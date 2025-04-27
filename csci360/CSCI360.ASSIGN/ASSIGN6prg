@@ -1,0 +1,395 @@
+//KC03G0BF JOB ,'Lucas Damler',MSGCLASS=H
+//STEP1    EXEC  PGM=ASSIST
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT   DD  SYSOUT=*
+//SYSIN      DD  *
+************************************************************
+*  MAIN
+*  Program:     ASSIGN6
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS/PPARMS/TPARMS
+*                  R12 Base register
+*                  R13 MAIN save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+ENTRY    DSECT                  DSECT definition
+FIRST    DS    CL10             First name
+LAST     DS    CL10             Last name
+PASSWD   DS    CL8              Password
+IDNUM    DS    CL9              ID number
+EXPDATE  DS    PL5              Expiration date
+BALANCE  DS    PL5              Balance
+FILLER   DS    CL1              Filler
+*******************
+MAIN     CSECT
+         STM   14,12,12(13)     Save  calling registers
+         LR    12,15            Load R15 into R12
+         USING MAIN,12          R12 base register
+         LA    14,MAINSAVE      Load address of MAINSAVE
+         ST    13,4(0,14)       Store backwards pointer
+         ST    14,8(0,13)       Store forwards pointer
+         LR    13,14            Load MAIN save area
+*********Call BUILD***********
+         LA    1,BPARMS         Load BPARMS into R1
+         L     15,=V(BUILD)     Load BUILD address into R15
+         BALR  14,15            Branch and link BUILD
+*********Call PRINT***********
+         LA    1,PPARMS         Load PPARMS into R1
+         L     15,=V(PRINT)     Load PRINT address into R15
+         BALR  14,15            Branch and link PRINT
+*********Call TALLY***********
+         LA    1,TPARMS         Load TPARMS into R1
+         L     15,=V(TALLY)     Load TALLY address into R15
+         BALR  14,15            Branch and link TALLY
+*********Exit Linkage*********
+         L     13,4(0,13)       Load calling registers address
+         LM    14,12,12(13)     Restore calling registers
+         BR    14               Return control
+         LTORG
+*********Main Storage*********
+         ORG   MAIN+(*-MAIN+15)/16*16
+TABLE    DS    70CL48           Table for values
+EOT      DS    F                End of table
+BPARMS   DC    A(TABLE)         Build parms
+         DC    A(EOT)
+PPARMS   DC    A(TABLE)         Print parms
+         DC    A(EOT)
+TPARMS   DC    A(TABLE)         Tally parms
+         DC    A(EOT)
+MAINSAVE DS    18F              MAIN save area
+************************************************************
+*  BUILD
+*  Program:     ASSIGN6
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS
+*                  R3  TABLE
+*                  R4  EOT
+*                  R5  BUFFER
+*                  R12 Base register
+*                  R13 PRINT save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+BUILD    CSECT
+         STM   14,12,12(13)     Save  calling registers
+         LR    12,15            Load R15 into R12
+         USING BUILD,12         R12 base register
+         LA    14,BLDSAVE       Load address of BLDSAVE
+         ST    13,4(0,14)       Store backwards pointer
+         ST    14,8(0,13)       Store forwards pointer
+         LR    13,14            Load BUILD save area
+*********Start Linkage********
+         LM    3,4,0(1)         R3 TABLE, R4 EOF
+         USING ENTRY,3          Load DSECT into R3
+         LA    5,BUF            Load BUFFER into R5
+         USING BUFFER,5         Load DSECT BUFFER into R5
+         XREAD 0(5),80          Read line
+BLOOP    BC    B'0100',BLEND    If EOF, go to BLEND
+         CR    3,4              If R3 = R4
+         BC    B'1000',BLEND    Go to BLEND
+         MVC   FIRST(10),FNAME  Load First name into line
+         MVC   LAST(10),LNAME   Load Last name into line
+         MVC   PASSWD(8),PASS   Load password into line
+         MVC   IDNUM(9),ID      Load ID number into line
+         PACK  EXPDATE(5),DATE(8)  Load Expiration date into line
+         PACK  BALANCE(5),BAL(7)   Load Balance into line
+         MVC   FILLER(1),FIL    Load Filler into line
+         LA    3,48(0,3)        Load next address
+         XREAD 0(0,5),80        Read next line
+         B     BLOOP            Go to BLOOP
+BLEND    DS    0H
+         ST    3,0(4)           Store EOT address
+         DROP  3                Drop R3 table
+         DROP  5                Drop R5 table
+         L     13,4(0,13)       Load BLDSAVE address
+         LM    14,12,12(13)     Restore calling registers
+         BR    14               Return control to MAIN
+         LTORG
+*********BUILD Storage********
+BLDSAVE  DS    18F              BUILD save area
+BUF      DS    CL80             Buffer
+         DC    C'*'
+FIL      DC    CL1' '           Filler
+BUFFER   DSECT                  DSECT definition
+FNAME    DS    10C              First name
+         DC    CL2' '
+LNAME    DS    10C              Last name
+         DC    CL2' '
+PASS     DS    8C               Password
+         DC    CL2' '
+ID       DS    9C               ID number
+         DC    CL2' '
+DATE     DS    8Z               Date
+         DC    CL2' '
+BAL      DS    7Z               Balance
+         DC    CL16' '
+************************************************************
+*  PRINT
+*  Program:     ASSIGN6
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  PPARMS
+*                  R3  TABLE
+*                  R4  EOT
+*                  R7  Counter
+*                  R12 Base register
+*                  R13 MAIN save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+PRINT    CSECT
+         STM   14,12,12(13)     Save  calling registers
+         LR    12,15            Load R15 into R12
+         USING PRINT,12         R12 base register
+         LA    14,PRTSAVE       Load address of BLDSAVE
+         ST    13,4(0,14)       Store backwards pointer
+         ST    14,8(0,13)       Store forwards pointer
+         LR    13,14            Load BUILD save area
+*********Start Linkage********
+         LM    3,4,0(1)         R3 TABLE, R4 EOF
+         USING ENTRY,3          Load DSECT into R3
+         SR    7,7              Make R9 zero
+         XPRNT PAGE1,83         Print page1 header
+         XPRNT TITLE,115        Print field headers
+         XPRNT LINES,115        Print dash spacers
+PLOOP    C     3,0(0,4)         Compare to end of file
+         BC    B'1000',PLEND    If so go to PLEND
+         MVC   SYM1(2),CLR      Reset CR symbol
+         MVC   PFNAME(10),FIRST Move first name to print line
+         MVC   PLNAME(10),LAST  Move last name to print line
+         MVC   PWD(8),PASSWD    Move password to print line
+         MVC   IDN(9),IDNUM     Move ID number to print line
+         MVC   EDATE(12),=X'402020202020612020612020'   Edit pattern
+         ED    EDATE(12),EXPDATE   Edit EXPDATE with pattern
+         MVC   BLC(12),=X'40202020206B2021204B2020'     Edit pattern
+         LA    1,BLC+8          Load BLC address + 8
+         EDMK  BLC(12),BALANCE  Edit BALANCE with pattern
+         BCTR  1,0              Get place for $ sign
+         MVI   0(1),C'$'        Add $
+         CP    BALANCE(5),=P'0' Compare balance to 0
+         BC    B'1011',END      If >= 0 go to END
+         MVC   SYM1(2),SYM      Else add CR to print line
+END      XPRNT LINE,115         Print LINE
+         A     7,=F'1'          Add 1 to R7
+         C     7,=F'20'         Compare counter to 20
+         BC    B'1000',HDR2     If so go to HDR2
+         C     7,=F'40'         Compare counter to 40
+         BC    B'1000',HDR3     If so go to HDR3
+         C     7,=F'60'         Compare counter to 60
+         BC    B'1000',HDR4     If so go to HDR4
+         B     END2             Go to END2
+HDR2     XPRNT PAGE2,83         Print PAGE2 header
+         XPRNT TITLE,115        Print fields header
+         XPRNT LINES,115        Print line spacers
+         B     END2             Go to END2
+HDR3     XPRNT PAGE3,83         Print PAGE3 header
+         XPRNT TITLE,115        Print fields header
+         XPRNT LINES,115        Print line spacers
+         B     END2             Go to END2
+HDR4     XPRNT PAGE4,83         Print PAGE4 header
+         XPRNT TITLE,115        Print fields header
+         XPRNT LINES,115        Print line spacers
+END2     LA    3,48(0,3)        Load next address
+         B     PLOOP            Go to PLOOP
+PLEND    DS    0H
+         DROP  3                Drop R3 table
+         L     13,4(0,13)       Load BLDSAVE address
+         LM    14,12,12(13)     Restore calling registers
+         BR    14               Return control to MAIN
+         LTORG
+*********PRINT Storage
+PRTSAVE  DS    18F              PRINT save area
+SYM      DC    C'CR'            CR symbol
+CLR      DC    CL2' '           Used to Clear
+LINE     DC    CL1'0'           Print line
+         DC    CL3' '
+PFNAME   DS    CL10             First name
+         DC    CL3' '
+PLNAME   DS    CL10             Last name
+BLC      DS    CL12             Balance
+         DC    CL1' '
+SYM1     DS    CL2' '           Symbol place holder
+         DC    CL7' '
+PWD      DS    CL8              Password
+         DC    CL3' '
+EDATE    DS    CL12             Expiration date
+         DC    CL5' '
+IDN      DS    CL9              ID number
+         DC    CL32' '
+TITLE    DC    CL1'-'           Field header
+         DC    CL3' '
+         DC    CL10'First Name'
+         DC    CL3' '
+         DC    CL10'Last Name'
+         DC    CL3' '
+         DC    CL12'  Balance'
+         DC    CL6' '
+         DC    CL9' Password'
+         DC    CL3' '
+         DC    CL12'  EXP. Date'
+         DC    CL3' '
+         DC    CL11'  ID Number'
+         DC    CL32' '
+LINES    DC    CL1'-'           Line spacers
+         DC    CL3' '
+         DC    CL10'----------'
+         DC    CL3' '
+         DC    CL10'---------'
+         DC    CL3' '
+         DC    CL10' ---------'
+         DC    CL6' '
+         DC    CL11'   --------'
+         DC    CL3' '
+         DC    CL12'  -----------'
+         DC    CL3' '
+         DC    CL11'  ---------'
+         DC    CL32' '
+PAGE1    DC    CL1'1'           PAGE1 header
+         DC    CL29' '
+         DC    CL29'Familiar Names -- Client List'
+         DC    CL18' '
+         DC    CL6'PAGE 1'
+PAGE2    DC    CL1'1'           PAGE2 header
+         DC    CL29' '
+         DC    CL29'Familiar Names -- Client List'
+         DC    CL18' '
+         DC    CL6'PAGE 2'
+PAGE3    DC    CL1'1'           PAGE3 header
+         DC    CL29' '
+         DC    CL29'Familiar Names -- Client List'
+         DC    CL18' '
+         DC    CL6'PAGE 3'
+PAGE4    DC    CL1'1'           PAGE4 header
+         DC    CL29' '
+         DC    CL29'Familiar Names -- Client List'
+         DC    CL18' '
+         DC    CL6'PAGE 4'
+************************************************************
+*  TALLY
+*  Program:     ASSIGN6
+*  Programmer:  Your Name
+*
+*  Register usage: R1  TPARMS
+*                  R3  TABLE
+*                  R4  EOT
+*                  R12 Base register
+*                  R13 MAIN save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+TALLY    CSECT
+         STM   14,12,12(13)     Save  calling registers
+         LR    12,15            Load R15 into R12
+         USING TALLY,12         R12 base register
+         LA    14,TLYSAVE       Load address of BLDSAVE
+         ST    13,4(0,14)       Store backwards pointer
+         ST    14,8(0,13)       Store forwards pointer
+         LR    13,14            Load BUILD save area
+*********Start Linkage********
+         LM    3,4,0(1)         R3 TABLE, R4 EOF
+         USING ENTRY,3          Load DSECT into R3
+         ZAP   COUNT(2),TEMP3(2)    Zero and add TEMP3 to COUNT
+         ZAP   NCOUNT(2),TEMP3(2)   Zero and add TEMP3 to NCOUNT
+         ZAP   SUM(6),TEMP1(6)  Zero and add TEMP1 to SUM
+         ZAP   HIGH(5),TEMP2(5) Zero and add TEMP2 to HIGH
+TLOOP    C     3,0(4)           Compare to end of file
+         BC    B'1000',TLYEND   Go to TLYEND
+         AP    SUM(6),BALANCE(5)    Add packed BALANCE to SUM
+         CP    BALANCE(5),HIGH(5)   Compare Balance to High
+         BC    B'1101',LOOP1        Go to LOOP1 if positive
+         ZAP   HIGH(5),BALANCE(5)   Else zero and add BALANCE to HIGH
+LOOP1    DS    0H
+         CP    BALANCE(5),=P'0'     Compare BALANCE to 0
+         BC    B'1011',LOOP2        Go to LOOP2
+         AP    NCOUNT(2),=P'1'      Else add to NCOUNT
+LOOP2    DS    0H
+         AP    COUNT(2),=P'1'       Add 1 to COUNT
+         LA    3,48(0,3)            Load next address
+         B     TLOOP                Go to TLOOP
+TLYEND   DS    0H
+         ZAP   AVG(6),SUM(6)        Zero and add SUM to AVG
+         DP    AVG(6),COUNT(2)      Divide AVG by COUNT
+         MVC   PCOUNT(4),=X'40202020'  Edit pattern
+         ED    PCOUNT(4),COUNT      Edit COUNT into PCOUNT
+         MVC   PNCOUNT(4),=X'40202020' Edit pattern
+         ED    PNCOUNT(4),NCOUNT    Edit NCOUNTinto PNCOUNT
+         LA    1,SUM                Load SUM address into R1
+         MVC   SUMOUT(14),=X'402020202020206B2020204B2020'
+         EDMK  SUMOUT(14),SUM       Edit SUM into SUMOUT
+         BCTR  1,0                  Find place for $ sign
+         MVI   0(1),C'$'            Add $ sign to number
+         CP    SUM(6),=P'0'         Compare SUM to 0
+         BC    B'1011',LOOP3        If positive go to LOOP3
+LOOP3    DS    0H
+         LA    1,AVG                Load AVG address into R1
+         MVC   AVGOUT(10),=X'4020206B2020204B2020'   Edit pattern
+         EDMK  AVGOUT(10),AVG       Edit AVG into AVGOUT
+         BCTR  1,0                  Find place for $ sign
+         MVI   0(1),C'$'            Add $ to value
+         CP    AVG(4),=P'0'         Compare AVG to 0
+         BC    B'1011',LOOP4        If positive go to LOOP4
+LOOP4    DS    0H
+         LA    1,HIGH               Load HIGH address into R1
+         MVC   HIGHOUT(12),=X'40202020206B2020204B2020'  Edit pattern
+         EDMK  HIGHOUT(12),HIGH     Edit HIGH into HIGHOUT
+         BCTR  1,0                  Find place for $ sign
+         MVI   0(1),C'$'            Add $ sign
+         XPRNT LINE2,59             Print number of clients
+         XPRNT LINE3,62             Print sum of accounts
+         XPRNT LINE4,62             Print average of accounts
+         XPRNT LINE5,62             Print largest account
+         XPRNT LINE6,59             Print number of negatives
+         DROP  3                    Drop R3 table
+         L     13,4(0,13)           Load TLYSAVE address
+         LM    14,12,12(13)         Restore calling registers
+         BR    14                   Return control to MAIN
+         LTORG
+*********TALLY Storage
+TLYSAVE  DS    18F                  TALLY save area
+TEMP1    DC    PL6'0'               temp1
+TEMP2    DC    PL5'0'               temp2
+TEMP3    DC    PL2'0'               temp3
+COUNT    DS    PL2                  Count
+NCOUNT   DS    PL2                  Negative count
+SUM      DS    PL6                  Balance sum
+AVG      DS    PL6                  Balance average
+HIGH     DS    PL5                  Balance high
+LINE2    DC    CL1' '               Number of clients
+         DC    CL22' '
+         DC    CL25'Number of clients: '
+         DC    CL7' '
+PCOUNT   DS    CL4
+LINE3    DC    CL1' '               Sum of account balances
+         DC    CL22' '
+         DC    CL25'Sum of account balances: '
+SUMOUT   DS    CL12
+         DC    CL1' '
+LINE4    DC    CL1' '               Average of account balances
+         DC    CL22' '
+         DC    CL25'Average account balance: '
+         DC    CL4' '
+AVGOUT   DS    CL8
+         DC    CL1' '
+LINE5    DC    CL1' '               Larges account balance
+         DC    CL22' '
+         DC    CL25'Largest account balance: '
+         DC    CL2' '
+HIGHOUT  DS    CL12
+LINE6    DC    CL1' '               Number of negative balances
+         DC    CL22' '
+         DC    CL29'Number of negative balances: '
+         DC    CL3' '
+PNCOUNT  DS    CL4
+         END   MAIN
+//FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW6DATA,DISP=SHR

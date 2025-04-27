@@ -1,0 +1,22 @@
+//KC03G0BA JOB ,'Lucas Damler',MSGCLASS=H                               00010002
+//STEP1 EXEC PGM=ASSIST                                                 00020001
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                        00030001
+//SYSPRINT DD SYSOUT=*                                                  00040001
+//SYSIN DD *                                                            00050001
+****************************                                            00060001
+* EXAMPLE PROGRAM                                                       00070001
+* NAME LUCAS DAMLER                                                     00080001
+* REGISTER USAGE                                                        00090001
+*  2     TOTAL                                                          00100001
+*  5     COUNTER                                                        00110001
+* 15     BASE REGISTER                                                  00120001
+****************************                                            00130001
+MAIN CSECT                                                              00140001
+     USING MAIN,15                                                      00150001
+     SR    2,2     ZERO FOR TOTAL                                       00160001
+     SR    5,5     ZERO FOR COUNTER                                     00170001
+     XDUMP                                                              00180001
+     BR 14                                                              00190001
+     END MAIN                                                           00200001
+/*                                                                      00210001
+//                                                                      00220001

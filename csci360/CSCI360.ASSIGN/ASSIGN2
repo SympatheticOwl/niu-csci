@@ -1,0 +1,92 @@
+//KC03G0BA JOB ,'Lucas Damler',MSGCLASS=H                               00010000
+//STEP1    EXEC  PGM=ASSIST                                             00020000
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                    00030000
+//SYSPRINT   DD  SYSOUT=*                                               00040000
+//SYSIN      DD  *                                                      00050000
+************************************************************            00060000
+*                                                                       00070000
+*  Program:     ASSIGN2                                                 00080000
+*  Programmer:  Damler, Lucas                                           00090056
+*                                                                       00100000
+*  Register usage: 3  Result of line                                    00110056
+*                  4  W                                                 00121057
+*                  5  X                                                 00122057
+*                  6  Y                                                 00123057
+*                  7  Z                                                 00124057
+*                  8  Total of all values                               00125057
+*                  9  Line counter                                      00126057
+*                  15 Base register                                     00127057
+************************************************************            00130000
+MAIN     CSECT                                                          00140000
+         USING MAIN,15                                                  00141015
+         SR    8,8            Sets total to zero                        00141156
+         SR    9,9            Sets line counter to zero                 00141256
+LOOP     XREAD BUFFER,80      Reads line into buffer                    00142056
+         BC    B'0100',LEND   Start loop, quit at EOF                   00143056
+         XDECI 4,BUFFER       Read first value into R4                  00144056
+         XDECI 5,0(1)         Read second value into R5                 00145056
+         XDECI 6,0(1)         Read third value into R6                  00146056
+         XDECI 7,0(1)         Read fourth value into R7                 00147056
+         LR    3,4            Load first value into R3                  00147356
+         SR    3,5            Subtract R4 fro, R3 store in R3           00147456
+         AR    3,6            Add R6 to R3 store in R3                  00147556
+         SR    3,7            Subtract R7 from R3 store in R3           00147656
+         XDECO 4,W            Make R4 printable and store at W          00147856
+         XDECO 5,X            Make R5 printable and store at X          00147956
+         XDECO 6,Y            Make R6 printable and store at Y          00148056
+         XDECO 7,Z            Make R7 printalbe and store at Z          00148156
+         XDECO 3,RESULT       Make R3 printable and store at RESULT     00148256
+         AR    8,3            Add total value at R3 to R8               00148456
+         XPRNT LINE,119       Print values of W, X, Y, Z and RESULT     00148556
+         A     9,=F'1'        Add one to line count                     00148656
+         BC    B'1111',LOOP   Continue loop                             00148756
+LEND     DS    0H             End of loop                               00149056
+         XDECO 8,TOTAL        Make R8 printable and store in TOTAL      00149156
+         XDECO 9,COUNT        Make R9 printable and store in COUNT      00149256
+         XPRNT LINE2,119      Print LINE2, total and count              00149356
+LINE2    DC    CL1' '         LINE2, COUNT, TOTAL used for printing     00149456
+         DC    CL18'Number of Lines = '                                 00149551
+COUNT    DS    CL12                                                     00149651
+         DC    CL5' '                                                   00149755
+         DC    CL18'Sum of Results = '                                  00149858
+TOTAL    DS    CL12                                                     00149951
+         DC    CL80' '                                                  00150051
+BUFFER   DS    CL80           Buffer to read line into                  00150156
+LINE     DC    CL1' '         LINE, W, X, Y, Z used for printing        00150256
+         DC    CL4'W = '                                                00150347
+W        DS    CL12                                                     00150445
+         DC    CL5' '                                                   00150555
+         DC    CL4'X = '                                                00150655
+X        DS    CL12                                                     00150745
+         DC    CL5' '                                                   00150855
+         DC    CL4'Y = '                                                00150955
+Y        DS    CL12                                                     00151045
+         DC    CL5' '                                                   00151155
+         DC    CL4'Z = '                                                00151255
+Z        DS    CL12                                                     00151345
+         DC    CL5' '                                                   00151455
+         DC    CL10' Result = '                                         00151554
+RESULT   DS    CL12                                                     00151648
+         DC    CL80' '                                                  00151748
+         BR    14                                                       00151815
+         END   MAIN                                                     00151916
+/*                                                                      00152000
+//FT05F001   DD  *                                                      00160000
+    0006   0001   0002   0004                                           00170000
+    9991   9972   9908   9926                                           00180028
+    4500   -230      9     58                                           00190028
+       0     +7      2    -45                                           00200028
+    8516   2853      0     17                                           00210028
+    0020      0   3245    316                                           00220028
+    5529   6977   1681      0                                           00230028
+    1013    250     85    831                                           00240028
+       0   3364   5275      0                                           00250028
+    -887   1100   2293   -993                                           00260028
+    1234   4447   8591     13                                           00270028
+     -89     -7     23   -104                                           00280028
+    8513   5409   2538   1001                                           00290028
+    0001   0002   0003   0004                                           00300028
+    9999   9998   9997   9996                                           00310028
+/*                                                                      00320000
+//FT06F001   DD SYSOUT=*                                                00330000
+//                                                                      00340000

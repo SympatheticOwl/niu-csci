@@ -1,0 +1,163 @@
+<html>
+
+<head>
+<title>CSCI 360 Assignment 2</title>
+</head>
+
+<body>
+
+<center>
+<h2><b>
+<p>Assignment 2
+<p>80 points
+</b></h2>
+</center>
+
+<p>For this assignment you will write a program that reads in an unknown
+   number of lines, each containing 4-digit numbers, 4 per line.  For each 
+   line read, print out the numbers W, X, Y and Z, calculate the value
+   of W - X + Y - Z and print the result, single-spaced.
+
+<p>Each line has the following format:
+<pre>     columns 1-4    blank
+     columns 5-8    first number W
+     columns 9-11   blank
+     columns 12-15  second number X
+     columns 16-18  blank
+     columns 19-22  third number Y
+     columns 23-25  blank
+     columns 26-29  fourth number Z
+     columns 30-80  blank</pre>
+
+<p>When all processing is done, skip a line and then print the sum of the 
+   result values from all of the lines and the number of lines read.
+
+<p>Write your program incrementally!  That means that you should begin by just
+   reading one record and print out those numbers.  When that works,
+   put in a loop. If you get one part working before moving on to
+   the next, your debugging will be much easier and less time-consuming.
+
+<p>Use a top driven loop:
+
+<pre>Initialize the counter and the total
+     Top of the loop
+      Read a record
+      If end-of-file, branch to the end of the loop
+      Deal with the record just read using XDECI, arithmetic, XDECO and XPRNT
+      Add 1 to the counter
+      Add the result (W - X + Y - Z) of the numbers read to the total
+      Branch to the top of the loop
+     End of the loop
+     Use XDECO and XPRNT to print the summary lines</pre>
+
+<p>You will need to put labels on two lines, one for the top of the
+   loop and one for the bottom of the loop.  You can actually put a
+   label on any line of code, but many people put them on lines that
+   don't do anything else, like this:
+
+<pre>     MYLABEL  DS    0H</pre>
+
+<p>Here <u>DS    0H</u> takes up no space.  (It declares 0 halfwords on
+   a halfword boundary, and as each instruction is an even number of
+   bytes, the location will already be on a halfword boundary.)
+
+<p><hr>
+
+<p><b>JCL for this assignment</b>
+
+<p>Use the following JCL:
+
+<pre>//KCnumberA JOB ,'Your Name',MSGCLASS=H
+//STEP1    EXEC  PGM=ASSIST
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT   DD  SYSOUT=*
+//SYSIN      DD  *
+************************************************************
+*
+*  Program:     ASSIGN2
+*  Programmer:  Your Name
+*
+*  Register usage:
+*
+************************************************************
+(Your program goes here.)
+/*
+//FT05F001   DD  *
+    0006   0001   0002   0004
+    9991   9972   9908   9926
+    4500   -230      9     58
+       0     +7      2    -45
+    8516   2853      0     17
+    0020      0   3245    316
+    5529   6977   1681      0
+    1013    250     85    831
+       0   3364   5275      0
+    -887   1100   2293   -993
+    1234   4447   8591     13   
+     -89     -7     23   -104
+    8513   5409   2538   1001
+    0001   0002   0003   0004
+    9999   9998   9997   9996
+/*
+//FT06F001   DD SYSOUT=*
+//</pre>
+
+<p>As before, you will need to replace "Your Name" with your own
+   name, and you will need to replace "KCnumber" with your own
+   logon ID.
+
+<p>Your actual code should be after the comment box and before the
+   /* line.
+
+<p><hr>
+
+<p><b>Data</b>
+
+<p>As indicated above, the data is listed in the source code file
+   between the <u>FT05FT001</u> line and the following <u>/*</u> line.
+
+<p>This is known as <u>instream</u> data.  It is also possible to
+   read from a specific disk file by name, and we will do so later.
+
+<p><hr>
+
+<p><b>Other requirements</b>
+
+<p>In the JCL, at the very beginning of the program is a <u>comment
+   box</u>.  Notice the place that says "Register Usage".  Make a
+   list here of registers you used and how you made use of each one.
+   For instance, you will be using register 15 as your base register,
+   and register 1 is used by XDECI.  Thus you might have:
+
+<pre>*
+*  Register usage:
+*    1        Used by XDECI
+*   15        Base register
+*</pre>
+
+<p>and probably several more such lines.
+
+<P>The comment box should also list your name and the number of
+   the assignment (Assignment 2).
+
+<p>To use XREAD, you will need to have an 80-byte field to contain
+   each line you read.
+
+<p>To produce the output, you will need to define a couple of output lines
+   containing DC and DS statements (with labels on the DS statements).
+
+<p>Your program should include <u>line documentation</u>.  At the
+   end of each line (certainly for most lines) skip one or more
+   spaces and insert a few words describing what that instruction
+   does.  Try to line these up so they start in the same column.
+   For instance:
+<pre>         SR    3,3                     Initialize counter.
+         SR    6,6                     Initialize total.</pre>
+
+<p>Name your program file something like "ASSIGN2" or "ASSIGN2".
+
+<p>Submit your program file and output file through Blackboard.
+
+</body>
+
+</html>

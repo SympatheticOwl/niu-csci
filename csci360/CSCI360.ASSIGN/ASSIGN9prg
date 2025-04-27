@@ -1,0 +1,102 @@
+//KC03G0BI JOB ,'Lucas Damler',MSGCLASS=H
+//STEP1   EXEC  PGM=ASSIST,PARM='MACRO=H'
+//STEPLIB   DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT  DD  SYSOUT=*
+//SYSIN     DD  *
+************************************************************
+*  STRLEN
+*   Counts length of input string
+*
+*  Program:     ASSIGN9
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R2  &STR
+*                  R3  COUNTER
+*
+************************************************************
+         MACRO                        MACRO start
+         STRLEN  &STR,&LEN            MACRO name and parameters
+         AIF     ('&STR' EQ '').ERROR Check if first parm present
+         AIF     ('&LEN' EQ '').ERROR Check if second parm is present
+         STM     2,3,A&SYSNDX         Store register values in A&SYSNDX
+         B       B&SYSNDX             Brnach to B&SYSNDX
+A&SYSNDX DS      3F                   MACRO save area
+B&SYSNDX LA      2,&STR               Load &STR into R2
+         SR      3,3                  Set R3 to zero
+C&SYSNDX DS      0H
+         CLI     0(2),X'00'           Compare char in R2 to delimiter
+         BC      B'1000',D&SYSNDX     If equal go to D&SYSNDX
+         A       2,=F'1'              Advance R2 pointer
+         A       3,=F'1'              Advance counter
+         B       C&SYSNDX             Go to C&SYSNDX
+D&SYSNDX DS      0H
+         ST      3,&LEN               Store count in &LEN
+         LM      2,3,A&SYSNDX         Load registers from save area
+         MEXIT                        Exit MACRO
+.ERROR   MNOTE   'Missing Argument'   MNOTE for error
+         MEND                         End MACRO
+************************************************************
+*  FROMHEX
+*   Converts input string from HEX to DECIMAL
+*  Program:     ASSIGN9
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R2  &IN
+*                  R3  HEX value of &IN
+*                  R4  Temp storage of single hex byte from &IN
+*                  R5  Counter
+*
+************************************************************
+         MACRO                        MACRO start
+         FROMHEX &IN,&OUT             MACRO name and parameters
+         AIF     ('&IN' EQ '').ERROR  Check if first parm present
+         AIF     ('&OUT' EQ '').ERROR Check if second parm is present
+         STM     2,6,Z&SYSNDX         Store register values in z&SYSNDX
+         SR      3,3                  Set R3 to zero
+         SR      5,5                  Set R5 to zero
+         B       Y&SYSNDX             Brnach to Y&SYSNDX
+Z&SYSNDX DS      5F                   FROMHEX save area
+R&SYSNDX DS      D                    Temp double word storage
+Y&SYSNDX LA      2,&IN                Load &IN into R2
+X&SYSNDX DS      0H
+         SR      4,4                  Set R4 to zero
+         C       5,=F'5'              Compare R5 to 5
+         BE      W&SYSNDX             If equal go to W&SYSNDX
+         IC      4,0(0,2)             Get single char from R2 into R4
+         CLI     0(2),X'F0'           Compare to X'F0"
+         BL      V&SYSNDX             If lower go to V&SYSNDX
+         S       4,=F'240'            Subtract 240 from R4
+         B       U&SYSNDX             Go to U&SYSNDX
+V&SYSNDX S       4,=F'183'            Subtract 183 from R4
+         B       U&SYSNDX             Go to U&SYSNDX
+U&SYSNDX DS      0H
+         SLA     4,4                  Shift left 4 bits
+         XR      3,4                  Add R4 to R3
+         SLA     3,4                  Shift R3 left 4 bits
+         A       5,=F'1'              Add 1 to R5
+         A       2,=F'1'              Advance R2 pointer
+         B       X&SYSNDX             Go to X&SYSNDX
+W&SYSNDX DS      0H
+         SR      4,4                  Set R4 to zero
+         IC      4,0(0,2)             Get single char from R2 into R4
+         CLI     0(2),X'F0'           Compare to X'F0"
+         BL      T&SYSNDX             If lower go to T&SYSNDX
+         S       4,=F'240'            Subtract 240 from R4
+         B       S&SYSNDX             Go to S&SYSNDX
+T&SYSNDX S       4,=F'183'            Subtract 183 from R4
+         B       S&SYSNDX             Go to S&SYSNDX
+S&SYSNDX DS      0H
+         SLA     4,4                  Shift R4 left 4 bits
+         XR      3,4                  Add R4 to R3
+         SRA     3,4                  Shift R3 right 4 bits
+         CVD     3,R&SYSNDX           Convert R3 to decimal in R&SYSNDX
+         MVC     &OUT.(16),=X'40212020202020202020202020202020'
+         ED      &OUT.(16),R&SYSNDX   Edit R&SYSNDX into &OUT
+         LM      2,5,Z&SYSNDX         Load registers from save area
+         MEXIT                        Exit MACRO
+.ERROR   MNOTE   'Missing Argument'   MNOTE for error
+         MEND                         End MACRO
+//          DD DSN=KC02314.SUMMER18.CSCI360.HW9DRVR,DISP=SHR
+//FT05F001  DD DUMMY
+//FT06F001  DD SYSOUT=*
+//

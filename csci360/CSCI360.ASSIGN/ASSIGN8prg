@@ -1,0 +1,398 @@
+//KC03G0BH JOB ,'Lucas Damler',MSGCLASS=H
+//STEP1    EXEC  PGM=ASSIST
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT   DD  SYSOUT=*
+//SYSIN      DD  *
+************************************************************
+*  MAIN
+*  Program:     ASSIGN8
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS/PPARMS
+*                  R12 Base register
+*                  R13 MAIN save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+$ENTRY   DSECT
+$STDID   DS    CL4
+$PASSWD  DS    CL8
+$DTG     DS    CL3
+**************
+MAIN     CSECT
+         STM   14,12,12(13)            Entry linkage
+         LR    12,15                   *
+         USING MAIN,12                 *
+         LA    14,MAINSAVE             *
+         ST    13,4(0,14)              *
+         ST    14,8(0,13)              *
+         LR    13,14                   *
+*CALL BUILD*
+         LA    1,BPARMS                Load BPAMRS into R1
+         L     15,=V(BUILD)            Load BUILD into R15
+         BALR  14,15                   Branch and link to BUILD
+         XDUMP TABLE,60
+*CALL PRINT*
+         LA    1,PPARMS                Load PPAMRS into R1
+         L     15,=V(PRINT)            Load PRINT into R15
+         BALR  14,15                   Branch and link to PRINT
+*CALL SORT*
+         LA    1,BPARMS                Load BPAMRS into R1
+         L     15,=V(SORT)             Load SORT into R15
+         BALR  14,15                   Branch and link to SORT
+*CALL PRINT*
+         LA    1,PPARMS2               Load PPAMRS2 into R1
+         L     15,=V(PRINT)            Load PRINT into R15
+         BALR  14,15                   Branch and link to PRINT
+*EXIT LINKAGE*
+         L     13,4(0,13)              Load calling registers address
+         LM    14,12,12(13)            Restore calling registers
+         BR    14                      Return control
+         LTORG
+*MAIN STORAGE*
+MAINSAVE DS    18F                     MAIN save area
+TABLE    DS    20CL15                  TABLE
+EOT      DS    F                       End of table
+CAP1     DC    CL15' '                 Caption 1
+         DC    CL36'Appointment Information             '
+CAP2     DC    CL15' '                 Caption 2
+         DC    CL36'Appointment Information by ID Number'
+BPARMS   DC    A(TABLE)                BPARMS
+         DC    A(EOT)
+PPARMS   DC    A(TABLE)                PPARMS
+         DC    A(EOT)
+         DC    A(CAP1)
+PPARMS2  DC    A(TABLE)                PPARMS2
+         DC    A(EOT)
+         DC    A(CAP2)
+************************************************************
+*  BUILD
+*  Program:     ASSIGN8
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS
+*                  R2  Storing $STDID
+*                  R3  TABLE
+*                  R4  EOT
+*                  R5  All packed bits for $DTG
+*                  R6  Various bits of $DTG
+*                  R12 Base register
+*                  R13 MAIN save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+BUILD    CSECT
+         STM   14,12,12(13)            Entry linkage
+         LR    12,15                   *
+         USING BUILD,12                *
+         LA    14,BLDSAVE              *
+         ST    13,4(0,14)              *
+         ST    14,8(0,13)              *
+         LR    13,14                   *
+*LINKAGE*
+         LM    3,4,0(1)                R3 TABLE, R4 EOT
+         USING $ENTRY,3                Load $ENTRY into R3
+         LA    1,BUFFER                Load BUFFER address into R1
+         USING $BUFF,1                 Load $BUFF into R1
+         XREAD 0(1),80                 Read first line
+BLOOP    BC    B'0100',BLEND           Go to BLEND if EOF
+         CR    3,4                     Compare R3 and R4
+         BC    B'1000',BLEND           Go to BLEND if EOT
+*STDID*
+         PACK  TEMP(8),$BID(7)         Pack ID into TEMP
+         CVB   2,TEMP                  Conver to binary
+         STCM  2,B'1111',$STDID        Put into $STDID
+*PASSWD*
+         MVC   $PASSWD(8),$BPASS       Move password into $PASSWD
+         XC    $PASSWD(4),$STDID       Hash password
+         XC    $PASSWD+4(4),$STDID     Hash password
+*DAY*
+         MVC   TMPDAY(9),$BDAY         Move day into TMPDAY
+         CLC   TMPDAY(6),=CL6'Monday'  Compare TMPDAY
+         BNE   CONT1                   If not equal continue
+         ZAP   TEMP(8),=P'1'           Else store 1 in TEMP
+         B     NEXT                    Go to NEXT
+CONT1    CLC   TMPDAY(7),=CL7'Tuesday' Compare TMPDAY
+         BNE   CONT2                   If not equal continue
+         ZAP   TEMP(8),=P'2'           Else store 2 in TEMP
+         B     NEXT                    Go to NEXT
+CONT2    CLC   TMPDAY(9),=CL9'Wednesday'  Compare TMPDAY
+         BNE   CONT3                      If not equal continue
+         ZAP   TEMP(8),=P'3'              Else store 3 in TEMP
+         B     NEXT                       Go to NEXT
+CONT3    CLC   TMPDAY(8),=CL8'Thursday'   Compare TMPDAY
+         BNE   CONT4                      If not equal continue
+         ZAP   TEMP(8),=P'4'              Else store 4 in TEMP
+         B     NEXT                       Go to NEXT
+CONT4    CLC   TMPDAY(6),=CL6'Friday'  Compare TMPDAY
+         BNE   CONT5                   If not equal continue
+         ZAP   TEMP(8),=P'5'           Else store 5 in TEMP
+         B     NEXT                    Go to NEXT
+CONT5    CLC   TMPDAY(8),=CL8'Saturday'   Compare TMPDAY
+         BNE   CONT6                      If not equal continue
+         ZAP   TEMP(8),=P'6'              Else store 6 in TEMP
+         B     NEXT                       Go to NEXT
+CONT6    CLC   TMPDAY(6),=CL6'Sunday'  Compare TMPDAY
+         ZAP   TEMP(8),=P'0'           Else store 1 in TEMPe
+         B     NEXT                    Go to NEXT
+NEXT     DS    0H
+         CVB   5,TEMP                  Convert TEMP to binary
+         SLL   5,21                    Shift left 21
+         PACK  TEMP(8),$BHR(2)         Pack hours into TEMP
+         CVB   6,TEMP                  Convert TEMP to binary
+         SLL   6,16                    Shift left 16
+         XR    5,6                     Add R6 to R5
+         PACK  TEMP(8),$BMIN(2)        Pack minutes into TEMP
+         CVB   6,TEMP                  Convert TEMP to binary
+         SLL   6,10                    Shift left 10
+         XR    5,6                     Add R6 to R5
+         PACK  TEMP(8),$BRMN(3)        Pack room number into TEMP
+         CVB   6,TEMP                  Convert TEMP to binary
+         XR    5,6                     Add R6 to R5
+         STCM  5,B'0111',$DTG          Move into $DTG
+         LA    3,15(0,3)               Advance address
+         XREAD 0(0,1),80               Read next line
+         B     BLOOP                   Go to BLOOP
+BLEND    DS    0H
+         ST    3,0(0,4)                Store EOT
+         L     13,4(0,13)              Load calling registers address
+         LM    14,12,12(13)            restore calling registers
+         BR    14                      Return control
+         LTORG
+*BUILD STORAGE*
+BLDSAVE  DS    18F                     BUILD storage area
+TEMP     DS    D                       TEMP storage
+*
+TMPDAY   DC    CL9' '                  Temp day
+BUFFER   DS    CL80                    Buffer
+         DC    C'*'
+$BUFF    DSECT                         Buffer DSECT
+$SYM     DS    CL1' '
+$BID     DS    7Z
+         DC    CL4' '
+$BPASS   DS    CL8' '
+         DC    CL4' '
+$BDAY    DC    CL9' '
+         DC    CL4' '
+$BHR     DS    2Z
+$SYM2    DS    CL1' '
+$BMIN    DS    2Z
+         DC    CL4' '
+$BRMN    DS    3Z
+         DC    CL31' '
+************************************************************
+*  PRINT
+*  Program:     ASSIGN8
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  PPARMS
+*                  R2  Temp storage of various bits/DTEMP
+*                  R3  TABLE
+*                  R4  EOT
+*                  R5  CAPTION
+*                  R7  Counter flag
+*                  R12 Base register
+*                  R13 MAIN save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+PRINT    CSECT
+         STM   14,12,12(13)            Entry linkage
+         LR    12,15                   *
+         USING PRINT,12                *
+         LA    14,PRTSAVE              *
+         ST    13,4(0,14)              *
+         ST    14,8(0,13)              *
+         LR    13,14                   *
+*LINKAGE*
+         LM    3,5,0(1)                R3 TABLE, R4 EOT, R5 CAPTION
+         USING $ENTRY,3                Load $ENTRY into R3
+         SR    7,7                     Set R7 to 0
+PLOOP    C     3,0(0,4)                Compare to EOT
+         BE    PLEND                   If EOT go to PLEND
+         C     7,=F'0'                 Compare to 0
+         BE    PHEADER                 If 0 go to PHEADER
+PCONT    DS    0H
+         MVC   DTEMP(8),$STDID         Move $STDID into TEMP
+         L     2,DTEMP                 Load DTEMP into R2
+         CVD   2,DTEMP                 Convert DTEMP into decimal
+         MVC   PID(10),=X'40212020202020202020'  Edit pattern
+         ED    PID(10),DTEMP+3         Edit DTEMP into PID
+         MVI   PLINE+3,C'R'            Add R to front of ID
+*PRINT PASSWORD
+         MVC   TEMP2(8),$PASSWD        Move $PASSWD into TEMP2
+         XC    TEMP2(4),$STDID         Unhash
+         XC    TEMP2+4(4),$STDID       Unhash
+         MVC   PPASS(8),TEMP2          Move TEMP2 into PPASS
+*PRINT DAY
+         ICM   2,B'0100',$DTG          Move byte 2 of $DTG into R2
+         SRL   2,21                    Shift right 21
+         CVD   2,DTEMP                 Convert to decimal
+         ZAP   DTEMP(1),DTEMP(8)       Zero and pack DTEMP
+         CP    DTEMP(1),=P'0'          Compare DTEMP to 0
+         BNE   PCONT1                  If not equal go to PCONT1
+         MVC   PDAY(6),=C'Sunday'      Else store into PDAY
+         B     PNEXT                   Go to PNEXT
+PCONT1   CP    DTEMP(1),=P'1'          Compare DTEMP to 1
+         BNE   PCONT2                  If not equal go to PCONT1
+         MVC   PDAY(9),=C'Monday   '   Else store into PDAY
+         B     PNEXT                   Go to PNEXT
+PCONT2   CP    DTEMP(1),=P'2'          Compare DTEMP to 2
+         BNE   PCONT3                  If not equal go to PCONT1
+         MVC   PDAY(9),=C'Tuesday  '   Else store into PDAY
+         B     PNEXT                   Go to PNEXT
+PCONT3   CP    DTEMP(1),=P'3'          Compare DTEMP to 3
+         BNE   PCONT4                  If not equal go to PCONT1
+         MVC   PDAY(9),=C'Wednesday'   Else store into PDAY
+         B     PNEXT                   Go to PNEXT
+PCONT4   CP    DTEMP(1),=P'4'          Compare DTEMP to 4
+         BNE   PCONT5                  If not equal go to PCONT1
+         MVC   PDAY(9),=C'Thursday '   Else store into PDAY
+         B     PNEXT                   Go to PNEXT
+PCONT5   CP    DTEMP(1),=P'5'          Compare DTEMP to 5
+         BNE   PCONT6                  If not equal go to PCONT1
+         MVC   PDAY(9),=C'Friday   '   Else store into PDAY
+         B     PNEXT                   Go to PNEXT
+PCONT6   CP    DTEMP(1),=P'6'          Compare DTEMP to 6
+         MVC   PDAY(9),=C'Saturday '   Store into PDAY
+         B     PNEXT                   Go to PNEXT
+PNEXT    DS    0H
+*PRINT HOUR*
+         ICM   2,B'0111',$DTG          Move 2,3,4 bytes of $DTG into R2
+         SLL   2,11                    Shift left 11
+         SRL   2,27                    Shift right 27
+         CVD   2,DTEMP                 Convert to hour to decimal
+         ZAP   DTEMP(2),DTEMP(8)       Zero and pack DTEMP
+         MVC   PHR(4),=X'40212020'     Edit pattern
+         ED    PHR(4),DTEMP            Edit DTEMP into PHR
+*PRINT MIN
+         ICM   2,B'0111',$DTG          Move 2,3,4 bytes of $DTG into R2
+         SLL   2,16                    Shift left 16
+         SRL   2,26                    Shift right 26
+         CVD   2,DTEMP                 Convert to minute to decimal
+         ZAP   DTEMP(2),DTEMP(8)       Zero and pack DTEMP
+         MVC   PMIN(3),=X'212020'      Edit pattern
+         ED    PMIN(3),DTEMP           Edit DTEMP into PHR
+         MVI   PMIN,C':'               Add : between hour and min
+*PRINT ROOM NUM
+         ICM   2,B'0111',$DTG          Move 2,3,4 bytes of $DTG into R2
+         SLL   2,22                    Shift left 22
+         SRL   2,22                    Shift right 22
+         CVD   2,DTEMP                 Convert to room num to decimal
+         ZAP   DTEMP(4),DTEMP(8)       Zero and pack DTEMP
+         SRP   DTEMP(4),3,0            Shift packed right 3
+         MVC   PRM(5),=X'4021202020'   Edit pattern
+         ED    PRM(5),DTEMP            Edit DTEMP into PHR
+*
+         XPRNT PLINE,53                Print PLINE
+         LA    3,15(0,3)               Load next address
+         B     PLOOP                   Go to PLOOP
+PHEADER  DS    0H
+         L     7,=F'1'                 Set R7 to 1
+         XPRNT 0(0,5),51               Print title
+         XPRNT HEADER,53               Print field headers
+         B     PCONT                   Go to PCONT
+PLEND    DS    0H
+         XPRNT BLANK,2                 Print blank line
+         L     13,4(0,13)              Load calling registers address
+         LM    14,12,12(13)            restore calling registers
+         BR    14                      Return control
+         LTORG
+*PRINT STORAGE*
+*
+PRTSAVE  DS    18F                     PRINT save area
+DTEMP    DS    D                       Temp storage
+TEMP2    DS    PL1                     Temp storage
+BLANK    DC    CL2' '                  Blank line
+*
+HEADER   DC    CL1' '                  Field headers
+         DC    CL10' ID Number'
+         DC    CL3' '
+         DC    CL8'Password'
+         DC    CL3' '
+         DC    CL3'Day'
+         DC    CL12' '
+         DC    CL4'Time'
+         DC    CL5' '
+         DC    CL4'Room'
+*
+PLINE    DC    CL1' '                  Print line
+PID      DC    CL10' '                 ID
+         DC    CL3' '
+PPASS    DC    CL8' '                  Password
+         DC    CL3' '
+PDAY     DC    CL9' '                  Day
+         DC    CL3' '
+PHR      DC    CL4' '                  Hours
+PMIN     DC    CL3' '                  Minutes
+         DC    CL4' '
+PRM      DC    CL5' '                  Room number
+************************************************************
+*  SORT
+*  Program:     ASSIGN8
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS
+*                  R3  TABLE
+*                  R4  EOT
+*                  R6  Copy of table
+*                  R8  First entry
+*                  R9  Compare entry
+*                  R12 Base register
+*                  R13 MAIN save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+SORT     CSECT
+         STM   14,12,12(13)            Entry linkage
+         LR    12,15                   *
+         USING SORT,12                 *
+         LA    14,SRTSAVE              *
+         ST    13,4(0,14)              *
+         ST    14,8(0,13)              *
+         LR    13,14                   *
+*LINKAGE*
+         LM    3,4,0(1)                R3 TABLE, R4 EOT
+         LR    6,3                     Copy R3 into R6
+         L     7,0(0,4)                Copy EOT into R7
+SLOOP    DS    0H
+         CR    6,7                     Compare R6 and R7
+         BC    B'1000',SREND           If equal go to SREND
+         LR    8,6                     Load R6 into R8
+SLOOP2   DS    0H
+         CR    8,3                     Compare R8 and R3
+         BE    SREND2                  If equal go to SREND2
+         LR    9,8                     Load R9 into R8
+         S     9,=F'15'                Subtract 15 from entry
+         CLC   0(4,8),0(9)             Compare 2 entrys
+         BC    B'0010',SKIP            Go to SKIP
+         MVC   STEMP(15),0(8)          Move entry1 into STEMP
+         MVC   0(15,8),0(9)            Move entry2 into entry1
+         MVC   0(15,9),STEMP           Move STEMP into entry2
+SKIP     DS    0H
+         S     8,=F'15'                Subtrack 15 from R8
+         B     SLOOP2                  Go to SLOOP2
+SREND2   DS    0H
+         LA    6,15(0,6)               Load next address
+         B     SLOOP                   Go to SLOOP
+SREND    DS    0H
+         L     13,4(0,13)              Load calling registers address
+         LM    14,12,12(13)            restore calling registers
+         BR    14                      Return control
+         LTORG
+*SORT STORAGE*
+SRTSAVE  DS    18F                     SORT save area
+STEMP    DS    15C                     Temp storage
+         END   MAIN
+/*
+//FT05F001   DD  DSN=KC02314.SUMMER18.CSCI360.HW8DATA,DISP=SHR
+//FT06F001   DD SYSOUT=*
+//

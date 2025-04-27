@@ -1,0 +1,214 @@
+<HTML>
+
+<HEAD>
+<TITLE>CSCI 360 Assignment 7</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>CSCI 360
+<P>Assignment 7
+<P>100 points
+</B></H2></CENTER>
+
+<P><B>Overview</B>
+
+<P>As in some other assignments, we have a file containing various
+   pieces of information.  In this case, however, the data is not
+   all lined up for us in neat columns.  We will need to use TRT
+   and EX to extract the data from the record.  Also, the names
+   in the file are written in upper case and lower case letters
+   at random.  We will need to use TR to put the names in a 
+   standard format.
+
+<P>For this assignment, we will write a program that will read a
+   file containing information about players:  ID numbers, names
+   and three scores for each person.  The information will be 
+   stored in a table.  We will print the table.  After that, there
+   will be some transactions to carry out and then we will print
+   the table again.
+
+<P>The program will make use of external subroutines, character
+   data and packed decimal numbers.
+
+<P><HR>
+
+<P><B>Input</B>
+
+<P>The input to the program will be a file with an unknown number of
+   records.  Each record represents a single player in the
+   Greek Myth game and has the following format:
+
+<P>There are two groups of records.  Each input record in the first
+   group contains:
+
+<PRE>     ID Number (always 8 digits)
+     at least one space
+     First Name (up to 10 characters)
+     at least one space
+     Last Name (up to 12 characters)
+     at least one space
+     three scores, each 1-3 digits, separated by at least 1 space
+     more spaces to make up 80 columns in all</PRE>
+
+<P>The end of the first group of records is a record with ID Number=0000000
+
+<P>Each input record in the second group contains (all neatly lined up):
+<PRE>     ID number (8 digits)
+     one space
+     transaction type:  one character indicating what to do
+     one space
+     one score (3 digits) (only if the character is 'N')
+     spaces to make up 80 columns in all</PRE>
+
+<P>The character may be 'S' for <U>statistics</U> or 'N' for <U>new</U>.
+
+<P>Use the following JCL statement to specify the input file:
+
+<PRE>//FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW7DATA,DISP=SHR</PRE>
+
+<P>Otherwise the JCL is the same JCL we have been using.
+
+<P><HR>
+
+<P><B>Processing Requirements</B>
+
+<P>The main program will carry out the following steps:
+
+<UL>
+ <LI>Call subroutine BUILD to read the file and store the data in
+     a table.  
+     <P>
+ <LI>Call subroutine PRINT to print the contents of the table,
+     using appropriate page and column headings.
+     <P>
+ <LI>Call subroutine TRANS to read the second group of records and
+     carry out the transactions.  TRANS will print a line about each
+     transaction.
+     <P>
+ <LI>Again call subroutine PRINT to print the contents of the table,
+     using appropriate page and column headings.
+</UL> 
+
+<P><HR>
+
+<P><B>Other Notes</B>
+
+<OL>
+ <LI>You may assume that the table needs to hold no more than 50
+     values.  (There are fewer than 50 players.)  Each entry should
+     have the following format:
+     <UL>
+      <LI>ID Number (stored as a fullword)
+      <LI>Last Name (12 characters)
+      <LI>First Name (10 characters)
+      <LI>Score 1 (2 packed decimal bytes)
+      <LI>Score 2 (2 packed decimal bytes)
+      <LI>Score 3 (2 packed decimal bytes)
+     </UL>
+     <P>
+ <LI>Use this DSECT to describe a table entry:
+
+<PRE>     $ENTRY   DSECT
+     $ID      DS    F
+     $LNAME   DS    12C
+     $FNAME   DS    10C
+     $SCORE1  DS    PL2
+     $SCORE2  DS    PL2
+     $SCORE3  DS    PL2</PRE> 
+     <P>
+ <LI>You should use TR to ensure that the first letter in each first or last name is
+     an upper-case letter and the rest of the name is in lower case.
+     <P>
+ <LI>In the BUILD subroutine, you will need to use TRT and EX to
+     extract the data from each line.  You will need at least two
+     search tables:  search for a space or for a non-space.
+     <P>
+ <LI>The TRANS subroutine will do search the table for the specified
+     ID number, and then:
+  <UL>
+   <LI>For a <U>statistics</U> transaction, find the largest score and
+       average score for that player and print a line giving the
+       ID number, name and the statistics.
+       <P>
+   <LI>For a <U>new</U> transaction, replace the player's lowest score
+       with the specified score (but only if it is larger than the lowest
+       score) and print a line giving the transaction type, ID number,
+       name and the score.  (The idea here is that we are keeping track
+       of the three largest scores to date.)
+       <P>
+   <LI>If the transaction type was invalid, print a message saying
+       so, including the transaction type and the ID number.
+       <P>
+   <LI>If the ID number was not found, print a message saying so,
+       including the transaction type and the ID number.
+  </UL>
+     <P>
+ <LI>Write this program incrementally, one subroutine at a time.
+     Start with BUILD and XDUMP the table to see whether BUILD is
+     correct.  After that, write and test PRINT.  Once you have PRINT
+     working, you can go on to TRANS.
+     <P>
+ <LI>The parameter list for each of the subroutines needs to contain
+     the address of the table and the address of a fullword containing
+     the address of the first unused entry.  BUILD will set this latter
+     address and the others will make use of it.  PRINT also needs the
+     address of the caption to use in the page heading and the address
+     of the page counter.  TRANS will also need the address of the
+     page counter.
+     <P>
+ <LI>The JCL for this assignment is the same as the JCL used in
+     Assignment 6 except for the line given above to provide the data.
+     <P>
+ <LI>You may not use XDECI or XDECO anywhere in this assignment.
+     The scores should all be stored in packed decimal format and
+     the ID numbers should be stored as binary fullwords.
+     <P>
+ <LI>The table is printed twice.  We will have a different caption
+     at the top of the page so we can tell them apart.  To tell the
+     PRINT subroutine which caption to use, we pass it an extra argument,
+     the address of a character field of length 24.  When we first
+     call PRINT, the caption should be " Initial Table Contents " and on
+     the second call, it should be "Table After Transactions".
+     <P>
+ <LI>The TRANS subroutine will have to print its own page heading
+     including a caption such as "Results of Transactions" and the page
+     number (which is why the page counter is one of its arguments).
+     <P>
+ <LI>As you work on this, you may need to XDUMP all or part of the
+     table to check your work.  Each line of XDUMP prints 32 bytes of
+     data, and each table entry is 32 bytes long.  Use the following
+     ORG trick to line up your table on a 32-byte boundary:
+
+<PRE>          ORG MAIN+((*-MAIN+31)/32)*32)
+TABLE    DS  1600C</PRE>
+</OL>
+
+<P><HR>
+
+<P><B>Output</B>
+
+<P>The page header for each report should start at the top of a new
+   page.  The page heading should be centered.  The page heading 
+   should include a page number.  There will be several pages of 
+   output.
+
+<P>The column headers should be triple-spaced from the page header.
+
+<P>The lines of player information should be double spaced.    
+
+<P>The transaction report should start at the top of a new page.
+
+<P>The lines reporting on transactions should be double-spaced.
+
+<P>Print no more than 18 lines of player information per page.
+
+<P>You may assume all the transaction messages will fit on one page. 
+
+<P>Print ID numbers as 8 digits with leading zeroes, as in "00123456".
+
+</BODY>
+
+</HTML>

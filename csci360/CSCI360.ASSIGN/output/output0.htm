@@ -1,0 +1,99 @@
+<HTML>
+
+<HEAD>
+<TITLE>Program 0 Output</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>Program 0 Output</B></H2>
+</CENTER>
+
+<P>Here is some of the output from the Lab Training exercises,
+   also known as Assignment 0. 
+
+<PRE>1                    J E S 2  J O B  L O G  --  S Y S T E M  S 0 W 1  --  N O D E  Z O S K C T R         
+0 
+ 16.00.09 JOB02156 ---- WEDNESDAY, 06 JUN 2018 ----
+ 16.00.09 JOB02156  IRR010I  USERID KC02314  IS ASSIGNED TO THIS JOB.
+ 16.00.09 JOB02156  ICH70001I KC02314  LAST ACCESS AT 16:00:08 ON WEDNESDAY, JUNE 6, 2018
+ 16.00.09 JOB02156  $HASP373 KC02314A STARTED - INIT 2    - CLASS A        - SYS S0W1
+ 16.00.09 JOB02156  -                                         --TIMINGS (MINS.)--            ----PAGING COUNTS---
+ 16.00.09 JOB02156  -JOBNAME  STEPNAME PROCSTEP    RC   EXCP    TCB    SRB  CLOCK   SERV  PG   PAGE   SWAP    VIO SWAPS
+ 16.00.09 JOB02156  -KC02314A                      00     36 ******    .00     .0    101   0      0      0      0     0
+ 16.00.09 JOB02156  -KC02314A ENDED.  NAME-Harry Hutchins       TOTAL TCB CPU TIME=   .00  TOTAL ELAPSED TIME=    .0
+ 16.00.09 JOB02156  $HASP395 KC02314A ENDED
+0------ JES2 JOB STATISTICS ------
+-  06 JUN 2018 JOB EXECUTION DATE
+-           26 CARDS READ
+-           76 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-            5 SYSOUT SPOOL KBYTES
+-         0.00 MINUTES EXECUTION TIME
+ !! END OF JES SPOOL FILE !!
+        1 //KC02314A JOB ,'Harry Hutchins',MSGCLASS=H                             JOB02156
+        2 //STEP1 EXEC PGM=ASSIST                                                         
+        3 //STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                                
+        4 //SYSPRINT DD SYSOUT=*                                                          
+        5 //SYSIN DD *                                                                    
+        6 //                                                                              
+ !! END OF JES SPOOL FILE !!
+ ICH70001I KC02314  LAST ACCESS AT 16:00:08 ON WEDNESDAY, JUNE 6, 2018
+ IEF236I ALLOC. FOR KC02314A STEP1
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IEF237I JES2 ALLOCATED TO SYSPRINT
+ IEF237I JES2 ALLOCATED TO SYSIN
+ IEF142I KC02314A STEP1 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02293.ASSIST.LOADLIB                       RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC02314.KC02314A.JOB02156.D0000102.?         SYSOUT        
+ IEF285I   KC02314.KC02314A.JOB02156.D0000101.?         SYSIN         
+ IEF373I STEP/STEP1   /START 2018157.1600
+ IEF032I STEP/STEP1   /STOP  2018157.1600 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:   584K  SYS:   268K  EXT:        0K  SYS:    12960K
+         ATB- REAL:                     0K  SLOTS:                     0K
+              VIRT- ALLOC:       0M SHRD:       0M
+ IEF375I  JOB/KC02314A/START 2018157.1600
+ IEF033I  JOB/KC02314A/STOP  2018157.1600 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+ !! END OF JES SPOOL FILE !!
+1*** ASSIST 4.0/A2-05/15/82  470/V7A/0:OS/VS2  INS=SDFP7/X=BGHO, CHECK/TRC/=1180, OPTS=CDKMPR FROM PENN ST*NIU COMPSCI*LT            
+0                                                                                                                                    
+0                                                                                                               PAGE    1            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+                                       1 ********************************************                                                
+                                       2 * EXAMPLE PROGRAM                                                                           
+                                       3 *                                                                                           
+                                       4 * NAME:  Harry Hutchins                                                                     
+                                       5 *                                                                                           
+                                       6 * Register Usage                                                                            
+                                       7 *                                                                                           
+                                       8 *  2     Total                                                                              
+                                       9 *  5     Counter                                                                            
+                                      10 * 15     Base register                                                                      
+                                      11 *                                                                                           
+                                      12 ********************************************                                                
+ 000000                               13 MAIN     CSECT                                                                              
+ 000000                               14          USING MAIN,15                                                                      
+ 000000 1B22                          15          SR    2,2     ZERO FOR TOTAL                                                       
+ 000002 1B55                          16          SR    5,5     ZERO FOR COUNTER                                                     
+ 000004 E160 0000 0000 00000          17          XDUMP                                                                              
+ 00000A 07FE                          18          BR    14                                                                           
+                                      19          END   MAIN                                                                         
+0***  NO   STATEMENTS FLAGGED -  NO   WARNINGS,  NO   ERRORS                                                                         
+0*** DYNAMIC CORE AREA USED:  LOW:     268 HIGH:     320 LEAVING:  492980 FREE BYTES. AVERAGE:       29 BYTES/STMT ***               
+0*** ASSEMBLY TIME =    0.000 SECS,    20000 STATEMENTS/SEC ***                                                                      
+0*** PROGRAM EXECUTION BEGINNING - ANY OUTPUT BEFORE EXECUTION TIME MESSAGE IS PRODUCED BY USER PROGRAM ***                          
+0BEGIN XSNAP - CALL     1 AT C000000A USER REGISTERS                                                                                 
+0 REGS 0-7      F4F4F4F4    F4F4F4F4    00000000    F4F4F4F4    F4F4F4F4    00000000    F4F4F4F4    F4F4F4F4                         
+  REGS 8-15     F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    00000010    FFFE7960    00000000                         
+0                                                                                                                                    
+0*** EXECUTION TIME =    0.000 SECS.         4 INSTRUCTIONS EXECUTED -     4000 INSTRUCTIONS/SEC ***                                 
+0*** FIRST CARD NOT READ: NO CARDS READ:FILE UNOPENED                                                                                
+0*** AM004 - NORMAL USER TERMINATION BY RETURN ***                                                                                   
+ !! END OF JES SPOOL FILE !!</PRE>
+
+</BODY>
+
+</HTML>

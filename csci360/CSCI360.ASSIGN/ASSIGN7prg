@@ -1,0 +1,526 @@
+//KC03G0BG JOB ,'Lucas Damler',MSGCLASS=H
+//STEP1    EXEC  PGM=ASSIST
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT   DD  SYSOUT=*
+//SYSIN      DD  *
+************************************************************
+*  MAIN
+*  Program:     ASSIGN7
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS/PPARMS/TPARMS
+*                  R12 Base register
+*                  R13 MAIN save area
+*                  R14 Return
+*                  R15 Address for subroutine
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+$ENTRY   DSECT
+$ID      DS    CL8
+$LNAME   DS    CL12
+$FNAME   DS    CL10
+$SCORE1  DS    PL2
+$SCORE2  DS    PL2
+$SCORE3  DS    PL2
+********************
+$TRANS   DSECT
+$TID     DS    CL8
+         DS    CL1
+$TYPE    DS    CL1
+         DS    CL1
+$TSCORE  DS    ZL3
+********************
+MAIN     CSECT
+         STM   14,12,12(13)     Save calling registers
+         LR    12,15            Load R15 into R12
+         USING MAIN,12          R12 base register
+         LA    14,MAINSAVE      Load address of MAINSAVE
+         ST    13,4(0,14)       Store backwards pointer
+         ST    14,8(0,13)       Store forwards pointer
+         LR    13,14            Load BUILD save area
+*CALL BUILD*
+         LA    1,BPARMS         Load BPARMS into R1
+         L     15,=V(BUILD)     Load BUILD into R15
+         BALR  14,15            Branch and link BUILD
+*CALL PRINT*
+         LA    1,PPARMS         Load PPARMS into R1
+         L     15,=V(PRINT)     Load PRINT into R15
+         BALR  14,15            Branch and link PRINT
+*CALL TRANS*
+         LA    1,TPARMS         Load TPARMS into R1
+         L     15,=V(TRANS)     Load TRANS into R15
+         BALR  14,15            Branch and link TRANS
+*CALL PRINT*
+         LA    1,PPARMS2        Load PPARMS2 INTO R1
+         L     15,=V(PRINT)     Load PRINT into R15
+         BALR  14,15            Branch and link PRINT
+*EXIT LINKAGE*
+         L     13,4(0,13)       Load calling registers address
+         LM    14,12,12(13)     Restore calling registers
+         BR    14               Return control
+         LTORG
+*MAIN STORAGE*
+TABLE    DS    1600C            Table
+EOT      DS    F                End of table
+BUFF     DS    CL80             Buffer
+CAPTION  DC    CL24' '          Print caption
+         DC    CL22'Initial Table Contents'
+         DC    24C'                  Page '
+CAPTION2 DC    CL22' '          Print caption
+         DC    CL24'Table After Transactions'
+         DC    24C'                  Page '
+CAPTION3 DC    CL23' '          Trans caption
+         DC    CL23'Results of Transactions'
+         DC    24C'                  Page '
+***
+BPARMS   DC    A(TABLE)         Build parms
+         DC    A(EOT)
+PPARMS   DC    A(TABLE)         Print parms
+         DC    A(EOT)
+         DC    A(CAPTION)
+PPARMS2  DC    A(TABLE)         Print parms
+         DC    A(EOT)
+         DC    A(CAPTION2)
+TPARMS   DC    A(TABLE)         Trans parms
+         DC    A(EOT)
+         DC    A(BUFF)
+         DC    A(CAPTION3)
+MAINSAVE DS    18F              MAIN save area
+************************************************************
+*  BUILD
+*  Program:     ASSIGN7
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS
+*                  R3  TABLE
+*                  R4  EOT
+*                  R5  Start of entry
+*                  R7  End of entry/Entry location
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+BUILD    CSECT
+         STM   14,12,12(13)     Save calling registers
+         LR    12,15            Load R15 into R12
+         USING BUILD,12         R12 base register
+         LA    14,BLDSAVE       Load address of BLDSAVE
+         ST    13,4(0,14)       Store backwards pointer
+         ST    14,8(0,13)       Store forwards pointer
+         LR    13,14            Load BUILD save area
+*START LINKAGE*
+         LM    3,4,0(1)         R3 - Table, R4 - end of table
+         USING $ENTRY,3         Load $ENTRY into R3
+BLOOP    XREAD BUFFER,80        Read line
+         BC    B'0100',BLEND    If eof go to BLEND
+         LA    1,BUFFER         Load BUFFER address into R1
+         TRT   0(80,1),NTABLE   ID START
+         LR    5,1              Save location in R5
+         TRT   0(80,1),BTABLE   ID END
+         LR    7,1              Save end location
+         SR    7,5              Subtract to find length
+         BCTR  7,0              Subtract 1 from length
+         EX    7,MVID           Execute MVID
+         CLC   $ID(8),=CL8'00000000'   Check if ID = delimiter ID
+         BE    BLEND            If yes go to BLEND
+         TRT   0(80,1),NTABLE   FNAME START
+         LR    5,1              Save location in R5
+         TRT   0(80,1),BTABLE   FNAME END
+         LR    7,1              Save end location
+         SR    7,5              Subtract to find length
+         BCTR  7,0              Subtract 1 from length
+         MVI   $FNAME,C' '      Destructive overlap
+         MVC   $FNAME+1(9),$FNAME    Make sure FNAME is blank
+         EX    7,MVFNAME        Execute MVFNAME
+         TR    $FNAME(10),LOWER Set $FNAME to lower case
+         TR    $FNAME(1),UPPER  Set first letter to upper case
+         TRT   0(80,1),NTABLE   LNAME START
+         LR    5,1              Save location in R5
+         TRT   0(80,1),BTABLE   LNAME END
+         LR    7,1              Save end location
+         SR    7,5              Subtract to find length
+         BCTR  7,0              Subtract 1 from length
+         MVI   $LNAME,C' '      Destructive overlap
+         MVC   $LNAME+1(11),$LNAME   Make sure LNAME is blank
+         EX    7,MVLNAME        Execute MVLNAME
+         TR    $LNAME(12),LOWER Set $LNAME to lower case
+         TR    $LNAME(1),UPPER  Set first letter to upper case
+         TRT   0(80,1),NTABLE   SRC1 START
+         LR    5,1              Save location in R5
+         TRT   0(80,1),BTABLE   SRC1 END
+         LR    7,1              Save end location
+         SR    7,5              Subtract to find length
+         BCTR  7,0              Subtract 1 from length
+         ZAP   $SCORE1(2),=P'0' Zero and pack 0 into $SCORE1
+         EX    7,MVSCR1         Execute MVSCR1
+         TRT   0(80,1),NTABLE   SRC2 START
+         LR    5,1              Save location in R5
+         TRT   0(80,1),BTABLE   SRC2 END
+         LR    7,1              Save end location
+         SR    7,5              Subtract to find length
+         BCTR  7,0              Subtract 1 from length
+         ZAP   $SCORE2(2),=P'0' Zero and pack 0 into $SCORE2
+         EX    7,MVSCR2         Execute MVSCR2
+         TRT   0(80,1),NTABLE   SRC3 START
+         LR    5,1              Save location in R5
+         TRT   0(80,1),BTABLE   SRC3 END
+         LR    7,1              Save end location
+         SR    7,5              Subtract to find length
+         BCTR  7,0              Subtract 1 from length
+         ZAP   $SCORE3(2),=P'0' Zero and pack 0 into $SCORE3
+         EX    7,MVSCR3         Execute MVSCR3
+         LA    3,36(0,3)        Load next address
+         B     BLOOP            Go to BLOOP
+BLEND    DS    0H
+         ST    3,0(0,4)         Store EOT
+         L     13,4(0,13)       Load calling registers address
+         LM    14,12,12(13)     Restore calling registers
+         BR    14               Return control
+         LTORG
+*BUILD STORAGE*
+BLDSAVE  DS    18F              BUILD save area
+BUFFER   DS    80C' '           Buffer
+         DC    C'*'
+TEMP     DS    D                Temp value
+***
+BTABLE   DC    256X'00'         Search for blanks table
+         ORG   BTABLE+C' '
+         DC    X'FF'
+         ORG
+***
+NTABLE   DS    256X'FF'        Search for non-blanks table
+         ORG   NTABLE+C' '
+         DC    X'00'
+         ORG
+***
+LOWER    DC    256C' '         Used to set to lower case
+         ORG   LOWER+C'a'
+         DC    CL9'abcdefghi'
+         ORG
+         ORG   LOWER+C'j'
+         DC    CL9'jklmnopqr'
+         ORG
+         ORG   LOWER+C's'
+         DC    CL8'stuvwxyz'
+         ORG
+         ORG   LOWER+C'A'
+         DC    CL9'abcdefghi'
+         ORG
+         ORG   LOWER+C'J'
+         DC    CL9'jklmnopqr'
+         ORG
+         ORG   LOWER+C'S'
+         DC    CL8'stuvwxyz'
+         ORG
+         ORG   LOWER+C'0'
+         DC    CL10'0123456789'
+         ORG
+***
+UPPER    DC    256C' '         Used to set to upper case
+         ORG   UPPER+C'a'
+         DC    CL9'ABCDEFGHI'
+         ORG
+         ORG   UPPER+C'j'
+         DC    CL9'JKLMNOPQR'
+         ORG
+         ORG   UPPER+C's'
+         DC    CL9'STUVWXYZ'
+         ORG
+         ORG   UPPER+C'A'
+         DC    CL9'ABCDEFGHI'
+         ORG
+         ORG   UPPER+C'J'
+         DC    CL9'JKLMNOPQR'
+         ORG
+         ORG   UPPER+C'S'
+         DC    CL9'STUVWXYZ'
+         ORG
+         ORG   UPPER+C'0'
+         DC    CL10'0123456789'
+         ORG
+***
+MVID     MVC   $ID(0),0(5)      Move ID into $ID
+MVLNAME  MVC   $LNAME(0),0(5)   Move last name into $LNAME
+MVFNAME  MVC   $FNAME(0),0(5)   Move last name into $FNAME
+MVSCR1   PACK  $SCORE1(2),0(0,5)  Pack score 1 into $SCORE1
+MVSCR2   PACK  $SCORE2(2),0(0,5)  Pack score 2 into $SCORE2
+MVSCR3   PACK  $SCORE3(2),0(0,5)  Pack score 3 into $SCORE3
+***
+************************************************************
+*  PRINT
+*  Program:     ASSIGN7
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS
+*                  R3  TABLE
+*                  R4  EOT
+*                  R5  CAPTION1/CAPTION2
+*                  R6  Counter
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+PRINT    CSECT
+         STM   14,12,12(13)       Save calling registers
+         LR    12,15              Load R15 into R12
+         USING PRINT,12           R12 base register
+         LA    14,PRTSAVE         Load address of BLDSAVE
+         ST    13,4(0,14)         Store backwards pointer
+         ST    14,0(0,13)         Store forwards pointer
+         LR    13,14              Load BUILD save area
+*START LINKAGE*
+         LM    3,5,0(1)           R3 - TABLE, R4 - EOT, R5 - CAPTION
+         USING $ENTRY,3           Load $ENTRY into R3
+         SR    6,6                Set R6 to zero
+PLOOP    C     3,0(0,4)           Compare R3 to end of table
+         BE    PLEND              If equal go to PLEND
+         C     6,=F'0'            Compare R6 to 0
+         BE    PHEADER            If equal go to PHEADER
+PCONT    MVC   PID(8),$ID         Move $ID to print ID
+         MVC   PFNAME(12),$LNAME  Move $PFNAME to print fname
+         MVC   PLNAME(10),$FNAME  Move $PLNAME to print lname
+         MVC   PSCR1(4),=X'40212020'  PSCR1 edit pattern
+         ED    PSCR1(4),$SCORE1   Edit $SCORE1 into print score1
+         MVC   PSCR2(4),=X'40212020'  PSCR2 edit pattern
+         ED    PSCR2(4),$SCORE2   Edit $SCORE2 into print score2
+         MVC   PSCR3(4),=X'40212020'  PSCR3 edit pattern
+         ED    PSCR3(4),$SCORE3   Edit $SCORE3 into print score3
+         XPRNT PLINE,75           Print PLINE
+         LA    3,36(0,3)          Load next address
+         S     6,=F'1'            Subtract 1 from R6
+         B     PLOOP              Go to PLOOP
+PHEADER  L     6,=F'18'           Set R6 to 18
+         MVC   HEADER(72),0(5)    Move CAPTION into HEADER
+         XPRNT HEADER,72          Print HEADER
+         XPRNT TITLE,75           Print TITLE
+         B     PCONT              go to PCONT
+PLEND    DS    0H
+         XPRNT BLANK,2            Print blank line
+         DROP  3                  Drop R3 dsect
+*EXIT LINKAGE*
+         L     13,4(0,13)         Load calling registers address
+         LM    14,12,12(13)       Restore calling registers
+         BR    14                 Return control
+         LTORG
+*PRINT STORAGE*
+PRTSAVE  DS    18F                PRINT save area
+HEADER   DS    CL70               HEADER
+PCNT     DC    CL1'1'             Page count
+TITLE    DC    CL10' ID Number'   Fields title
+         DC    CL3' '
+         DC    CL9'Last Name'
+         DC    CL5' '
+         DC    CL10'First Name'
+         DC    CL7' '
+         DC    CL7'Score 1'
+         DC    CL5' '
+         DC    CL7'Score 2'
+         DC    CL5' '
+         DC    CL7'Score 3'
+BLANK    DC    C'0'               Blank line
+         DC    C' '
+PLINE    DC    C' '               Data print line
+PID      DS    CL8                ID
+         DC    CL4' '
+PLNAME   DS    CL10               Last name
+         DC    CL5' '
+PFNAME   DS    CL10               First name
+         DC    CL6' '
+PSCR1    DS    CL4                Score 1
+         DC    CL9' '
+PSCR2    DS    CL4                Score 2
+         DC    CL8' '
+PSCR3    DS    CL4                Score 3
+         DC    CL30' '
+************************************************************
+*  TRANS
+*  Program:     ASSIGN7
+*  Programmer:  Lucas Damler
+*
+*  Register usage: R1  BPARMS
+*                  R3  TABLE
+*                  R4  EOT
+*                  R5  BUFF
+*                  R6  CAPTION3
+*                  R7  TABLE start pointer
+*                  R12-15 Entry and exit linkage
+*
+************************************************************
+TRANS    CSECT
+         STM   14,12,12(13)       Save calling registers
+         LR    12,15              Load R15 into R12
+         USING TRANS,12           R12 base register
+         LA    14,TRNSAVE         Load address of TRNSAVE
+         ST    13,4(0,14)         Store backwards pointer
+         ST    14,8(0,13)         Store forwards pointer
+         LR    13,14              Load TRANS save area
+***
+         LM    3,6,0(1)           R3 TABLE, R4 EOT, R5 BUFF, R6 CAPTION
+         LR    7,3                Save start of table in R7
+         USING $ENTRY,3           Load $ENTRY into R3
+         USING $TRANS,5           Load $TRANS into R5
+         MVC   THEADER(70),0(6)   Move CAPTION into THEADER
+         XPRNT THEADER,70         Print THEADER
+TLOOP    XREAD 0(0,5),80          Read line
+         BL    TLEND              Go to TLEND if empty
+         LR    3,7                Reset Table pointer
+         ZAP   TEMP3(2),=P'0'     Zero and pack TEMP3
+         ZAP   TEMP2(2),=P'0'     Zero and pack TEMP2
+         ZAP   TMPSCR(2),=P'0'    Zero and pack TMPSCR
+         PACK  TEMP2(2),$TSCORE(3)   Pack $TSCORE into TEMP2
+         CLC   $TYPE(1),=CL1'S'      Compare $TYPE to S
+         BE    ESTAT                 If equal go to ESTAT
+         CLC   $TYPE(1),=CL1'N'      Compare $TYPE to N
+         BE    ENEW                  If equal go to ENEW
+         B     EERR                  Else go to EERR
+ESTAT    MVC   STYPE(10),=CL10'Statistics'     Move into STYPE
+         MVC   ETYPE2(10),=CL10'Statistics'    Move into ETYPE2
+         B     SKPS                  Go to SKPS
+ENEW     MVC   NTYPE(10),=CL10'New Score '     Move into STYPE
+         MVC   ETYPE2(10),=CL10'New Score '    Move into ETYPE2
+         B     SKPN                  Go tp SKPN
+EERR     MVC   EID1(8),$TID          Move $TID into EID1
+         MVC   ETYPE1(1),$TYPE       Move $TYPE into ETYPE1
+         XPRNT EPRINT1,65            Print EPRINT1
+         LA    3,12(0,3)             Load next adddress
+         B     TLOOP                 Go to TLOOP
+SKPN     DS    0H
+         MVC   NID(8),$TID           Move $TID into NID
+         MVC   NSCR(4),=X'40212020'  NSCR edit pattern
+         ED    NSCR(4),TEMP2         Edit TEMP2 into NSCR
+         B     SLOOP                 Go to SLOOP
+SKPS     DS    0H
+         MVC   SID(8),$TID           Move $TID into SID
+         B     SLOOP                 Go to SLOOP
+SLOOP    DS    0H                    Search loop
+         C     3,0(0,4)              Compare R3 to end of table
+         BE    IDERR                 If equal go to IDERR
+         CLC   $ID(8),$TID           Compare $ID to $TID
+         BE    LPTYPE                If equal go to LPTYPE
+         LA    3,36(0,3)             Load next address
+         B     SLOOP                 Go to SLOOP
+LPTYPE   DS    0H                    Loop Type
+         CLC   $TYPE(1),=CL1'S'      Compare $TYPE to S
+         BE    TSTAT                 If equal go to TSAT
+         CLC   $TYPE(1),=CL1'N'      Compare $TYPE to N
+         BE    TNEW                  If equal go to TNEW
+         B     IDERR                 Else go to IDERR
+TSTAT    DS    0H
+         CP    TEMP3(2),$SCORE1(2)   Compare $SCORE1 to TEMP3
+         BL    SWAP1                 If TEMP# lower go to SWAP1
+         CP    TEMP3(2),$SCORE2(2)   Compare $SCORE2 to TEMP3
+         BL    SWAP2                 If TEMP# lower go to SWAP2
+         CP    TEMP3(2),$SCORE3(2)   Compare $SCORE3 to TEMP3
+         BL    SWAP3                 If TEMP# lower go to SWAP3
+         B     TSTAT2                Go to TSTAT2
+SWAP1    MVC   TEMP3(2),$SCORE1      Move $SCORE1 to TEMP3
+         B     TSTAT                 Go to TSAT
+SWAP2    MVC   TEMP3(2),$SCORE2      Move $SCORE1 to TEMP3
+         B     TSTAT                 Go to TSAT
+SWAP3    MVC   TEMP3(2),$SCORE3      Move $SCORE1 to TEMP3
+         B     TSTAT2                Go to TSAT2
+TSTAT2   DS    0H
+         MVC   SHIGH(4),=X'40212020' Edit pattern for SHIGH
+         ED    SHIGH(4),TEMP3        Edit TEMP3 into SHIGH
+         ZAP   AVGTMP(3),$SCORE1(2)  Zero and pack $SCORE1 into AVGTMP
+         AP    AVGTMP(3),$SCORE2(2)  Add $SCORE2 to AVGTMP
+         AP    AVGTMP(3),$SCORE3(2)  Add $SCORE3 to AVGTMP
+         DP    AVGTMP(3),=P'3'       Divide AVGTMP by 3
+         MVC   SAVG(4),=X'40212020'  Edit pattern for SAVG
+         ED    SAVG(4),AVGTMP        Edit AVGTMP into SAVG
+         XPRNT SPRINT,71             Print SPRINT
+         LA    3,12(0,3)             Load next address
+         B     TLOOP                 Go to TLOOP
+TNEW     DS    0H
+         PACK  TMPSCR(2),$TSCORE(3)  Pack $TSCORE into TMPSCR
+         CP    TMPSCR(2),$SCORE1(2)  Compate TMPSCR to $SCORE1
+         BL    CONT1                 If TMPSCR lower go to CONT1
+         ZAP   $SCORE1(2),TMPSCR     Zero and pack TMPSCR into $SCORE1
+         MVC   NCHNG(8),=CL9'Score1 = ' Move into NCHNG
+         MVC   NSCR2(4),=X'40212020' Edit pattern for NSCR2
+         ED    NSCR2(4),TMPSCR       Edit TMPSCR into NSCR2
+         B     TNEND                 Go to TNEND
+CONT1    CP    TMPSCR(2),$SCORE2(2)  Compate TMPSCR to $SCORE2
+         BL    CONT2                 If TMPSCR lower go to CONT2
+         ZAP   $SCORE2(2),TMPSCR     Zero and pack TMPSCR into $SCORE1
+         MVC   NCHNG(8),=CL9'Score2 = ' Move into NCHNG
+         MVC   NSCR2(4),=X'40212020' Edit pattern for NSCR2
+         ED    NSCR2(4),TMPSCR       Edit TMPSCR into NSCR2
+         B     TNEND                 Go to TNEND
+CONT2    CP    TMPSCR(2),$SCORE3(2)  Compate TMPSCR to $SCORE3
+         BL    CONT3                 If TMPSCR lower go to CONT3
+         ZAP   $SCORE3(2),TMPSCR     Zero and pack TMPSCR into $SCORE1
+         MVC   NCHNG(8),=CL9'Score3 = ' Move into NCHNG
+         MVC   NSCR2(4),=X'40212020' Edit pattern for NSCR2
+         ED    NSCR2(4),TMPSCR       Edit TMPSCR into NSCR2
+         B     TNEND                 Go to TNEND
+CONT3    MVC   NCHNG(9),=CL9'No change' Move into NCHNG
+         B     TNEND                 Go to TNEND
+TNEND    DS    0H                    Trans New End
+         XPRNT NPRINT,66             Print NPRINT
+         LA    3,12(0,3)             Load next address
+         B     TLOOP                 Go to TLOOP
+IDERR    DS    0H                    ID error
+         MVC   EID2(8),$TID          Move $TID into EID2
+         XPRNT EPRINT2,53            Print EPRINT2
+         LA    3,12(0,3)             Load next address
+         B     TLOOP                 Go to TLOOP
+TLEND    DS    0H
+         L     13,4(0,13)            Load calling registers address
+         LM    14,12,12(13)          Restore calling registers
+         BR    14                    Return control
+         LTORG
+*TRANS STORAGE*
+TMPSCR   DS    PL2                   Temp score
+TEMP2    DS    PL2                   Temp value 2
+TRNSAVE  DS    18F                   TRANS save area
+TEMP3    DS    PL2                   Temp value 3
+AVGTMP   DS    PL3                   Average temp value
+THEADER  DS    CL70                  Trans header
+SPRINT   DS    CL1' '                Stat Print
+         DC    CL5'ID = '
+SID      DS    CL8                   ID
+         DC    CL5' '
+         DC    CL7'Type = '
+STYPE    DS    CL10                  Type
+         DC    CL5' '
+         DC    CL7'High = '
+SHIGH    DS    CL4                   High score
+         DC    CL5' '
+         DC    CL10'Average = '
+SAVG     DS    CL4                   Average score
+***
+NPRINT   DC    CL1' '                New print
+         DC    CL5'ID = '
+NID      DS    CL8                   ID
+         DC    CL5' '
+         DC    CL7'Type = '
+NTYPE    DS    CL10                  Type
+         DC    CL5' '
+         DC    CL7'Score = '
+NSCR     DS    CL4                   New Score
+         DC    CL5' '
+NCHNG    DS    CL9                   Change or not
+NSCR2    DS    CL4                   Changed score
+***
+EPRINT1  DC    CL1' '                Error print 1
+         DC    CL5'ID = '
+EID1     DS    CL8                   ID
+         DC    CL5' '
+         DC    CL14'Trans. Code = '
+ETYPE1   DS    CL1                   Trans code
+         DC    CL7' '
+         DC    CL24'Invalid transaction code'
+***
+EPRINT2  DC    CL1' '               Error print 2
+         DC    CL5'ID = '
+EID2     DS    CL8                  ID
+         DC    CL5' '
+         DC    CL7'Type = '
+ETYPE2   DS    CL10                 Type
+         DC    CL5' '
+         DC    CL12'ID not found'
+         END   MAIN
+/*
+//FT05F001   DD  DSN=KC02314.SUMMER18.CSCI360.HW7DATA,DISP=SHR
+//FT06F001   DD SYSOUT=*
+//

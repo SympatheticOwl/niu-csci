@@ -1,0 +1,76 @@
+<HTML>
+
+<HEAD>
+<TITLE>CSCI 360 Assignment 1</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>CSCI 360
+<P>Assignment 1
+<P>50 points
+</B></H2></CENTER>
+
+<P>This assignment is in three parts:
+
+<P><HR>
+
+<P><B>Part A</B>
+
+<P>Write a program that does the following:
+
+<UL TYPE=DISC>
+ <LI>Declare a fullword LEFT with the value 169.
+ <LI>Declare a fullword RIGHT with the value 74.
+ <LI>Subtract RIGHT from LEFT.  To do this, simply load these numbers
+     into registers and use an SR.
+ <LI>Add LEFT to RIGHT.  To do this, load the two numbers into 
+     registers (a different pair of registers) and use an AR.
+ <LI>Now use an XDUMP to dump out the registers and look at the
+     register values to see your answer.
+</UL>
+
+<P><HR>
+
+<P><B>Part B</B>
+
+<P>Modify the program from Part A as follows:
+
+<UL>
+ <LI>Declare two consecutive fullwords of storage called DIFF and SUM.
+ <LI>Store (ST) the first answer (LEFT minus RIGHT) into DIFF.
+ <LI>Store (ST) the second answer (LEFT plus RIGHT) into SUM.
+ <LI>XDUMP that area of storage (containing DIFF and SUM) using XDUMP.  
+     You can use XDUMP to print the results in storage by using the label 
+     followed by the length of the field like this:  XDUMP LEFT,8.
+ <LI>Go into the XDUMP output and verify your math is correct.
+</UL>
+
+<P><HR>
+
+<P><B>Part C</B>
+
+<P>Now rewrite your program using explicit addressing.  This
+   means on the L and ST, take out your labels and fill in the
+   addresses of the various fullwords.  You can get these addresses
+   from the program listing of part B.
+
+<P><HR>
+
+<P><B>Other Notes</B>
+
+<P>Hint:  Start with the JCL and the trivial little program we had in 
+   the lab training exercise.  Take out the two SR lines and put in 
+   what you need.
+
+<P>Be sure your name and the assignment number (including Part A, B or C)
+   is included in the documentation for each file.
+
+<P>Turn in all three programs (from Parts A, B and C) and the output file
+   from Part C.
+
+</BODY>
+
+</HTML>

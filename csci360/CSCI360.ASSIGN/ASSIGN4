@@ -1,0 +1,128 @@
+//KC03G0BD JOB ,'Lucas Damler',MSGCLASS=H                               00010000
+//STEP1    EXEC  PGM=ASSIST                                             00020000
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                    00030000
+//SYSPRINT   DD  SYSOUT=*                                               00040000
+//SYSIN      DD  *                                                      00050000
+************************************************************            00060000
+*                                                                       00070000
+*  Program:     ASSIGN3                                                 00080000
+*  Programmer:  Damler, Lucas                                           00090038
+*                                                                       00100000
+*  Register usage: R1   BPARMS                                          00110038
+*                  R2   TABLER                                          00111038
+*                  R3   EOT                                             00112038
+*                  R4   BUFFER/TABLE VALUE                              00113038
+*                  R5   COUTNER                                         00114038
+*                  R6   DIVIDING/HOLDING TABLE VALUE                    00115038
+*                  R7   HOLDING TABLE VALUE                             00116038
+*                  R8   PLINE POINTER                                   00117038
+*                  R9   HOLDING TABLE VALUE/STORING FOR PLINE           00118038
+*                                                                       00120000
+************************************************************            00130000
+MAIN     CSECT                                                          00140000
+         USING MAIN,15                                                  00150000
+         LA    1,BPARMS           Loads parameter list into R1          00170030
+         BAL   11,BUILD           Branches to BUILD                     00180030
+         LA    1,BPARMS           Loads parameter list into R1          00190031
+         BAL   11,PRINT           Brnaches to PRINT                     00200030
+         LA    1,BPARMS           Loads parameter list into R1          00210031
+         BAL   11,ODDS            Branches to ODDS                      00220032
+*********BUILD*********                                                 00240039
+BUILD    DS    0H                 Used to build a table                 00250032
+         SR    5,5                Set R5 to zero                        00270032
+         LM    2,3,0(1)           Loads TABLE into R2, EOT int R3       00280033
+LOOP1    XREAD BUFFER,80          Read from file                        00290032
+         BC    B'0100',LEND1      If end of file go to LEND1            00300032
+         C     5,=F'60'           If R5 = 60                            00310032
+         BE    LEND1              Go to LEND1                           00320032
+         XDECI 4,BUFFER           Read number from file                 00330032
+NLOOP    BC    B'0001',LOOP1      If error go to top LOOP1              00340033
+         ST    4,0(2)             Store value in TABLE                  00350033
+         A     5,=F'1'            Add 1 to counter                      00360033
+         LA    2,4(2)             Add 4 to table pointer                00370033
+         XDECI 4,0(1)             Get next value                        00380033
+         B     NLOOP              Go to GETNUM                          00390033
+LEND1    DS    0H                 End of loop                           00400033
+         ST    2,0(3)             Store EOT in R2                       00410033
+         S     3,=F'4'            Store EOT in R2                       00420033
+         BR    11                 Branch back to MAIN                   00440033
+*********END BUILD*********                                             00450039
+*********PRINT*************                                             00460039
+PRINT    DS    0H                 Used to print table                   00470033
+         XPRNT HEADER,17          Print header                          00480033
+         XPRNT LINE,73            Print blank space                     00490033
+         LM    2,3,0(1)           Loads TABLE into R2, EOT int R3       00510033
+         SR    5,5                Set R5 to zero                        00520033
+         SR    6,6                Set R6 to zero                        00530033
+         SR    8,8                Set R8 to zero                        00540033
+         LA    8,PLINE+1          Load PLINE address                    00550037
+LOOP2    C     2,0(3)             Check if EOT                          00560037
+         BC    B'1000',LEND2      If EOT go to LEND2                    00570037
+         L     6,0(2)             Load number from TABLE                00580037
+         XDECO 6,0(8)             Store value in PLINE                  00590037
+         A     5,=F'1'            Add 1 to counter                      00600037
+         A     8,=F'12'           Add 12 to storage address             00610037
+         A     2,=F'4'            Add 4 to table pointer                00620037
+         C     5,=F'5'            If line counter = 5                   00630037
+         BNZ   SKIP               Go to SKIP                            00640037
+         XPRNT PLINE,61           Print PLINE                           00650037
+         LA    8,PLINE+1          Reset PLINE pointer                   00660037
+         SR    5,5                Set R5 to zero                        00670037
+SKIP     DS    0H                 SKIP                                  00680037
+         B     LOOP2              Go to LOOP2                           00690037
+LEND2    DS    0H                 LEND2                                 00700037
+         XPRNT PLINE,49           Print PLINE                           00710037
+         BR    11                 Branch back to MAIN                   00730037
+*********END PRINT*********                                             00740039
+*********ODDS**************                                             00750039
+ODDS     DS    0H                 Used to print odd values              00760037
+         XPRNT HEADER2,20         Print header2                         00770037
+         XPRNT LINE,73            Print blank line                      00780037
+         LM    2,3,0(1)           Loads TABLE into R2, EOT int R3       00800037
+         SR    5,5                Set R5 to zero                        00810037
+         SR    6,6                Set R6 to zero                        00820037
+         SR    8,8                Set R8 to zero                        00830037
+         LA    8,PLINE+1          Load PLINE address                    00840037
+LOOP3    C     2,0(3)             Check if EOT                          00850037
+         BC    B'1000',LEND3      If EOT go to LEND3                    00860037
+         L     7,0(2)             Load value from TABLE into R7         00870037
+         LR    9,7                Load R7 into R9                       00880037
+         M     6,=F'1'            Make R6 64 bit for division           00890037
+         D     6,=F'2'            Divide R6 by 2                        00900037
+         A     2,=F'4'            Add 4 to table pointer                00910037
+         C     6,=F'0'            Compare R6 remainder to 0             00920037
+         BC    B'1000',SKIPODD    Go to SKIPODD                         00930037
+         XDECO 9,0(8)             Store R9 in PLINE                     00940037
+         A     5,=F'1'            Add 1 to counter                      00950037
+         A     8,=F'12'           Add 12 to storage address             00960037
+         C     5,=F'6'            If line ocunter = 6                   00970037
+         BNZ   SKIPODD            go to SKIPODD                         00980037
+         XPRNT PLINE,73           Print PLINE                           00990037
+         LA    8,PLINE+1          Reset PLINE pointer                   01000037
+         SR    5,5                Set R5 to zero                        01010037
+SKIPODD  DS    0H                 SKIPODD                               01020037
+         B     LOOP3              Go to LOOP3                           01030037
+LEND3    DS    0H                 LEND3                                 01040037
+         XPRNT PLINE,13           Print PLINE                           01050037
+         BR    11                 Brnach back to MAIN                   01070037
+*********END ODDS*********                                              01080039
+*********STORAGE**********                                              01090039
+BPARMS   DC    A(TABLE)           Parameter list                        01100038
+         DC    A(BUFFER)                                                01110000
+BUFFER   DS    CL80               Buffer                                01120040
+         DC    C'*'                                                     01130000
+EOT      DS    F                  End of table                          01140038
+TABLE    DC    60F'-8'            Table                                 01160038
+LINE     DC    CL73' '                                                  01190033
+HEADER   DC    CL1' '                                                   01210000
+         DC    CL15'List of Numbers'                                    01220000
+HEADER2  DC    CL1' '                                                   01230000
+         DC    CL19'List of Odd Numbers'                                01240000
+PLINE    DC    C' '               Print line for printing table values  01250038
+         DS    70C                                                      01251034
+         BR    14                                                       01260000
+         END   MAIN                                                     01270000
+/*                                                                      01280000
+//FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW4DATA,DISP=SHR           01290000
+//FT06F001   DD SYSOUT=*                                                01300000
+//                                                                      01310000

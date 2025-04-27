@@ -1,0 +1,129 @@
+//KC03G0BC JOB ,'Lucas Damler',MSGCLASS=H                               00010068
+//STEP1    EXEC  PGM=ASSIST                                             00020000
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                    00030000
+//SYSPRINT   DD  SYSOUT=*                                               00040000
+//SYSIN      DD  *                                                      00050000
+************************************************************            00060000
+*                                                                       00070000
+*  Program:     ASSIGN3                                                 00080000
+*  Programmer:  Damler, Lucas                                           00090077
+*                                                                       00100000
+*  Register usage:                                                      00110000
+*                                                                       00120000
+*  0  COUNTER                                                           00121068
+*  2  FREE SHIPPING COUNTER                                             00122068
+*  3  ORDER ID                                                          00123068
+*  4  MULTIPLYING NUMBER ORDERED AND PRICE EACH                         00124068
+*  5  PRICE EACH, PRETOTAL                                              00125068
+*  6  NUMBER ORDERED                                                    00126068
+*  7  SALES COUNTER                                                     00127068
+*  9  PRODUCT ID                                                        00128068
+*  10 SLAES GRAND TOTAL                                                 00129068
+*  12 SALE DISCOUNT                                                     00129168
+*  13 SHIPPING DISCOUNT                                                 00129268
+************************************************************            00130000
+MAIN     CSECT                                                          00140000
+         USING MAIN,15                                                  00141000
+         SR    0,0            Sales counter                             00141168
+         SR    2,2            Free shipping counter                     00141268
+         SR    10,10          Set R10 to 0                              00141368
+         XPRNT HEADER,74      Print title                               00141476
+         XPRNT LINE1,119      Print data header                         00141575
+LOOP     XREAD BUFFER,80      Read into buffer                          00142068
+         BC    B'0100',LEND                                             00143000
+         XDECI 3,BUFFER       Order ID                                  00143132
+         XDECI 6,0(1)         Number ordered                            00143228
+         XDECI 5,0(1)         Price each                                00143320
+         XDECI 9,0(1)         Product ID                                00143428
+         XDECO 3,ORDID        Make Order ID printable                   00143968
+         XDECO 6,NMORD        Make Number ordered printable             00144068
+         XDECO 5,PE           Make price each printable                 00144168
+         XDECO 9,PRDID        Make product ID printable                 00144368
+         A     2,=F'1'        Add one to sales counter                  00144468
+         MR    4,6            Multiply Number ordered and price each    00144668
+         C     5,=F'25000'    Compare pretotal for discount             00145068
+         BC    B'0100',ELSE   Branch to else if no                      00145168
+         L     12,DISY        Load discount 500 to R12                  00145268
+         XDECO 12,DSCNT       Make discount printable                   00145368
+         BC    B'1111',ELSE2  Go to else3                               00145468
+ELSE     L     12,DISN        Load no discount                          00145568
+         XDECO 12,DSCNT       Make discount printable                   00145668
+ELSE2    C     5,=F'10000'    Compare pretotal for free shipping        00145768
+         BC    B'0100',END    Go to end if yes                          00145868
+         L     13,SHPN        Load no free shipping                     00145968
+         A     0,=F'1'        Add 1 to free shipping counter            00146068
+         XDECO 13,SHIP        Make shipping printable                   00146168
+         BC    B'1111',ELSE3  Go to else3                               00146268
+END      L     13,SHPY        Load shipping discount 750                00146368
+         XDECO 13,SHIP        Make shipping printable                   00146468
+ELSE3    AR    5,13           Add shipping to pretotal                  00146568
+         SR    5,12           Subtract discount                         00146668
+         XDECO 5,TOTAL        Make total printable                      00146768
+         AR    10,5           Add to grand sales total                  00146868
+         XPRNT LINE2,119      Print data                                00146968
+         BC    B'1111',LOOP   Loop                                      00147068
+LEND     DS    0H             End loop                                  00147168
+         SR    4,4            Make R4 zero                              00147268
+         M     4,=F'1'        Make R4 64bit for dividing                00147368
+         SR    7,7            Make R7 zero                              00148068
+         LR    7,2            Load R2 into R7                           00148168
+         LR    5,10           Load R10 into R5                          00148268
+         DR    4,7            Divide R4 and R7 for average              00148368
+         XDECO 2,CNT          Make count printable                      00148468
+         XDECO 5,SAVG         Make sales average printable              00148568
+         XDECO 10,SUM         Make sum printable                        00148668
+         XDECO 0,SHPCNT       Make free shipping count printable        00148768
+         XPRNT TSALES,50      Print sales count                         00148868
+         XPRNT FRSHP,50       Print free shipping count                 00148968
+         XPRNT SUMSL,50       Print sum of sales                        00149068
+         XPRNT AVG,50         Print average                             00149168
+BUFFER   DS    CL80                                                     00149200
+HEADER   DC    CL43' '                                                  00149377
+         DC    CL29' Sales Report -- Widgets-R-Us'                      00149474
+LINE1    DC    CL5'    '                     Data header                00149668
+         DC    CL13' ORDER ID'                                          00149753
+         DC    CL13'   PRODUCT ID'                                      00149856
+         DC    CL18'        PRICE EACH'                                 00149960
+         DC    CL17'     NUMBER ORDER'                                  00150161
+         DC    CL16'        DISCOUNT'                                   00150356
+         DC    CL17'         SHIPPING'                                  00150556
+         DC    CL16'           TOTAL'                                   00150756
+         DC    CL80' '                                                  00150858
+LINE2    DC    CL1' '                        Data to be printed         00150968
+ORDID    DS    CL12                                                     00151006
+         DC    CL5' '                                                   00151100
+PRDID    DS    CL12                                                     00151200
+         DC    CL5' '                                                   00151300
+PE       DS    CL12                                                     00151400
+         DC    CL5' '                                                   00151500
+NMORD    DS    CL12                                                     00151600
+         DC    CL5' '                                                   00151700
+DSCNT    DS    CL12                                                     00151800
+         DC    CL5' '                                                   00151900
+SHIP     DS    CL12                                                     00152000
+         DC    CL5' '                                                   00152100
+TOTAL    DS    CL12                                                     00152200
+         DC    CL80' '                                                  00152310
+DISY     DC    F'500'                        Discount yes               00152468
+DISN     DC    F'0'                          Discount no                00152568
+SHPY     DC    F'750'                        Free shipping yes          00152668
+SHPN     DC    F'0'                          Free shipping no           00152768
+TSALES   DC    CL25' TOTAL NUMBER OF SALES: '                           00152966
+CNT      DS    12C                                                      00153049
+         DC    CL80' '                                                  00153157
+FRSHP    DC    CL25' NUMBER WITH FREE SHIPPING: '                       00153266
+SHPCNT   DS    12C                                                      00153349
+         DC    CL80' '                                                  00153457
+SUMSL    DC    CL25' SUM OF ALL SALES:       '                          00153566
+SUM      DS    12C                                                      00153649
+         DC    CL80' '                                                  00153757
+AVG      DC    CL25' AVERAGE SALE TOTAL:     '                          00153967
+SAVG     DS    12C                                                      00154049
+         DC    CL80' '                                                  00154157
+         XDUMP                                                          00154310
+         BR    14                                                       00154401
+         END   MAIN                                                     00154501
+/*                                                                      00155000
+//FT05F001   DD  DSN=KC02314.SUMMER18.CSCI360.HW3DATA,DISP=SHR          00160000
+//FT06F001   DD SYSOUT=*                                                00270000
+//                                                                      00280000

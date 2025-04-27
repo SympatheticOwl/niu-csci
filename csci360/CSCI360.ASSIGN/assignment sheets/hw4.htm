@@ -1,0 +1,192 @@
+<HTML>
+
+<HEAD>
+<TITLE>Assignment 4</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>Assignment 4
+<P>100 points
+</B></H2></CENTER>
+
+<P><B>Overview</B>
+
+<P>In this assignment, you will write a program that will read integers
+   from a file of 80-byte records and store the integers in a table.
+
+<P>Read the file and process the integers on each line.  Store each one
+   in the table.  The table may or may not be entirely full.  Store the 
+   address of the first entry not in use.
+
+<P>To verify the loading of the table, print out the entire table with
+   5 numbers per line.  The last line may not have as many as 5.
+
+<P>After that, print a list of all of the odd integers with 6 numbers per 
+   line.  (An integer M is odd if the remainder of dividing M by 2 is not 0.)  
+   The last line may not have as many as 6.
+
+<P>We will use <U>internal subroutines</U> to structure this program.
+   (See the instructions listed below.)
+   
+<P><HR>
+
+<P><B>Input</B>
+
+<P>The input to the program will be a file with an unknown number of
+   records.  Each record contains zero or more integers, separated by
+   spaces.
+
+<P>The JCL is the same JCL we used in Assignment 3, but we need the following 
+   JCL statement to specify the input file:
+
+<PRE>     //FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW4DATA,DISP=SHR</PRE>
+
+<P><HR>
+
+<P><B>Internal Subroutines</B>
+
+<P>You will need several internal subroutines:
+
+<UL>
+ <LI>BUILD is a subroutine that will read the input file and build
+     the table.  It will store the address of the last entry in
+     a fullword passed in as a parameter.
+     <P>
+ <LI>PRINT is a subroutine that will print the entire table (up to
+     the last entry in use).
+     <P>
+ <LI>ODDS is a subroutine that will print only the odd values
+     in the table.
+</UL>
+
+<P>There are several requirements for using an internal subroutine:
+
+<UL>
+ <LI>You need a label with the name of the subroutine, as in:
+
+<PRE>     BUILD    DS    0H</PRE>
+     <P>
+ <LI>You need to create a parameter list for the subroutine (a set
+     of consecutive fullwords, each containing the address of a
+     parameter).
+
+     <P>What parameters should each subroutine have?  Each of these
+        three subroutines needs to receive two items:  the
+        address of the table itself, and the address of a fullword
+        in which we store the address of the first unused entry.
+        List them in that order.
+     <P>
+ <LI>You need to call the subroutine, as in:
+
+<PRE>     LA      1,BPARMS    Parameter list for BUILD
+     BAL     11,BUILD    Branch to BUILD</PRE>
+
+     <P>Here the BAL instruction will set register 11 = the address
+        of the next instruction after the BAL.
+     <P>
+ <LI>You need to return from the subroutine, as in:
+
+<PRE>     BR      11</PRE>
+     <P>
+ <LI>You will need to use some registers in each subroutine.  When
+     you exit from the subroutine, these registers should have the
+     same values as they had before the subroutine was called.  To
+     accomplish this, set up a save area (a set of consecutive
+     fullwords) and save the register values using STM, and later,
+     just before the subroutine ends, restore the original values
+     using LM.
+</UL>     
+
+<P><HR>
+
+<P><B>Assorted Requirements</B>
+
+<UL>
+ <LI>Define the table to hold 60 values.  Each entry is one fullword.
+     Initialize entries in the table to the value -8.
+     <P>
+ <LI>Also define a fullword in which to store the address of the
+     first unused fullword.  
+     <P>
+ <LI>It is possible that the input file might contain more than 60
+     values.  We do not want to over-fill the table.  (Nothing will
+     protect us from this.)  As you put numbers into the table,
+     count them.  If you reach 60, stop, even if there are more
+     numbers in the file.  Be sure to set the value of the 
+     end-of-table-address variable.
+     <P>
+ <LI>The main program mostly consists of calls to subroutines and 
+     the definitions of variables.
+     <P>
+ <LI>In BUILD, you will need two loops. The outer loop reads the records 
+     using XREAD and stops when it detects the end of the file.  The inner
+     loop processes one record, using XDECI to obtain each integer
+     in turn.  Be sure to stop at the end of the record.  Each of these
+     should be a <I>top-driven</I> loop.
+     <P>
+ <LI>You will need to blank out your print lines.  You can do this with
+     a standard trick called <U>destructive overlap</U>.  For a line 
+     of length 85, you can do the following:
+
+<PRE>         MVI   PLINE+1,C' '
+         MVC   PLINE+2(83),PLINE+1</PRE>
+     <P>Here we are not changing the first byte in PLINE because
+        it is the carriage-control character.
+     <P>
+ <LI>Use a non-numeric marker at the end of the input storage area to stop
+     the XDECI scan, like this:
+  
+<PRE>BUFFER   DS    CL80
+         DC    C'*'</PRE>
+     <P>
+ <LI>You may use <U>register equates</U> if you like.  You can read
+     about these in our textbook, page 65.  This is not required.
+     <P>
+ <LI>You may use extended mnemonics such as BH, BL, BNE, etc. for branch
+     instructions.  This is not required.
+     <P>
+ <LI>In this assignment, avoid using labeled constants in storage; use
+     instead LA instructions or literals.
+     <P>
+ <LI>In PRINT, you will need print lines of at least 61 bytes each (or
+     73 in ODDS) (including the carriage-control character).  
+     Double-space between lines of numbers.  Each list of numbers should 
+     start on a new page and have a heading, centered, stating "List of 
+     numbers" or "List of odd numbers".  Leave two lines blank after the 
+     heading.
+     <P>
+ <LI>Your program needs to have adequate documentation.  We need a
+     box of documentation for each subroutine, including its name
+     and a statement of what it does, along with a list of what
+     registers have been used and how.  We also need line documentation.
+     <P>
+ <LI>A problem here is how to print 5 numbers on a line.  One way to do
+     this is to treat the print line as a table of 5 values of 12 bytes
+     each:
+
+     <UL TYPE=DISC>
+      <LI>Load the address of LINE+1 into a register (pointer into
+          the line).
+      <LI>Set Counter = 0.
+      <LI>While Counter is < 5:
+       <UL TYPE=SQUARE>
+        <LI>Use XDECO to put a number from the table on the line at the
+            address in the register (the line pointer).
+        <LI>Advance the pointer into the line by 12.
+        <LI>Increment the table pointer.
+        <LI>Increment Counter.
+       </UL>
+      <LI>Use XPRNT to print the line.
+      <LI>Use destructive overlap to restore the line to its original
+          condition.
+     </UL>
+
+     <P>and then repeat.
+</UL>
+
+</BODY>
+
+</HTML>

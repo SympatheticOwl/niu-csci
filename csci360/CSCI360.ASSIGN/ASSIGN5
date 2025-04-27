@@ -1,0 +1,207 @@
+//KC03G0BE JOB ,'Lucas Damler',MSGCLASS=H                               00010019
+//STEP1    EXEC  PGM=ASSIST                                             00020000
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                    00030000
+//SYSPRINT   DD  SYSOUT=*                                               00040000
+//SYSIN      DD  *                                                      00050000
+************************************************************            00060000
+*  MAIN                                                                 00070026
+*  Program:     ASSIGN5                                                 00080026
+*  Programmer:  Damler, Lucas                                           00090000
+*                                                                       00100000
+*  Register usage: R1   BPARMS/PPARMS                                   00110026
+*                  R12-R15 Entry and Exit Linkage                       00111026
+*                  R5   COUTNER                                         00114000
+*                  R6   DIV,HOWMANY,D123,H123                           00115026
+*                                                                       00120000
+************************************************************            00130000
+MAIN     CSECT                     Entry Linkage                        00140025
+         STM   14,12,12(13)                                             00141000
+         LR    12,15                                                    00142000
+         USING MAIN,12                                                  00150007
+         LA    14,MAINSAVE                                              00160000
+         ST    13,4(0,14)                                               00170000
+         ST    14,8(0,13)                                               00180000
+         LR    13,14                                                    00190000
+*********Call BUILD                                                     00200000
+         LA   1,BPARMS             Load BPARMS into R1                  00210025
+         L    15,=V(BUILD)         Load BUILD address into R15          00220025
+         BALR 14,15                Branch and link to BUILD             00230025
+*********Call PRINT***********                                          00231025
+         XPRNT HDR1,15             Print first header                   00232025
+         LA    1,PPARMS            Load PPARMS into R1                  00233025
+         L     15,=V(PRINT)        Load PRINT address into R15          00234025
+         BALR  14,15               Branch and link to PRINT             00235025
+*********Call PRINT2**********                                          00235625
+         XREAD BUFFER,80           Read D1 into BUFFER                  00235725
+         XDECI 6,BUFFER            Make D1 usable for math              00235825
+         XDECO 6,NUM1              Store D1 in NUM1 for printing        00235925
+         ST    6,DIV               Store R6 in DIV                      00236025
+         XDECI 6,0(1)              Read H1                              00236125
+         ST    6,HOWMANY           Sore H1 in HOWMANY                   00236225
+         XPRNT HDR2,25             Print second header                  00236431
+         LA    1,PPARMS            Load PPARMS into R1                  00236525
+         L     15,=V(PRINT)        Load PRINT address into R15          00236625
+         BALR  14,15               Branch and link to PRINT             00236725
+*********Call PRINT3**********                                          00236825
+         XREAD BUFFER,80           Read D2 into BUFFER                  00236925
+         XDECI 6,BUFFER            Make D2 usable for math              00237025
+         XDECO 6,NUM2              Store D2 in NUM2 for printing        00237125
+         ST    6,DIV               Store R6 in DIV                      00237225
+         XDECI 6,0(1)              Read H2                              00237325
+         ST    6,HOWMANY           Sore H2 in HOWMANY                   00237425
+         XPRNT HDR3,25             Print third header                   00237631
+         LA    1,PPARMS            Load PPARMS into R1                  00237725
+         L     15,=V(PRINT)        Load PRINT address into R15          00237825
+         BALR  14,15               Branch and link to PRINT             00237925
+*********Call PRINT4**********                                          00238025
+         XREAD BUFFER,80           Read D3 into BUFFER                  00238125
+         XDECI 6,BUFFER            Make D3 usable for math              00238225
+         XDECO 6,NUM3              Store D3 in NUM3 for printing        00238325
+         ST    6,DIV               Store R6 in DIV                      00238425
+         XDECI 6,0(1)              Read H3                              00238525
+         ST    6,HOWMANY           Sore H3 in HOWMANY                   00238625
+         XPRNT HDR4,25             Print first header                   00238831
+         LA    1,PPARMS            Load PPARMS into R1                  00238925
+         L     15,=V(PRINT)        Load PRINT address into R15          00239025
+         BALR  14,15               Branch and link to PRINT             00239125
+*********Exit Linkage**********    Exit Linkage                         00239226
+         L     13,4(0,13)                                               00239300
+         LM    14,12,12(13)                                             00239400
+         BR    14                                                       00239500
+         LTORG                     Literal Origin                       00239625
+*********Main Storage**********                                         00239726
+TABLE    DC    80F'-64'            TABLE address filled with -64        00239825
+EOT      DC    A(TABLE)            End of TABLE address                 00239925
+MAINSAVE DS    18F                 Used to store registers              00240025
+BUFFER   DS    CL80                Buffer                               00240125
+BPARMS   DC    A(TABLE)            Address for building TABLE           00240225
+         DC    A(EOT)              Address for end of building TABLE    00240325
+         DC    A(BUFFER)           Address for BUFFER                   00240425
+PPARMS   DC    A(TABLE)            Address for printing TABLE           00240525
+         DC    A(EOT)              Address for end of printing TABLE    00240625
+         DC    A(DIV)              Address for DIV                      00240725
+         DC    A(HOWMANY)          Address for HOWMANY                  00240825
+DIV      DC    F'0'                DIV                                  00240925
+HOWMANY  DC    F'5'                HOWMANY                              00241025
+HDR1     DC    C' '              Header 1                               00241133
+         DC    CL14'Table Contents'                                     00241200
+HDR2     DC    C' '              Header 2                               00241333
+         DC    CL12'Multiples of'                                       00241422
+NUM1     DS    CL12                D1                                   00241525
+HDR3     DC    C' '              Header 3                               00241633
+         DC    CL12'Multiples of'                                       00241722
+NUM2     DS    CL12                D2                                   00241825
+HDR4     DC    C' '              Header 4                               00241933
+         DC    CL12'Multiples of'                                       00242022
+NUM3     DS    CL12                D3                                   00242125
+************************************************************            00243026
+*  BUILD                                                                00244026
+*  Program:     ASSIGN5                                                 00245026
+*  Programmer:  Damler, Lucas                                           00246026
+*                                                                       00247026
+*  Register usage: R1   BPARMS/PPARMS                                   00248026
+*                  R12-R15 Entry and Exit Linkage                       00249026
+*                  R3   TABLE                                           00249126
+*                  R4   EOT                                             00249226
+*                  R5   BUFFER                                          00249326
+*                  R6   Reading input values                            00249426
+*                                                                       00249926
+************************************************************            00250026
+BUILD    CSECT                    Used to build a table                 00251000
+         STM   14,12,12(13)       Save calling registers                00260025
+         LR    12,15              Load address for BUILD                00270025
+         USING BUILD,12           R12 is base register                  00271025
+         LA    14,BLDSAVE         Loads register storage                00280025
+         ST    13,4(0,14)         Stores backwards pointer              00281025
+         ST    14,8(0,13)         Stores forwards pointer               00282025
+         LR    13,14              R13 points to BLDSAVE                 00283025
+         LM    3,5,0(1)           R3 TABLE, R4 EOT, R5 Buffer           00284025
+LOOP1    XREAD 0(5),80            Read from file                        00290000
+         BC    B'0100',LEND1      If end of file go to LEND1            00300000
+         XDECI 6,0(5)             Read number from file                 00330008
+NEXT     BC    B'0001',LOOP1      If error go to top LOOP1              00340008
+         C     6,=F'-44444444'    Check for delimiter                   00341025
+         BC    B'1000',LEND1      Go to LEND1                           00342025
+         ST    6,0(3)             Store value in TABLE                  00350008
+         LA    3,4(3)             Add 4 to table pointer                00370008
+         XDECI 6,0(1)             Get next value                        00380008
+         B     NEXT               Go to NEXT                            00390025
+LEND1    DS    0H                 End of loop                           00400000
+         ST    3,0(4)             Store EOT in R3                       00410025
+         L     13,4(13)           Load address for BLDSAVE              00411025
+         LM    14,12,12(13)       Reload registers from MAINSAVE        00412025
+         BR    14                 Branch back to MAIN                   00440000
+         LTORG                    Literal Origin                        00441025
+*********END BUILD/STORAGE**                                            00450026
+BLDSAVE  DS    18F                Used to save BUILD registers          00451025
+************************************************************            00460026
+*  PRINT                                                                00461026
+*  Program:     ASSIGN5                                                 00462026
+*  Programmer:  Damler, Lucas                                           00463026
+*                                                                       00464026
+*  Register usage: R1   BPARMS/PPARMS                                   00465026
+*                  R12-R15 Entry and Exit Linkage                       00466026
+*                  R3   TABLE                                           00467026
+*                  R4   EOT                                             00468026
+*                  R5   BUFFER                                          00469026
+*                  R6   Reading input values                            00469126
+*                  R7   TABLE                                           00469226
+*                  R8   Counter                                         00469326
+*                  R9   DIV                                             00469426
+*                  R10  Remainder                                       00469526
+*                  R11  TABLE                                           00469626
+*                                                                       00469726
+************************************************************            00469826
+PRINT    CSECT                    Used to print a table                 00470025
+         STM   14,12,12(13)       Save calling registers                00471025
+         LR    12,15              Load address for PRINT                00472025
+         USING PRINT,12           R12 is base register                  00473025
+         LA    14,PRTSAVE         Loads register storage                00474025
+         ST    13,4(0,14)         Stores backwards pointer              00475025
+         ST    14,8(0,13)         Stores forwards pointer               00476025
+         LR    13,14              R13 points to PRTSAVE                 00477025
+         LM    3,6,0(1)           R3 TABLE, R4 EOT, R5 DIV              00478025
+*                                 R6 HOWMANY                            00478125
+         L     9,0(5)             Load DIV into R9                      00479025
+         L     1,0(6)             Load HOWMANY into R1                  00480025
+         LA    2,PLINE+1          Load PLINE address                    00550000
+         SR    8,8                Set R8 to zero                        00551025
+LOOP2    C     3,0(4)             Check if EOT                          00560000
+         BC    B'1010',LEND2      If EOT go to LEND2                    00570000
+         L     7,0(3)             Load number from TABLE                00580000
+         C     9,=F'0'            Compare DIV to 0                      00581025
+         BC    B'1000',GNEXT      Branch to GNEXT                       00582032
+         LR    11,7               Load R1 into R11                      00583025
+         M     10,=F'1'           Make R10 64 bit for division          00584025
+         DR    10,9               Divide R10 by R9                      00585025
+         C     10,=F'0'           Compare remainder to zero             00586025
+         BC    B'0111',RMDR       If remainder = 0 go to RMDR           00587025
+GNEXT    XDECO 7,0(2)             Get next number                       00590025
+         A     8,=F'1'            Add 1 to counter                      00600000
+         LA    2,12(0,2)          Add to LINE address                   00610025
+RMDR     LA    3,4(0,3)           Add 4 to table pointer                00620025
+         CR    8,1                Compare numbers on LINE               00630025
+         BC    B'0100',LOOP2      If full go to LOOP2                   00631025
+         XPRNT LINE,85            Print LINE                            00632025
+         MVI   PLINE,C' '         Destructive overlap                   00633025
+         MVC   PLINE+1(84),PLINE  for last line                         00634030
+         SR    8,8                Set R8 to zero                        00635025
+         LA    2,LINE+1           Reset LINE pointer                    00636025
+         B     LOOP2              Go to LOOP2                           00637025
+LEND2    DS    0H                 LEND2                                 00700000
+         XPRNT LINE,85            Print LINE                            00710025
+         MVI   PLINE,C' '         Destructive overlap                   00720025
+         MVC   PLINE+1(84),PLINE  for last line                         00721030
+         L     13,4(0,13)         Load addresses of PRTSAVE             00722025
+         LM    14,12,12(13)       Reload MAIN registers                 00723025
+         BR    14                 Branch back to MAIN                   00730000
+         LTORG                    Literal Origin                        00731025
+*********END PRINT*********                                             00740000
+LINE     DS    C               Line to print output                     00750034
+PLINE    DC    85C' '             Line to print output                  00760025
+PRTSAVE  DS    18F                PRINT save area                       00770025
+         END   MAIN                                                     01270000
+/*                                                                      01280000
+//FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW5DATA,DISP=SHR           01290000
+//FT06F001   DD SYSOUT=*                                                01300000
+//                                                                      01310000

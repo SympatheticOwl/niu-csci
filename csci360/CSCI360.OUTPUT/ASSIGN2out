@@ -1,0 +1,194 @@
+1                    J E S 2  J O B  L O G  --  S Y S T E M  S 0 W 1  --  N O D E  Z O S K C T R         
+0 
+ 15.46.21 JOB08819 ---- FRIDAY,    29 JUN 2018 ----
+ 15.46.21 JOB08819  IRR010I  USERID KC03G0B  IS ASSIGNED TO THIS JOB.
+ 15.46.21 JOB08819  ICH70001I KC03G0B  LAST ACCESS AT 15:44:57 ON FRIDAY, JUNE 29, 2018
+ 15.46.21 JOB08819  $HASP373 KC03G0BA STARTED - INIT 2    - CLASS A        - SYS S0W1
+ 15.46.21 JOB08819  -                                         --TIMINGS (MINS.)--            ----PAGING COUNTS---
+ 15.46.21 JOB08819  -JOBNAME  STEPNAME PROCSTEP    RC   EXCP    TCB    SRB  CLOCK   SERV  PG   PAGE   SWAP    VIO SWAPS
+ 15.46.21 JOB08819  -KC03G0BA                      00     46 ******    .00     .0    125   0      0      0      0     0
+ 15.46.21 JOB08819  -KC03G0BA ENDED.  NAME-Lucas Damler         TOTAL TCB CPU TIME=   .00  TOTAL ELAPSED TIME=    .0
+ 15.46.21 JOB08819  $HASP395 KC03G0BA ENDED
+0------ JES2 JOB STATISTICS ------
+-  29 JUN 2018 JOB EXECUTION DATE
+-           91 CARDS READ
+-          194 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-           18 SYSOUT SPOOL KBYTES
+-         0.00 MINUTES EXECUTION TIME
+         1 //KC03G0BA JOB ,'Lucas Damler',MSGCLASS=H                               JOB08819
+         2 //STEP1    EXEC  PGM=ASSIST                                             00020000
+         3 //STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                    00030000
+         4 //SYSPRINT   DD  SYSOUT=*                                               00040000
+         5 //SYSIN      DD  *                                                      00050000
+         6 //FT05F001   DD  *                                                      00160000
+         7 //FT06F001   DD SYSOUT=*                                                00330000
+ ICH70001I KC03G0B  LAST ACCESS AT 15:44:57 ON FRIDAY, JUNE 29, 2018
+ IEF236I ALLOC. FOR KC03G0BA STEP1
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IEF237I JES2 ALLOCATED TO SYSPRINT
+ IEF237I JES2 ALLOCATED TO SYSIN
+ IEF237I JES2 ALLOCATED TO FT05F001
+ IEF237I JES2 ALLOCATED TO FT06F001
+ IEF142I KC03G0BA STEP1 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02293.ASSIST.LOADLIB                       RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC03G0B.KC03G0BA.JOB08819.D0000103.?         SYSOUT        
+ IEF285I   KC03G0B.KC03G0BA.JOB08819.D0000101.?         SYSIN         
+ IEF285I   KC03G0B.KC03G0BA.JOB08819.D0000102.?         SYSIN         
+ IEF285I   KC03G0B.KC03G0BA.JOB08819.D0000104.?         SYSOUT        
+ IEF373I STEP/STEP1   /START 2018180.1546
+ IEF032I STEP/STEP1   /STOP  2018180.1546 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:   584K  SYS:   268K  EXT:        0K  SYS:    11472K
+         ATB- REAL:                     0K  SLOTS:                     0K
+              VIRT- ALLOC:       0M SHRD:       0M
+ IEF375I  JOB/KC03G0BA/START 2018180.1546
+ IEF033I  JOB/KC03G0BA/STOP  2018180.1546 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+1*** ASSIST 4.0/A2-05/15/82  470/V7A/0:OS/VS2  INS=SDFP7/X=BGHO, CHECK/TRC/=1180, OPTS=CDKMPR FROM PENN ST*NIU COMPSCI*LT         
+0                                                                                                                                 
+0                                                                                                               PAGE    1         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                       1 ************************************************************            00060000         
+                                       2 *                                                                       00070000         
+                                       3 *  Program:     ASSIGN2                                                 00080000         
+                                       4 *  Programmer:  Damler, Lucas                                           00090056         
+                                       5 *                                                                       00100000         
+                                       6 *  Register usage: 3  Result of line                                    00110056         
+                                       7 *                  4  W                                                 00121057         
+                                       8 *                  5  X                                                 00122057         
+                                       9 *                  6  Y                                                 00123057         
+                                      10 *                  7  Z                                                 00124057         
+                                      11 *                  8  Total of all values                               00125057         
+                                      12 *                  9  Line counter                                      00126057         
+                                      13 *                  15 Base register                                     00127057         
+                                      14 ************************************************************            00130000         
+ 000000                               15 MAIN     CSECT                                                          00140000         
+ 000000                               16          USING MAIN,15                                                  00141015         
+ 000000 1B88                          17          SR    8,8            Sets total to zero                        00141156         
+ 000002 1B99                          18          SR    9,9            Sets line counter to zero                 00141256         
+ 000004 E000 F0EA 0050 000EA          19 LOOP     XREAD BUFFER,80      Reads line into buffer                    00142056         
+ 00000A 4740 F04A            0004A    20          BC    B'0100',LEND   Start loop, quit at EOF                   00143056         
+ 00000E 5340 F0EA            000EA    21          XDECI 4,BUFFER       Read first value into R4                  00144056         
+ 000012 5351 0000            00000    22          XDECI 5,0(1)         Read second value into R5                 00145056         
+ 000016 5361 0000            00000    23          XDECI 6,0(1)         Read third value into R6                  00146056         
+ 00001A 5371 0000            00000    24          XDECI 7,0(1)         Read fourth value into R7                 00147056         
+ 00001E 1834                          25          LR    3,4            Load first value into R3                  00147356         
+ 000020 1B35                          26          SR    3,5            Subtract R4 fro, R3 store in R3           00147456         
+ 000022 1A36                          27          AR    3,6            Add R6 to R3 store in R3                  00147556         
+ 000024 1B37                          28          SR    3,7            Subtract R7 from R3 store in R3           00147656         
+ 000026 5240 F13F            0013F    29          XDECO 4,W            Make R4 printable and store at W          00147856         
+ 00002A 5250 F154            00154    30          XDECO 5,X            Make R5 printable and store at X          00147956         
+ 00002E 5260 F169            00169    31          XDECO 6,Y            Make R6 printable and store at Y          00148056         
+ 000032 5270 F17E            0017E    32          XDECO 7,Z            Make R7 printalbe and store at Z          00148156         
+ 000036 5230 F199            00199    33          XDECO 3,RESULT       Make R3 printable and store at RESULT     00148256         
+ 00003A 1A83                          34          AR    8,3            Add total value at R3 to R8               00148456         
+ 00003C E020 F13A 0077 0013A          35          XPRNT LINE,119       Print values of W, X, Y, Z and RESULT     00148556         
+ 000042 5A90 F1F8            001F8    36          A     9,=F'1'        Add one to line count                     00148656         
+ 000046 47F0 F004            00004    37          BC    B'1111',LOOP   Continue loop                             00148756         
+ 00004A                               38 LEND     DS    0H             End of loop                               00149056         
+ 00004A 5280 F08E            0008E    39          XDECO 8,TOTAL        Make R8 printable and store in TOTAL      00149156         
+ 00004E 5290 F06B            0006B    40          XDECO 9,COUNT        Make R9 printable and store in COUNT      00149256         
+ 000052 E020 F058 0077 00058          41          XPRNT LINE2,119      Print LINE2, total and count              00149356         
+ 000058 40                            42 LINE2    DC    CL1' '         LINE2, COUNT, TOTAL used for printing     00149456         
+ 000059 D5A4948285994096              43          DC    CL18'Number of Lines = '                                 00149551         
+ 00006B                               44 COUNT    DS    CL12                                                     00149651         
+ 000077 4040404040                    45          DC    CL5' '                                                   00149755         
+ 00007C E2A49440968640D9              46          DC    CL18'Sum of Results = '                                  00149858         
+ 00008E                               47 TOTAL    DS    CL12                                                     00149951         
+ 00009A 4040404040404040              48          DC    CL80' '                                                  00150051         
+ 0000EA                               49 BUFFER   DS    CL80           Buffer to read line into                  00150156         
+ 00013A 40                            50 LINE     DC    CL1' '         LINE, W, X, Y, Z used for printing        00150256         
+ 00013B E6407E40                      51          DC    CL4'W = '                                                00150347         
+ 00013F                               52 W        DS    CL12                                                     00150445         
+1                                                                                                               PAGE    2         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 00014B 4040404040                    53          DC    CL5' '                                                   00150555         
+ 000150 E7407E40                      54          DC    CL4'X = '                                                00150655         
+ 000154                               55 X        DS    CL12                                                     00150745         
+ 000160 4040404040                    56          DC    CL5' '                                                   00150855         
+ 000165 E8407E40                      57          DC    CL4'Y = '                                                00150955         
+ 000169                               58 Y        DS    CL12                                                     00151045         
+ 000175 4040404040                    59          DC    CL5' '                                                   00151155         
+ 00017A E9407E40                      60          DC    CL4'Z = '                                                00151255         
+ 00017E                               61 Z        DS    CL12                                                     00151345         
+ 00018A 4040404040                    62          DC    CL5' '                                                   00151455         
+ 00018F 40D985A2A493A340              63          DC    CL10' Result = '                                         00151554         
+ 000199                               64 RESULT   DS    CL12                                                     00151648         
+ 0001A5 4040404040404040              65          DC    CL80' '                                                  00151748         
+ 0001F6 07FE                          66          BR    14                                                       00151815         
+                                      67          END   MAIN                                                     00151916         
+ 0001F8 00000001                      68                =F'1'                                                                     
+0***  NO   STATEMENTS FLAGGED -  NO   WARNINGS,  NO   ERRORS                                                                      
+0*** DYNAMIC CORE AREA USED:  LOW:    3752 HIGH:     552 LEAVING:  489264 FREE BYTES. AVERAGE:       62 BYTES/STMT ***            
+0*** ASSEMBLY TIME =    0.000 SECS,    69000 STATEMENTS/SEC ***                                                                   
+0*** PROGRAM EXECUTION BEGINNING - ANY OUTPUT BEFORE EXECUTION TIME MESSAGE IS PRODUCED BY USER PROGRAM ***                       
+ W =            6     X =            1     Y =            2     Z =            4      Result =            3                       
+ W =         9991     X =         9972     Y =         9908     Z =         9926      Result =            1                       
+ W =         4500     X =         -230     Y =            9     Z =           58      Result =         4681                       
+ W =            0     X =            7     Y =            2     Z =          -45      Result =           40                       
+ W =         8516     X =         2853     Y =            0     Z =           17      Result =         5646                       
+ W =           20     X =            0     Y =         3245     Z =          316      Result =         2949                       
+ W =         5529     X =         6977     Y =         1681     Z =            0      Result =          233                       
+ W =         1013     X =          250     Y =           85     Z =          831      Result =           17                       
+ W =            0     X =         3364     Y =         5275     Z =            0      Result =         1911                       
+ W =         -887     X =         1100     Y =         2293     Z =         -993      Result =         1299                       
+ W =         1234     X =         4447     Y =         8591     Z =           13      Result =         5365                       
+ W =          -89     X =           -7     Y =           23     Z =         -104      Result =           45                       
+ W =         8513     X =         5409     Y =         2538     Z =         1001      Result =         4641                       
+ W =            1     X =            2     Y =            3     Z =            4      Result =           -2                       
+ W =         9999     X =         9998     Y =         9997     Z =         9996      Result =            2                       
+ Number of Lines =           15     Sum of Results =         26831                                                                
+0*** EXECUTION TIME =    0.000 SECS.       293 INSTRUCTIONS EXECUTED -   293000 INSTRUCTIONS/SEC ***                              
+1 ASSIST COMPLETION DUMP                                                                                                          
+0PSW AT ABEND FFC50004 9000005C       COMPLETION CODE   SYSTEM = 0C4 PROTECTION                                                   
+0** TRACE OF INSTRUCTIONS JUST BEFORE TERMINATION: PSW BITS SHOWN ARE THOSE BEFORE CORRESPONDING INSTRUCTION DECODED ***          
+0  IM LOCATION    INSTRUCTION :  IM = PSW BITS 32-39(ILC,CC,MASK) BEFORE INSTRUCTION EXECUTED AT PROGRAM LOCATION SHOWN           
+0  20  00003A     1A83                                                                                                            
+0  60  00003C     E020 F13A 0077                                                                                                  
+0  E0  000042     5A90 F1F8                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  A0  000004     E000 F0EA 0050                                                                                                  
+0  D0  00000A     4740 F04A                                                                                                       
+0  90  00004A     5280 F08E                                                                                                       
+0  90  00004E     5290 F06B                                                                                                       
+0  90  000052     E020 F058 0077                                                                                                  
+0  D0  000058     40D5 A494       <-- LAST INSTRUCTION DONE - PROBABLE CAUSE OF TERMINATION                                       
+0                                                                                                                                 
+-** TRACE OF LAST 10 BRANCH INSTRUCTIONS EXECUTED: PSW BITS SHOWN ARE THOSE BEFORE CORRESPONDING INSTRUCTION DECODED ***          
+0  IM LOCATION    INSTRUCTION :  IM = PSW BITS 32-39(ILC,CC,MASK) BEFORE INSTRUCTION EXECUTED AT PROGRAM LOCATION SHOWN           
+0  20  000046     47F0 F004                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  A0  000046     47F0 F004                                                                                                       
+0  90  00000A     4740 F04A                                                                                                       
+0 REGS 0-7      F4F4F4F4    00000107    F4F4F4F4    00000002    0000270F    0000270E    0000270D    0000270C                      
+  REGS 8-15     000068CF    0000000F    F4F4F4F4    F4F4F4F4    F4F4F4F4    00000200    FFFE7960    00000000                      
+0 FLTR 0-6      F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4                          
+1 USER STORAGE                                                                                                                    
+0                             CORE ADDRESSES SPECIFIED-     000000 TO 000348                                                      
+ 000000   1B881B99 E000F0EA 00504740 F04A5340    F0EA5351 00005361 00005371 00001834   *......0.... 0.. 0...............*         
+ 000020   1B351A36 1B375240 F13F5250 F1545260    F1695270 F17E5230 F1991A83 E020F13A   *....... 1...1...1...1...1.....1.*         
+ 000040   00775A90 F1F847F0 F0045280 F08E5290    F06BE020 F0580077 40D5A494 82859940   *....18.00...0...0...0... N..... *         
+ 000060   968640D3 899585A2 407E4040 40404040    40404040 40F1F540 40404040 E2A49440   *.. L.... .           15     S.. *         
+ 000080   968640D9 85A2A493 A3A2407E 40404040    40404040 40F2F6F8 F3F14040 40404040   *.. R...... .         26831      *         
+ 0000A0   40404040 40404040 40404040 40404040    40404040 40404040 40404040 40404040   *                                *         
+   LINES    0000C0-0000C0    SAME AS ABOVE                                                                                        
+ 0000E0   40404040 40404040 40404040 4040F9F9    F9F94040 40F9F9F9 F8404040 F9F9F9F7   *              9999   9998   9997*         
+ 000100   404040F9 F9F9F640 40404040 40404040    40404040 40404040 40404040 40404040   *   9996                         *         
+ 000120   40404040 40404040 40404040 40404040    4040F0F0 F3F1F0F0 F2F840E6 407E4040   *                  00310028 W .  *         
+ 000140   40404040 404040F9 F9F9F940 40404040    E7407E40 40404040 40404040 F9F9F9F8   *       9999     X .         9998*         
+ 000160   40404040 40E8407E 40404040 40404040    40F9F9F9 F7404040 4040E940 7E404040   *     Y .         9997     Z .   *         
+ 000180   40404040 4040F9F9 F9F64040 40404040    D985A2A4 93A3407E 40404040 40404040   *      9996      R..... .        *         
+ 0001A0   40404040 F2404040 40404040 40404040    40404040 40404040 40404040 40404040   *    2                           *         
+ 0001C0   40404040 40404040 40404040 40404040    40404040 40404040 40404040 40404040   *                                *         
+ 0001E0   40404040 40404040 40404040 40404040    40404040 40F507FE 00000001 F5F5F5F5   *                     5......5555*         
+ 000200   F5F5F5F5 00000000 F5F5F5F5 F5F5F5F5    F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5   *5555....555555555555555555555555*         
+ 000220   F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5    F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5   *55555555555555555555555555555555*         
+   LINES    000240-000320    SAME AS ABOVE                                                                                        
+0                                                                                                                                 

@@ -1,0 +1,35 @@
+//KC03G0BB JOB ,'Lucas Damler',MSGCLASS=H                               00010000
+//STEP1 EXEC PGM=ASSIST                                                 00020000
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                        00030000
+//SYSPRINT DD SYSOUT=*                                                  00040000
+//SYSIN DD *                                                            00050000
+****************************                                            00060000
+* ASSIGNMENT 1B                                                         00070010
+* NAME LUCAS DAMLER                                                     00080000
+* REGISTER USAGE                                                        00090000
+*  3     LEFT, DIFF                                                     00100010
+*  4     RIGHT                                                          00110010
+*  5     LEFT, SUM                                                      00111010
+*  6     RIGHT                                                          00112010
+* 15     BASE REGISTER                                                  00120000
+****************************                                            00130000
+MAIN     CSECT                                                          00140000
+         USING MAIN,15                                                  00150000
+         L     3,LEFT                                                   00160000
+         L     4,RIGHT                                                  00170000
+         SR    3,4                                                      00180000
+         L     5,LEFT                                                   00181000
+         L     6,RIGHT                                                  00182000
+         AR    5,6                                                      00190000
+         ST    3,DIFF                                                   00191000
+         ST    5,SUM                                                    00192000
+LEFT     DC    F'169'                                                   00200000
+RIGHT    DC    F'74'                                                    00210000
+DIFF     DS    F                                                        00211000
+SUM      DS    F                                                        00212000
+         XDUMP DIFF,8                                                   00221009
+         XDUMP SUM,8                                                    00222009
+         BR    14                                                       00230000
+         END   MAIN                                                     00240000
+/*                                                                      00250000
+//                                                                      00260000

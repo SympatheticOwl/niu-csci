@@ -1,0 +1,235 @@
+<HTML>
+
+<HEAD>
+<TITLE>Extra Credit Assignment</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>Extra Credit Assignment
+<P>40 points
+</B></H2></CENTER>
+
+<P><B>Overview</B>
+
+<P>For this assignment, you will write a program that will read a
+   file containing two groups of records.  Each record contains
+   a person's name and Logon ID.  The two groups of records
+   are not yet in exactly the same format.  Each group of records 
+   has already been sorted in ascending order by Last Name + First Name
+   as the key field.
+
+<P>Your program will read the the groups of records and store the
+   information from each group in a table, making sure all the
+   records are now in the same format.  After that, each table will
+   be printed, and then the two tables will be merged into
+   a larger table which will also be printed.
+
+<P><HR>
+
+<P><B>Input</B>
+
+<P>The input file contains an unknown number of records.  The records
+   are in two groups.
+
+<P>The records in the first group are in the following format:
+
+<UL>
+ <LI>First Name (10 characters)
+ <LI>1 blank space
+ <LI>Last Name (12 characters)
+ <LI>1 blank space
+ <LI>Logon ID (5 characters, actually all digits)
+ <LI>more blank spaces to a total length of 80 bytes
+</UL>
+
+<P>The first group of records ends with a record which is all '-'.  Do
+   not put this record into the table.
+
+<P>The records in the second group are in the following format:
+
+<UL>
+ <LI>Logon ID (7 characters, actually "GP" followed by 5 digits)
+ <LI>1 blank space
+ <LI>Last Name (10 characters)
+ <LI>1 blank space
+ <LI>First Name (12 characters)
+ <LI>more blank spaces to a total length of 80 bytes
+</UL>
+<P>Use the following JCL statement to specify the input file:
+
+<PRE>//FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HWEXDATA,DISP=SHR</PRE>
+
+<P><HR>
+
+<P><B>Processing Requirements</B>
+
+<P>The main program will carry out the following steps:
+
+<UL>
+ <LI>Declare three tables:  two of size 15 entries each and one of
+     size 30.  The layout of the table entries should be the same
+     for all three tables:
+
+     <UL>
+      <LI>Last Name (12 characters)
+      <LI>First Name (12 characters)
+      <LI>LogonID (7 characters)
+      <LI>1 blank character
+     </UL>
+     <P>Initialize the entire table to blanks.
+     <P>
+ <LI>Call subroutine BUILD1 to read the first group of records and store
+     the data in a table.  BUILD1 will store the number of entries in a
+     numerical field passed in as a parameter.
+     <P>BUILD1 should also supply the letters "GP" at the beginning of
+        the Logon ID.
+     <P>
+ <LI>Call subroutine PRINT to print the contents of the first table,
+     using appropriate page and column headings.
+     <P>
+ <LI>Call subroutine BUILD2 to read the second group of records and store
+     the data in a table.  BUILD2 will store the number of entries in a
+     numerical field passed in as a parameter.
+     <P>
+ <LI>Call subroutine PRINT to print the contents of the second table,
+     using appropriate page and column headings.
+     <P>
+ <LI>Call subroutine MERGE to combine the first two tables into the
+     third table using the same key field.
+     <P>
+ <LI>Call subroutine PRINT to print the contents of the third table,
+     using appropriate page and column headings.
+     <P>
+</UL> 
+
+<P><HR>
+
+<P><B>Other Notes</B>
+
+<UL>
+ <LI>You should use the following DSECT to describe the table entries:
+
+<PRE>     $ENTRY   DSECT
+     $LNAME   DS    12C
+     $FNAME   DS    12C
+     $LID     DS    7C
+              DS    C</PRE>
+
+     <P>To use this, we need to attach it to the address in a register,
+        like this:
+
+<PRE>     LA    R3,TABLE1   
+     USING $ENTRY,R3</PRE>
+
+<P>and when we are done with it:
+
+<PRE>     DROP  R3</PRE>
+     <P>Of course, in your subroutines, the register will obtain its
+        value when you unload the parameter list.
+     <P>You can use the DSECT in BUILD1, BUILD2 and PRINT.  It is
+        not as useful MERGE.
+        <P>
+ <LI>The BUILD1 and BUILD2 subroutines each need 2 parameters:  the
+     address of the table and the address of the EOT.
+     <P>
+ <LI>The PRINT subroutine needs 3 parameters:  the address of the
+     table, the address of the EOT, and the address of a character
+     string which will be the caption to put in the page heading.
+     <P>
+ <LI>Declare the three tables, the three EOT variables, both TR tables
+     and the three captions for PRINT all in the main routine.
+     <P>
+ <LI>How does MERGE work?
+     <P>The MERGE subroutine will merge two tables into one large table.
+     The tables should be merged on the same key as was used in sorting.
+     You may assume that there are no duplicates between the two tables.
+     <P>The MERGE subroutine takes six parameters:
+     <UL>
+      <LI>address of the first table
+      <LI>address of fullword that holds the address of the next
+          available entry in the first table
+      <LI>address of the second table
+      <LI>address of fullword that holds the address of the next
+          available entry in the second table
+      <LI>address of the merged table
+      <LI>address of fullword that holds the address of the next
+          available entry in the merged table
+     </UL>
+      <P>Here is a suggested structure for the MERGE subroutine:</p>
+
+<PRE> 1. Initialization:  Load the input parameters
+
+ 2. Do while NOT the end of either table
+
+ 3.   If table 1's Last Name &lt; table 2's Last Name
+
+ 4.     Copy table 1's entry into the merged table
+
+ 5.     Increment table 1's pointer
+
+ 6.   Else (table 1's Last Name &gt; table 2's Last Name)
+
+ 7.     Copy table 2's entry into the merged table
+
+ 8.     Increment table 2's pointer
+
+ 9.   EndIf
+
+10.   Increment the merged table pointer
+
+11. EndDo
+
+12. Do while NOT the end of table 1
+ 
+13.   Copy table 1's entry into the merged table
+
+14.   Increment table 1's pointer
+
+15.   Increment the merged table pointer
+
+16. EndDo
+
+17. Do while NOT the end of table 2
+ 
+18.   Copy table 2's entry into the merged table
+
+19.   Increment table 2's pointer
+
+20.   Increment the merged table pointer
+
+21. EndDo
+ 
+22. Set the address of the next available entry for the merged table</PRE>
+     <P>
+ <LI>The JCL for this assignment is the same as the JCL used before
+     except for the line given above to provide the data.
+     <P>
+ <LI>In the output, each page should have a page heading with a
+     caption, centered.  After the page heading,
+     leave 2 blank lines before the column heading.  Leave one blank
+     line between the column heading and the first detail line.
+     Single-space the detail lines.  Each table should fit on one
+     page apiece.
+     <P>
+ <LI>It is possible you may need to use an XDUMP at some point in 
+     writing this assignment.  Each of our table entries is 32 
+     bytes long, and XDUMP prints 32 byte values across each line.
+     It would be nice if we could arrange for each table to be 
+     aligned so one line of the dump was one entry of the table.
+     We can do this as follows:
+
+<PRE>          ORG PROGEX+((*-PROGEX+31)/32)*32)
+TABLE1    DS  480C' '</PRE>
+
+     <P>The effect of the ORG statement is to advance to an address 
+        which is a multiple of 32.
+     <P>You do not have to do this, but if you need to use XDUMP to
+        look at the table contents, it will be a convenience.
+</UL>
+
+</BODY>
+
+</HTML>

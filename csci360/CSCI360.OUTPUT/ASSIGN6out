@@ -1,0 +1,557 @@
+1                    J E S 2  J O B  L O G  --  S Y S T E M  S 0 W 1  --  N O D E  Z O S K C T R         
+0 
+ 20.30.55 JOB03078 ---- SATURDAY,  21 JUL 2018 ----
+ 20.30.55 JOB03078  IRR010I  USERID KC03G0B  IS ASSIGNED TO THIS JOB.
+ 20.30.55 JOB03078  ICH70001I KC03G0B  LAST ACCESS AT 20:15:51 ON SATURDAY, JULY 21, 2018
+ 20.30.55 JOB03078  $HASP373 KC03G0BF STARTED - INIT 2    - CLASS A        - SYS S0W1
+ 20.30.55 JOB03078  -                                         --TIMINGS (MINS.)--            ----PAGING COUNTS---
+ 20.30.55 JOB03078  -JOBNAME  STEPNAME PROCSTEP    RC   EXCP    TCB    SRB  CLOCK   SERV  PG   PAGE   SWAP    VIO SWAPS
+ 20.30.55 JOB03078  -KC03G0BF                      00    125 ******    .00     .0    275   0      0      0      0     0
+ 20.30.55 JOB03078  -KC03G0BF ENDED.  NAME-Lucas Damler         TOTAL TCB CPU TIME=   .00  TOTAL ELAPSED TIME=    .0
+ 20.30.55 JOB03078  $HASP395 KC03G0BF ENDED
+0------ JES2 JOB STATISTICS ------
+-  21 JUL 2018 JOB EXECUTION DATE
+-          395 CARDS READ
+-          557 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-           46 SYSOUT SPOOL KBYTES
+-         0.00 MINUTES EXECUTION TIME
+         1 //KC03G0BF JOB ,'Lucas Damler',MSGCLASS=H                               JOB03078
+         2 //STEP1    EXEC  PGM=ASSIST                                                     
+         3 //STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                            
+         4 //SYSPRINT   DD  SYSOUT=*                                                       
+         5 //SYSIN      DD  *                                                              
+         6 //FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW6DATA,DISP=SHR                   
+ ICH70001I KC03G0B  LAST ACCESS AT 20:15:51 ON SATURDAY, JULY 21, 2018
+ IEF236I ALLOC. FOR KC03G0BF STEP1
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IEF237I JES2 ALLOCATED TO SYSPRINT
+ IEF237I JES2 ALLOCATED TO SYSIN
+ IGD103I SMS ALLOCATED TO DDNAME FT05F001
+ IEF142I KC03G0BF STEP1 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02293.ASSIST.LOADLIB                       RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC03G0B.KC03G0BF.JOB03078.D0000102.?         SYSOUT        
+ IEF285I   KC03G0B.KC03G0BF.JOB03078.D0000101.?         SYSIN         
+ IGD104I KC02314.SUMMER18.CSCI360.HW6DATA             RETAINED,  DDNAME=FT05F001
+ IEF373I STEP/STEP1   /START 2018202.2030
+ IEF032I STEP/STEP1   /STOP  2018202.2030 
+         CPU:     0 HR  00 MIN  00.01 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:   584K  SYS:   276K  EXT:        4K  SYS:    11440K
+         ATB- REAL:                     0K  SLOTS:                     0K
+              VIRT- ALLOC:       0M SHRD:       0M
+ IEF375I  JOB/KC03G0BF/START 2018202.2030
+ IEF033I  JOB/KC03G0BF/STOP  2018202.2030 
+         CPU:     0 HR  00 MIN  00.01 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+1*** ASSIST 4.0/A2-05/15/82  470/V7A/0:OS/VS2  INS=SDFP7/X=BGHO, CHECK/TRC/=1180, OPTS=CDKMPR FROM PENN ST*NIU COMPSCI*LT         
+0                                                                                                                                 
+0                                                                                                               PAGE    1         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                       1 ************************************************************                             
+                                       2 *  MAIN                                                                                  
+                                       3 *  Program:     ASSIGN6                                                                  
+                                       4 *  Programmer:  Lucas Damler                                                             
+                                       5 *                                                                                        
+                                       6 *  Register usage: R1  BPARMS/PPARMS/TPARMS                                              
+                                       7 *                  R12 Base register                                                     
+                                       8 *                  R13 MAIN save area                                                    
+                                       9 *                  R14 Return                                                            
+                                      10 *                  R15 Address for subroutine                                            
+                                      11 *                  R12-15 Entry and exit linkage                                         
+                                      12 *                                                                                        
+                                      13 ************************************************************                             
+ 000000                               14 ENTRY    DSECT                  DSECT definition                                         
+ 000000                               15 FIRST    DS    CL10             First name                                               
+ 00000A                               16 LAST     DS    CL10             Last name                                                
+ 000014                               17 PASSWD   DS    CL8              Password                                                 
+ 00001C                               18 IDNUM    DS    CL9              ID number                                                
+ 000025                               19 EXPDATE  DS    PL5              Expiration date                                          
+ 00002A                               20 BALANCE  DS    PL5              Balance                                                  
+ 00002F                               21 FILLER   DS    CL1              Filler                                                   
+                                      22 *******************                                                                      
+ 000000                               23 MAIN     CSECT                                                                           
+ 000000 90EC D00C            0000C    24          STM   14,12,12(13)     Save  calling registers                                  
+ 000004 18CF                          25          LR    12,15            Load R15 into R12                                        
+ 000000                               26          USING MAIN,12          R12 base register                                        
+ 000006 41E0 CD8C            00D8C    27          LA    14,MAINSAVE      Load address of MAINSAVE                                 
+ 00000A 50D0 E004            00004    28          ST    13,4(0,14)       Store backwards pointer                                  
+ 00000E 50E0 D008            00008    29          ST    14,8(0,13)       Store forwards pointer                                   
+ 000012 18DE                          30          LR    13,14            Load MAIN save area                                      
+                                      31 *********Call BUILD***********                                                           
+ 000014 4110 CD74            00D74    32          LA    1,BPARMS         Load BPARMS into R1                                      
+ 000018 58F0 C040            00040    33          L     15,=V(BUILD)     Load BUILD address into R15                              
+ 00001C 05EF                          34          BALR  14,15            Branch and link BUILD                                    
+                                      35 *********Call PRINT***********                                                           
+ 00001E 4110 CD7C            00D7C    36          LA    1,PPARMS         Load PPARMS into R1                                      
+ 000022 58F0 C044            00044    37          L     15,=V(PRINT)     Load PRINT address into R15                              
+ 000026 05EF                          38          BALR  14,15            Branch and link PRINT                                    
+                                      39 *********Call TALLY***********                                                           
+ 000028 4110 CD84            00D84    40          LA    1,TPARMS         Load TPARMS into R1                                      
+ 00002C 58F0 C048            00048    41          L     15,=V(TALLY)     Load TALLY address into R15                              
+ 000030 05EF                          42          BALR  14,15            Branch and link TALLY                                    
+                                      43 *********Exit Linkage*********                                                           
+ 000032 58D0 D004            00004    44          L     13,4(0,13)       Load calling registers address                           
+ 000036 98EC D00C            0000C    45          LM    14,12,12(13)     Restore calling registers                                
+ 00003A 07FE                          46          BR    14               Return control                                           
+                                      47          LTORG                                                                           
+ 000040 00000DD8                      48                =V(BUILD)                                                                 
+ 000044 00000EF0                      49                =V(PRINT)                                                                 
+ 000048 00001318                      50                =V(TALLY)                                                                 
+                                      51 *********Main Storage*********                                                           
+ 000050                               52          ORG   MAIN+(*-MAIN+15)/16*16                                                    
+1                                                                                                               PAGE    2         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000050                               53 TABLE    DS    70CL48           Table for values                                         
+ 000D70                               54 EOT      DS    F                End of table                                             
+ 000D74 00000050                      55 BPARMS   DC    A(TABLE)         Build parms                                              
+ 000D78 00000D70                      56          DC    A(EOT)                                                                    
+ 000D7C 00000050                      57 PPARMS   DC    A(TABLE)         Print parms                                              
+ 000D80 00000D70                      58          DC    A(EOT)                                                                    
+ 000D84 00000050                      59 TPARMS   DC    A(TABLE)         Tally parms                                              
+ 000D88 00000D70                      60          DC    A(EOT)                                                                    
+ 000D8C                               61 MAINSAVE DS    18F              MAIN save area                                           
+                                      62 ************************************************************                             
+                                      63 *  BUILD                                                                                 
+                                      64 *  Program:     ASSIGN6                                                                  
+                                      65 *  Programmer:  Lucas Damler                                                             
+                                      66 *                                                                                        
+                                      67 *  Register usage: R1  BPARMS                                                            
+                                      68 *                  R3  TABLE                                                             
+                                      69 *                  R4  EOT                                                               
+                                      70 *                  R5  BUFFER                                                            
+                                      71 *                  R12 Base register                                                     
+                                      72 *                  R13 PRINT save area                                                   
+                                      73 *                  R14 Return                                                            
+                                      74 *                  R15 Address for subroutine                                            
+                                      75 *                  R12-15 Entry and exit linkage                                         
+                                      76 *                                                                                        
+                                      77 ************************************************************                             
+ 000DD8                               78 BUILD    CSECT                                                                           
+ 000DD8 90EC D00C            0000C    79          STM   14,12,12(13)     Save  calling registers                                  
+ 000DDC 18CF                          80          LR    12,15            Load R15 into R12                                        
+ 000DD8                               81          USING BUILD,12         R12 base register                                        
+ 000DDE 41E0 C078            00E50    82          LA    14,BLDSAVE       Load address of BLDSAVE                                  
+ 000DE2 50D0 E004            00004    83          ST    13,4(0,14)       Store backwards pointer                                  
+ 000DE6 50E0 D008            00008    84          ST    14,8(0,13)       Store forwards pointer                                   
+ 000DEA 18DE                          85          LR    13,14            Load BUILD save area                                     
+                                      86 *********Start Linkage********                                                           
+ 000DEC 9834 1000            00000    87          LM    3,4,0(1)         R3 TABLE, R4 EOF                                         
+ 000000                               88          USING ENTRY,3          Load DSECT into R3                                       
+ 000DF0 4150 C0C0            00E98    89          LA    5,BUF            Load BUFFER into R5                                      
+ 000000                               90          USING BUFFER,5         Load DSECT BUFFER into R5                                
+ 000DF4 E005 0000 0050 00000          91          XREAD 0(5),80          Read line                                                
+ 000DFA 4740 C064            00E3C    92 BLOOP    BC    B'0100',BLEND    If EOF, go to BLEND                                      
+ 000DFE 1934                          93          CR    3,4              If R3 = R4                                               
+ 000E00 4780 C064            00E3C    94          BC    B'1000',BLEND    Go to BLEND                                              
+ 000E04 D209 3000 5000 00000 00000    95          MVC   FIRST(10),FNAME  Load First name into line                                
+ 000E0A D209 300A 500C 0000A 0000C    96          MVC   LAST(10),LNAME   Load Last name into line                                 
+ 000E10 D207 3014 5018 00014 00018    97          MVC   PASSWD(8),PASS   Load password into line                                  
+ 000E16 D208 301C 5022 0001C 00022    98          MVC   IDNUM(9),ID      Load ID number into line                                 
+ 000E1C F247 3025 502D 00025 0002D    99          PACK  EXPDATE(5),DATE(8)  Load Expiration date into line                        
+ 000E22 F246 302A 5037 0002A 00037   100          PACK  BALANCE(5),BAL(7)   Load Balance into line                                
+ 000E28 D200 302F C111 0002F 00EE9   101          MVC   FILLER(1),FIL    Load Filler into line                                    
+ 000E2E 4130 3030            00030   102          LA    3,48(0,3)        Load next address                                        
+ 000E32 E000 5000 0050 00000         103          XREAD 0(0,5),80        Read next line                                           
+ 000E38 47F0 C022            00DFA   104          B     BLOOP            Go to BLOOP                                              
+ 000E3C                              105 BLEND    DS    0H                                                                        
+ 000E3C 5034 0000            00000   106          ST    3,0(4)           Store EOT address                                        
+ 000E40                              107          DROP  3                Drop R3 table                                            
+ 000E40                              108          DROP  5                Drop R5 table                                            
+ 000E40 58D0 D004            00004   109          L     13,4(0,13)       Load BLDSAVE address                                     
+1                                                                                                               PAGE    3         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000E44 98EC D00C            0000C   110          LM    14,12,12(13)     Restore calling registers                                
+ 000E48 07FE                         111          BR    14               Return control to MAIN                                   
+                                     112          LTORG                                                                           
+                                     113 *********BUILD Storage********                                                           
+ 000E50                              114 BLDSAVE  DS    18F              BUILD save area                                          
+ 000E98                              115 BUF      DS    CL80             Buffer                                                   
+ 000EE8 5C                           116          DC    C'*'                                                                      
+ 000EE9 40                           117 FIL      DC    CL1' '           Filler                                                   
+ 000000                              118 BUFFER   DSECT                  DSECT definition                                         
+ 000000                              119 FNAME    DS    10C              First name                                               
+ 00000A 4040                         120          DC    CL2' '                                                                    
+ 00000C                              121 LNAME    DS    10C              Last name                                                
+ 000016 4040                         122          DC    CL2' '                                                                    
+ 000018                              123 PASS     DS    8C               Password                                                 
+ 000020 4040                         124          DC    CL2' '                                                                    
+ 000022                              125 ID       DS    9C               ID number                                                
+ 00002B 4040                         126          DC    CL2' '                                                                    
+ 00002D                              127 DATE     DS    8Z               Date                                                     
+ 000035 4040                         128          DC    CL2' '                                                                    
+ 000037                              129 BAL      DS    7Z               Balance                                                  
+ 00003E 4040404040404040             130          DC    CL16' '                                                                   
+                                     131 ************************************************************                             
+                                     132 *  PRINT                                                                                 
+                                     133 *  Program:     ASSIGN6                                                                  
+                                     134 *  Programmer:  Lucas Damler                                                             
+                                     135 *                                                                                        
+                                     136 *  Register usage: R1  PPARMS                                                            
+                                     137 *                  R3  TABLE                                                             
+                                     138 *                  R4  EOT                                                               
+                                     139 *                  R7  Counter                                                           
+                                     140 *                  R12 Base register                                                     
+                                     141 *                  R13 MAIN save area                                                    
+                                     142 *                  R14 Return                                                            
+                                     143 *                  R15 Address for subroutine                                            
+                                     144 *                  R12-15 Entry and exit linkage                                         
+                                     145 *                                                                                        
+                                     146 ************************************************************                             
+ 000EF0                              147 PRINT    CSECT                                                                           
+ 000EF0 90EC D00C            0000C   148          STM   14,12,12(13)     Save  calling registers                                  
+ 000EF4 18CF                         149          LR    12,15            Load R15 into R12                                        
+ 000EF0                              150          USING PRINT,12         R12 base register                                        
+ 000EF6 41E0 C12C            0101C   151          LA    14,PRTSAVE       Load address of BLDSAVE                                  
+ 000EFA 50D0 E004            00004   152          ST    13,4(0,14)       Store backwards pointer                                  
+ 000EFE 50E0 D008            00008   153          ST    14,8(0,13)       Store forwards pointer                                   
+ 000F02 18DE                         154          LR    13,14            Load BUILD save area                                     
+                                     155 *********Start Linkage********                                                           
+ 000F04 9834 1000            00000   156          LM    3,4,0(1)         R3 TABLE, R4 EOF                                         
+ 000000                              157          USING ENTRY,3          Load DSECT into R3                                       
+ 000F08 1B77                         158          SR    7,7              Make R9 zero                                             
+ 000F0A E020 C2DA 0053 011CA         159          XPRNT PAGE1,83         Print page1 header                                       
+ 000F10 E020 C1EE 0073 010DE         160          XPRNT TITLE,115        Print field headers                                      
+ 000F16 E020 C264 0073 01154         161          XPRNT LINES,115        Print dash spacers                                       
+ 000F1C 5930 4000            00000   162 PLOOP    C     3,0(0,4)         Compare to end of file                                   
+ 000F20 4780 C0F0            00FE0   163          BC    B'1000',PLEND    If so go to PLEND                                        
+ 000F24 D201 C1A0 C176 01090 01066   164          MVC   SYM1(2),CLR      Reset CR symbol                                          
+ 000F2A D209 C17C 3000 0106C 00000   165          MVC   PFNAME(10),FIRST Move first name to print line                            
+ 000F30 D209 C189 300A 01079 0000A   166          MVC   PLNAME(10),LAST  Move last name to print line                             
+1                                                                                                               PAGE    4         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000F36 D207 C1A9 3014 01099 00014   167          MVC   PWD(8),PASSWD    Move password to print line                              
+ 000F3C D208 C1C5 301C 010B5 0001C   168          MVC   IDN(9),IDNUM     Move ID number to print line                             
+ 000F42 D20B C1B4 C100 010A4 00FF0   169          MVC   EDATE(12),=X'402020202020612020612020'   Edit pattern                     
+ 000F48 DE0B C1B4 3025 010A4 00025   170          ED    EDATE(12),EXPDATE   Edit EXPDATE with pattern                             
+ 000F4E D20B C193 C10C 01083 00FFC   171          MVC   BLC(12),=X'40202020206B2021204B2020'     Edit pattern                     
+ 000F54 4110 C19B            0108B   172          LA    1,BLC+8          Load BLC address + 8                                     
+ 000F58 DF0B C193 302A 01083 0002A   173          EDMK  BLC(12),BALANCE  Edit BALANCE with pattern                                
+ 000F5E 0610                         174          BCTR  1,0              Get place for $ sign                                     
+ 000F60 925B 1000      00000         175          MVI   0(1),C'$'        Add $                                                    
+ 000F64 F940 302A C128 0002A 01018   176          CP    BALANCE(5),=P'0' Compare balance to 0                                     
+ 000F6A 47B0 C084            00F74   177          BC    B'1011',END      If >= 0 go to END                                        
+ 000F6E D201 C1A0 C174 01090 01064   178          MVC   SYM1(2),SYM      Else add CR to print line                                
+ 000F74 E020 C178 0073 01068         179 END      XPRNT LINE,115         Print LINE                                               
+ 000F7A 5A70 C118            01008   180          A     7,=F'1'          Add 1 to R7                                              
+ 000F7E 5970 C11C            0100C   181          C     7,=F'20'         Compare counter to 20                                    
+ 000F82 4780 C0AA            00F9A   182          BC    B'1000',HDR2     If so go to HDR2                                         
+ 000F86 5970 C120            01010   183          C     7,=F'40'         Compare counter to 40                                    
+ 000F8A 4780 C0C0            00FB0   184          BC    B'1000',HDR3     If so go to HDR3                                         
+ 000F8E 5970 C124            01014   185          C     7,=F'60'         Compare counter to 60                                    
+ 000F92 4780 C0D6            00FC6   186          BC    B'1000',HDR4     If so go to HDR4                                         
+ 000F96 47F0 C0E8            00FD8   187          B     END2             Go to END2                                               
+ 000F9A E020 C32D 0053 0121D         188 HDR2     XPRNT PAGE2,83         Print PAGE2 header                                       
+ 000FA0 E020 C1EE 0073 010DE         189          XPRNT TITLE,115        Print fields header                                      
+ 000FA6 E020 C264 0073 01154         190          XPRNT LINES,115        Print line spacers                                       
+ 000FAC 47F0 C0E8            00FD8   191          B     END2             Go to END2                                               
+ 000FB0 E020 C380 0053 01270         192 HDR3     XPRNT PAGE3,83         Print PAGE3 header                                       
+ 000FB6 E020 C1EE 0073 010DE         193          XPRNT TITLE,115        Print fields header                                      
+ 000FBC E020 C264 0073 01154         194          XPRNT LINES,115        Print line spacers                                       
+ 000FC2 47F0 C0E8            00FD8   195          B     END2             Go to END2                                               
+ 000FC6 E020 C3D3 0053 012C3         196 HDR4     XPRNT PAGE4,83         Print PAGE4 header                                       
+ 000FCC E020 C1EE 0073 010DE         197          XPRNT TITLE,115        Print fields header                                      
+ 000FD2 E020 C264 0073 01154         198          XPRNT LINES,115        Print line spacers                                       
+ 000FD8 4130 3030            00030   199 END2     LA    3,48(0,3)        Load next address                                        
+ 000FDC 47F0 C02C            00F1C   200          B     PLOOP            Go to PLOOP                                              
+ 000FE0                              201 PLEND    DS    0H                                                                        
+ 000FE0                              202          DROP  3                Drop R3 table                                            
+ 000FE0 58D0 D004            00004   203          L     13,4(0,13)       Load BLDSAVE address                                     
+ 000FE4 98EC D00C            0000C   204          LM    14,12,12(13)     Restore calling registers                                
+ 000FE8 07FE                         205          BR    14               Return control to MAIN                                   
+                                     206          LTORG                                                                           
+ 000FF0 4020202020206120             207                =X'402020202020612020612020'                                              
+ 000FFC 40202020206B2021             208                =X'40202020206B2021204B2020'                                              
+ 001008 00000001                     209                =F'1'                                                                     
+ 00100C 00000014                     210                =F'20'                                                                    
+ 001010 00000028                     211                =F'40'                                                                    
+ 001014 0000003C                     212                =F'60'                                                                    
+ 001018 0C                           213                =P'0'                                                                     
+                                     214 *********PRINT Storage                                                                   
+ 00101C                              215 PRTSAVE  DS    18F              PRINT save area                                          
+ 001064 C3D9                         216 SYM      DC    C'CR'            CR symbol                                                
+ 001066 4040                         217 CLR      DC    CL2' '           Used to Clear                                            
+ 001068 F0                           218 LINE     DC    CL1'0'           Print line                                               
+ 001069 404040                       219          DC    CL3' '                                                                    
+ 00106C                              220 PFNAME   DS    CL10             First name                                               
+ 001076 404040                       221          DC    CL3' '                                                                    
+ 001079                              222 PLNAME   DS    CL10             Last name                                                
+ 001083                              223 BLC      DS    CL12             Balance                                                  
+1                                                                                                               PAGE    5         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 00108F 40                           224          DC    CL1' '                                                                    
+ 001090                              225 SYM1     DS    CL2' '           Symbol place holder                                      
+ 001092 40404040404040               226          DC    CL7' '                                                                    
+ 001099                              227 PWD      DS    CL8              Password                                                 
+ 0010A1 404040                       228          DC    CL3' '                                                                    
+ 0010A4                              229 EDATE    DS    CL12             Expiration date                                          
+ 0010B0 4040404040                   230          DC    CL5' '                                                                    
+ 0010B5                              231 IDN      DS    CL9              ID number                                                
+ 0010BE 4040404040404040             232          DC    CL32' '                                                                   
+ 0010DE 60                           233 TITLE    DC    CL1'-'           Field header                                             
+ 0010DF 404040                       234          DC    CL3' '                                                                    
+ 0010E2 C68999A2A340D581             235          DC    CL10'First Name'                                                          
+ 0010EC 404040                       236          DC    CL3' '                                                                    
+ 0010EF D381A2A340D58194             237          DC    CL10'Last Name'                                                           
+ 0010F9 404040                       238          DC    CL3' '                                                                    
+ 0010FC 4040C28193819583             239          DC    CL12'  Balance'                                                           
+ 001108 404040404040                 240          DC    CL6' '                                                                    
+ 00110E 40D781A2A2A69699             241          DC    CL9' Password'                                                            
+ 001117 404040                       242          DC    CL3' '                                                                    
+ 00111A 4040C5E7D74B40C4             243          DC    CL12'  EXP. Date'                                                         
+ 001126 404040                       244          DC    CL3' '                                                                    
+ 001129 4040C9C440D5A494             245          DC    CL11'  ID Number'                                                         
+ 001134 4040404040404040             246          DC    CL32' '                                                                   
+ 001154 60                           247 LINES    DC    CL1'-'           Line spacers                                             
+ 001155 404040                       248          DC    CL3' '                                                                    
+ 001158 6060606060606060             249          DC    CL10'----------'                                                          
+ 001162 404040                       250          DC    CL3' '                                                                    
+ 001165 6060606060606060             251          DC    CL10'---------'                                                           
+ 00116F 404040                       252          DC    CL3' '                                                                    
+ 001172 4060606060606060             253          DC    CL10' ---------'                                                          
+ 00117C 404040404040                 254          DC    CL6' '                                                                    
+ 001182 4040406060606060             255          DC    CL11'   --------'                                                         
+ 00118D 404040                       256          DC    CL3' '                                                                    
+ 001190 4040606060606060             257          DC    CL12'  -----------'                                                       
+ 00119C 404040                       258          DC    CL3' '                                                                    
+ 00119F 4040606060606060             259          DC    CL11'  ---------'                                                         
+ 0011AA 4040404040404040             260          DC    CL32' '                                                                   
+ 0011CA F1                           261 PAGE1    DC    CL1'1'           PAGE1 header                                             
+ 0011CB 4040404040404040             262          DC    CL29' '                                                                   
+ 0011E8 C681948993898199             263          DC    CL29'Familiar Names -- Client List'                                       
+ 001205 4040404040404040             264          DC    CL18' '                                                                   
+ 001217 D7C1C7C540F1                 265          DC    CL6'PAGE 1'                                                               
+ 00121D F1                           266 PAGE2    DC    CL1'1'           PAGE2 header                                             
+ 00121E 4040404040404040             267          DC    CL29' '                                                                   
+ 00123B C681948993898199             268          DC    CL29'Familiar Names -- Client List'                                       
+ 001258 4040404040404040             269          DC    CL18' '                                                                   
+ 00126A D7C1C7C540F2                 270          DC    CL6'PAGE 2'                                                               
+ 001270 F1                           271 PAGE3    DC    CL1'1'           PAGE3 header                                             
+ 001271 4040404040404040             272          DC    CL29' '                                                                   
+ 00128E C681948993898199             273          DC    CL29'Familiar Names -- Client List'                                       
+ 0012AB 4040404040404040             274          DC    CL18' '                                                                   
+ 0012BD D7C1C7C540F3                 275          DC    CL6'PAGE 3'                                                               
+ 0012C3 F1                           276 PAGE4    DC    CL1'1'           PAGE4 header                                             
+ 0012C4 4040404040404040             277          DC    CL29' '                                                                   
+ 0012E1 C681948993898199             278          DC    CL29'Familiar Names -- Client List'                                       
+ 0012FE 4040404040404040             279          DC    CL18' '                                                                   
+ 001310 D7C1C7C540F4                 280          DC    CL6'PAGE 4'                                                               
+1                                                                                                               PAGE    6         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                     281 ************************************************************                             
+                                     282 *  TALLY                                                                                 
+                                     283 *  Program:     ASSIGN6                                                                  
+                                     284 *  Programmer:  Your Name                                                                
+                                     285 *                                                                                        
+                                     286 *  Register usage: R1  TPARMS                                                            
+                                     287 *                  R3  TABLE                                                             
+                                     288 *                  R4  EOT                                                               
+                                     289 *                  R12 Base register                                                     
+                                     290 *                  R13 MAIN save area                                                    
+                                     291 *                  R14 Return                                                            
+                                     292 *                  R15 Address for subroutine                                            
+                                     293 *                  R12-15 Entry and exit linkage                                         
+                                     294 *                                                                                        
+                                     295 ************************************************************                             
+ 001318                              296 TALLY    CSECT                                                                           
+ 001318 90EC D00C            0000C   297          STM   14,12,12(13)     Save  calling registers                                  
+ 00131C 18CF                         298          LR    12,15            Load R15 into R12                                        
+ 001318                              299          USING TALLY,12         R12 base register                                        
+ 00131E 41E0 C13C            01454   300          LA    14,TLYSAVE       Load address of BLDSAVE                                  
+ 001322 50D0 E004            00004   301          ST    13,4(0,14)       Store backwards pointer                                  
+ 001326 50E0 D008            00008   302          ST    14,8(0,13)       Store forwards pointer                                   
+ 00132A 18DE                         303          LR    13,14            Load BUILD save area                                     
+                                     304 *********Start Linkage********                                                           
+ 00132C 9834 1000            00000   305          LM    3,4,0(1)         R3 TABLE, R4 EOF                                         
+ 000000                              306          USING ENTRY,3          Load DSECT into R3                                       
+ 001330 F811 C191 C18F 014A9 014A7   307          ZAP   COUNT(2),TEMP3(2)    Zero and add TEMP3 to COUNT                          
+ 001336 F811 C193 C18F 014AB 014A7   308          ZAP   NCOUNT(2),TEMP3(2)   Zero and add TEMP3 to NCOUNT                         
+ 00133C F855 C195 C184 014AD 0149C   309          ZAP   SUM(6),TEMP1(6)  Zero and add TEMP1 to SUM                                
+ 001342 F844 C1A1 C18A 014B9 014A2   310          ZAP   HIGH(5),TEMP2(5) Zero and add TEMP2 to HIGH                               
+ 001348 5934 0000            00000   311 TLOOP    C     3,0(4)           Compare to end of file                                   
+ 00134C 4780 C06C            01384   312          BC    B'1000',TLYEND   Go to TLYEND                                             
+ 001350 FA54 C195 302A 014AD 0002A   313          AP    SUM(6),BALANCE(5)    Add packed BALANCE to SUM                            
+ 001356 F944 302A C1A1 0002A 014B9   314          CP    BALANCE(5),HIGH(5)   Compare Balance to High                              
+ 00135C 47D0 C04E            01366   315          BC    B'1101',LOOP1        Go to LOOP1 if positive                              
+ 001360 F844 C1A1 302A 014B9 0002A   316          ZAP   HIGH(5),BALANCE(5)   Else zero and add BALANCE to HIGH                    
+ 001366                              317 LOOP1    DS    0H                                                                        
+ 001366 F940 302A C138 0002A 01450   318          CP    BALANCE(5),=P'0'     Compare BALANCE to 0                                 
+ 00136C 47B0 C05E            01376   319          BC    B'1011',LOOP2        Go to LOOP2                                          
+ 001370 FA10 C193 C139 014AB 01451   320          AP    NCOUNT(2),=P'1'      Else add to NCOUNT                                   
+ 001376                              321 LOOP2    DS    0H                                                                        
+ 001376 FA10 C191 C139 014A9 01451   322          AP    COUNT(2),=P'1'       Add 1 to COUNT                                       
+ 00137C 4130 3030            00030   323          LA    3,48(0,3)            Load next address                                    
+ 001380 47F0 C030            01348   324          B     TLOOP                Go to TLOOP                                          
+ 001384                              325 TLYEND   DS    0H                                                                        
+ 001384 F855 C19B C195 014B3 014AD   326          ZAP   AVG(6),SUM(6)        Zero and add SUM to AVG                              
+ 00138A FD51 C19B C191 014B3 014A9   327          DP    AVG(6),COUNT(2)      Divide AVG by COUNT                                  
+ 001390 D203 C1DD C110 014F5 01428   328          MVC   PCOUNT(4),=X'40202020'  Edit pattern                                      
+ 001396 DE03 C1DD C191 014F5 014A9   329          ED    PCOUNT(4),COUNT      Edit COUNT into PCOUNT                               
+ 00139C D203 C2D0 C110 015E8 01428   330          MVC   PNCOUNT(4),=X'40202020' Edit pattern                                      
+ 0013A2 DE03 C2D0 C193 015E8 014AB   331          ED    PNCOUNT(4),NCOUNT    Edit NCOUNTinto PNCOUNT                              
+ 0013A8 4110 C195            014AD   332          LA    1,SUM                Load SUM address into R1                             
+ 0013AC D20D C211 C120 01529 01438   333          MVC   SUMOUT(14),=X'402020202020206B2020204B2020'                               
+ 0013B2 DF0D C211 C195 01529 014AD   334          EDMK  SUMOUT(14),SUM       Edit SUM into SUMOUT                                 
+ 0013B8 0610                         335          BCTR  1,0                  Find place for $ sign                                
+ 0013BA 925B 1000      00000         336          MVI   0(1),C'$'            Add $ sign to number                                 
+ 0013BE F950 C195 C138 014AD 01450   337          CP    SUM(6),=P'0'         Compare SUM to 0                                     
+1                                                                                                               PAGE    7         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 0013C4 47B0 C0B0            013C8   338          BC    B'1011',LOOP3        If positive go to LOOP3                              
+ 0013C8                              339 LOOP3    DS    0H                                                                        
+ 0013C8 4110 C19B            014B3   340          LA    1,AVG                Load AVG address into R1                             
+ 0013CC D209 C252 C12E 0156A 01446   341          MVC   AVGOUT(10),=X'4020206B2020204B2020'   Edit pattern                        
+ 0013D2 DF09 C252 C19B 0156A 014B3   342          EDMK  AVGOUT(10),AVG       Edit AVG into AVGOUT                                 
+ 0013D8 0610                         343          BCTR  1,0                  Find place for $ sign                                
+ 0013DA 925B 1000      00000         344          MVI   0(1),C'$'            Add $ to value                                       
+ 0013DE F930 C19B C138 014B3 01450   345          CP    AVG(4),=P'0'         Compare AVG to 0                                     
+ 0013E4 47B0 C0D0            013E8   346          BC    B'1011',LOOP4        If positive go to LOOP4                              
+ 0013E8                              347 LOOP4    DS    0H                                                                        
+ 0013E8 4110 C1A1            014B9   348          LA    1,HIGH               Load HIGH address into R1                            
+ 0013EC D20B C28D C114 015A5 0142C   349          MVC   HIGHOUT(12),=X'40202020206B2020204B2020'  Edit pattern                    
+ 0013F2 DF0B C28D C1A1 015A5 014B9   350          EDMK  HIGHOUT(12),HIGH     Edit HIGH into HIGHOUT                               
+ 0013F8 0610                         351          BCTR  1,0                  Find place for $ sign                                
+ 0013FA 925B 1000      00000         352          MVI   0(1),C'$'            Add $ sign                                           
+ 0013FE E020 C1A6 003B 014BE         353          XPRNT LINE2,59             Print number of clients                              
+ 001404 E020 C1E1 003E 014F9         354          XPRNT LINE3,62             Print sum of accounts                                
+ 00140A E020 C21E 003E 01536         355          XPRNT LINE4,62             Print average of accounts                            
+ 001410 E020 C25B 003E 01573         356          XPRNT LINE5,62             Print largest account                                
+ 001416 E020 C299 003B 015B1         357          XPRNT LINE6,59             Print number of negatives                            
+ 00141C                              358          DROP  3                    Drop R3 table                                        
+ 00141C 58D0 D004            00004   359          L     13,4(0,13)           Load TLYSAVE address                                 
+ 001420 98EC D00C            0000C   360          LM    14,12,12(13)         Restore calling registers                            
+ 001424 07FE                         361          BR    14                   Return control to MAIN                               
+                                     362          LTORG                                                                           
+ 001428 40202020                     363                =X'40202020'                                                              
+ 00142C 40202020206B2020             364                =X'40202020206B2020204B2020'                                              
+ 001438 402020202020206B             365                =X'402020202020206B2020204B2020'                                          
+ 001446 4020206B2020204B             366                =X'4020206B2020204B2020'                                                  
+ 001450 0C                           367                =P'0'                                                                     
+ 001451 1C                           368                =P'1'                                                                     
+                                     369 *********TALLY Storage                                                                   
+ 001454                              370 TLYSAVE  DS    18F                  TALLY save area                                      
+ 00149C 00000000000C                 371 TEMP1    DC    PL6'0'               temp1                                                
+ 0014A2 000000000C                   372 TEMP2    DC    PL5'0'               temp2                                                
+ 0014A7 000C                         373 TEMP3    DC    PL2'0'               temp3                                                
+ 0014A9                              374 COUNT    DS    PL2                  Count                                                
+ 0014AB                              375 NCOUNT   DS    PL2                  Negative count                                       
+ 0014AD                              376 SUM      DS    PL6                  Balance sum                                          
+ 0014B3                              377 AVG      DS    PL6                  Balance average                                      
+ 0014B9                              378 HIGH     DS    PL5                  Balance high                                         
+ 0014BE 40                           379 LINE2    DC    CL1' '               Number of clients                                    
+ 0014BF 4040404040404040             380          DC    CL22' '                                                                   
+ 0014D5 D5A4948285994096             381          DC    CL25'Number of clients: '                                                 
+ 0014EE 40404040404040               382          DC    CL7' '                                                                    
+ 0014F5                              383 PCOUNT   DS    CL4                                                                       
+ 0014F9 40                           384 LINE3    DC    CL1' '               Sum of account balances                              
+ 0014FA 4040404040404040             385          DC    CL22' '                                                                   
+ 001510 E2A4944096864081             386          DC    CL25'Sum of account balances: '                                           
+ 001529                              387 SUMOUT   DS    CL12                                                                      
+ 001535 40                           388          DC    CL1' '                                                                    
+ 001536 40                           389 LINE4    DC    CL1' '               Average of account balances                          
+ 001537 4040404040404040             390          DC    CL22' '                                                                   
+ 00154D C1A5859981878540             391          DC    CL25'Average account balance: '                                           
+ 001566 40404040                     392          DC    CL4' '                                                                    
+ 00156A                              393 AVGOUT   DS    CL8                                                                       
+ 001572 40                           394          DC    CL1' '                                                                    
+1                                                                                                               PAGE    8         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 001573 40                           395 LINE5    DC    CL1' '               Larges account balance                               
+ 001574 4040404040404040             396          DC    CL22' '                                                                   
+ 00158A D381998785A2A340             397          DC    CL25'Largest account balance: '                                           
+ 0015A3 4040                         398          DC    CL2' '                                                                    
+ 0015A5                              399 HIGHOUT  DS    CL12                                                                      
+ 0015B1 40                           400 LINE6    DC    CL1' '               Number of negative balances                          
+ 0015B2 4040404040404040             401          DC    CL22' '                                                                   
+ 0015C8 D5A4948285994096             402          DC    CL29'Number of negative balances: '                                       
+ 0015E5 404040                       403          DC    CL3' '                                                                    
+ 0015E8                              404 PNCOUNT  DS    CL4                                                                       
+                                     405          END   MAIN                                                                      
+0***  NO   STATEMENTS FLAGGED -  NO   WARNINGS,  NO   ERRORS                                                                      
+0*** DYNAMIC CORE AREA USED:  LOW:   22904 HIGH:    2344 LEAVING:  468320 FREE BYTES. AVERAGE:       62 BYTES/STMT ***            
+0*** ASSEMBLY TIME =    0.002 SECS,   203000 STATEMENTS/SEC ***                                                                   
+0*** PROGRAM EXECUTION BEGINNING - ANY OUTPUT BEFORE EXECUTION TIME MESSAGE IS PRODUCED BY USER PROGRAM ***                       
+1                             Familiar Names -- Client List                  PAGE 1                                               
+-   First Name   Last Name      Balance          Password     EXP. Date      ID Number                                            
+-   ----------   ---------     ---------         --------     ----------     ---------                                            
+0   Anna         Leonowens        $0.00          SIAMS4ME     2018/08/01     A1621350L                                            
+0   Barry        Reed             $1.74 CR       THEREIGO     2018/09/02     B7602565R                                            
+0   Ben          Grimm          $470.40          STRONGUY     2018/10/03     B2876543G                                            
+0   Boris        Badenov          $0.00          KILLMOOS     2019/03/04     B2766631B                                            
+0   Bruce        Banner       $2,019.57          HULKISME     2019/02/05     B3377711B                                            
+0   Bruce        Wayne          $161.33 CR       BATYCOON     2019/01/06     B9098765W                                            
+0   Buffy        Summers         $25.90          VAMPSRME     2018/12/07     B7990241S                                            
+0   Bullwinkle   Moose            $0.00          ROCKYPAL     2018/11/08     B1094477M                                            
+0   Casper       Ghost            $0.00          FRIENDLY     2019/10/09     C9162021G                                            
+0   Charles      Xavier       $2,120.93          BALDIE       2019/09/10     C0987654X                                            
+0   Clark        Kent           $201.96 CR       SUPERME      2018/08/11     C6789012K                                            
+0   Daisy        Duck             $0.00          FEMINIST     2019/07/12     D5432109D                                            
+0   Dawn         Summers         $78.90          GREENKID     2019/06/13     D9054788S                                            
+0   Diana        Prince           $0.00          AMAZON       2018/05/14     D8374651P                                            
+0   Dick         Grayson      $1,100.61          SIDEKICK     2019/04/15     D8765439G                                            
+0   Don          Blake          $501.02 CR       ODINSSON     2018/09/16     D1223347B                                            
+0   Donald       Duck             $0.00          MICKSPAL     2018/12/17     D2345678D                                            
+0   Draco        Malfoy         $734.10          BULLYBOY     2018/11/18     D3131313M                                            
+0   Edward       Nygma        $3,151.53          IAMSMART     2019/12/19     E9012345N                                            
+0   Ellen        Ripley         $315.92          ALIENIST     2019/11/20     E3666000R                                            
+1                             Familiar Names -- Client List                  PAGE 2                                               
+-   First Name   Last Name      Balance          Password     EXP. Date      ID Number                                            
+-   ----------   ---------     ---------         --------     ----------     ---------                                            
+0   Hal          Jordan         $401.02 CR       GREENMAN     2019/10/21     H4662160J                                            
+0   Harold       Hill             $0.00          MUSICMAN     2019/09/22     H5678947H                                            
+0   Harry        Potter       $8,745.90          DESTINED     2019/08/23     H0000000P                                            
+0   Henry        Higgins          $0.00          POLYLING     2019/07/24     H7021600H                                            
+0   Hermione     Granger        $951.00          STUDIOUS     2019/06/25     H6666666G                                            
+0   Indiana      Jones        $5,642.99          FOUNDARK     2019/05/26     I7766655J                                            
+0   Jean         Gray           $321.03          ESPGIRL      2019/04/27     J0789012G                                            
+0   Jimmy        Olsen          $151.53          JUSTAKID     2019/03/28     J3781223O                                            
+0   John         Watson           $1.50 CR       LOYALDOC     2018/11/29     J0293843W                                            
+0   Johnny       Storm          $100.32          FIREMAN      2018/10/30     J3012345S                                            
+0   Joyce        Summers          $0.00          DECEASED     2018/12/31     J4726151S                                            
+0   Lamont       Cranston         $0.00          SHADOWY      2018/11/01     L9056734C                                            
+0   Lana         Lang           $561.64          REDHEAD      2018/10/02     L6502700L                                            
+0   Lemuel       Gulliver       $214.56          TRAVELER     2018/09/03     L6882255G                                            
+0   Lex          Luthor         $212.15          IWANTALL     2019/08/04     L8827315L                                            
+0   Lois         Lane             $5.97          MYSUPER      2019/07/05     L3210987L                                            
+0   Lori         Lemaris          $0.00          FISHGIRL     2019/09/06     L0000100L                                            
+0   Lucy         Lane           $372.48          JIMSGIRL     2018/08/07     L3210987L                                            
+0   Luke         Skywalker      $458.47          FORCEFUL     2018/08/08     L0000000S                                            
+0   Mary         Watson          $70.72 CR       LOVEPETE     2019/09/29     M2456789W                                            
+1                             Familiar Names -- Client List                  PAGE 3                                               
+-   First Name   Last Name      Balance          Password     EXP. Date      ID Number                                            
+-   ----------   ---------     ---------         --------     ----------     ---------                                            
+0   Matt         Murdock          $0.00          BLINDMAN     2018/10/10     M4889900M                                            
+0   Mickey       Mouse            $0.00          DONSPAL      2019/02/11     M4543210M                                            
+0   Mighty       Mouse            $0.05          HEREIAM      2018/11/12     M8230451M                                            
+0   Nellie       Forbush          $0.00          WASHHAIR     2019/07/04     N3952025F                                            
+0   Nick         Fury           $340.40          OLDGUARD     2019/11/14     N7223344F                                            
+0   Norman       Osborne          $0.00          GGOBLIN      2019/10/15     N0324571O                                            
+0   Percy        Weasley         $76.73          BESTBOY      2019/09/16     P0090907W                                            
+0   Perry        White           $21.22          IAMBOSS      2019/08/17     P8337610W                                            
+0   Peter        Parker         $120.81 CR       ARACHNID     2019/07/18     P0432109P                                            
+0   Reed         Richards     $1,113.27          STRETCHY     2019/10/31     R5901234R                                            
+0   Road         Runner           $0.00          BEEPBEEP     2018/12/20     R9999999R                                            
+0   Rocket       Squirrel         $0.00          ICANFLY      2018/11/21     R1390245S                                            
+0   Ron          Weasley         $23.13          FRECKLES     2018/10/22     R5432871W                                            
+0   Rupert       Giles          $235.71          WATCHER      2019/02/27     R9087436G                                            
+0   Sarah        Connor       $1,764.23 CR       SURVIVOR     2018/02/24     S0000000C                                            
+0   Scott        Summers          $0.00          FOUREYES     2018/10/25     S9028776S                                            
+0   Scrooge      McDuck           $0.00          IAMRICH      2019/04/26     S6234567M                                            
+0   Sherlock     Holmes           $0.00          DETECTIV     2018/12/28     S0000000H                                            
+0   Stephen      Strange          $0.00          AMULET       2018/07/30     S3455667S                                            
+0   Steve        Rogers           $0.00          CAPTAINA     2019/06/01     S7492871R                                            
+1                             Familiar Names -- Client List                  PAGE 4                                               
+-   First Name   Last Name      Balance          Password     EXP. Date      ID Number                                            
+-   ----------   ---------     ---------         --------     ----------     ---------                                            
+0   Sue          Storm            $0.00          REEDSGAL     2019/07/15     S2765432S                                            
+0   Sylvester    Cat            $194.56          PUDDYTAT     2018/11/01     S5050505C                                            
+0   Tony         Stark            $0.00          STEELGUY     2018/12/30     T4678901S                                            
+0   Tweety       Bird             $0.00          TARGET       2018/11/11     T0404040B                                            
+0   Wiley        Coyote       $7,523.41          BUYSACME     2018/11/11     W0990009C                                            
+0   Willow       Rosenberg      $156.72          BIGWITCH     2019/10/31     W7356012R                                            
+0   Xander       Harris          $95.96 CR       GOODGUY      2018/12/31     X7205879H                                            
+                       Number of clients:                67                                                                       
+                       Sum of account balances:     $34,120.81                                                                    
+1                      Average account balance:        $509.26                                                                    
+                       Largest account balance:      $8,745.90                                                                    
+                       Number of negative balances:      10                                                                       
+0*** EXECUTION TIME =    0.003 SECS.      3471 INSTRUCTIONS EXECUTED -  1157000 INSTRUCTIONS/SEC ***                              
+0*** AM004 - NORMAL USER TERMINATION BY RETURN ***                                                                                

@@ -1,0 +1,36 @@
+Forms![Generate Report]![CheckID] = True
+Forms![Generate Report]![CheckName] = True
+Forms![Generate Report]![CheckDate] = True
+Forms![Generate Report]![CheckTime] = True
+Forms![Generate Report]![CheckStreet] = True
+Forms![Generate Report]![CheckCity] = True
+Forms![Generate Report]![CheckState] = True
+Forms![Generate Report]![CheckZip] = True
+Forms![Generate Report]![CheckCountry] = True
+
+Forms![Generate Report]![CheckVendor] = True
+Forms![Generate Report]![CheckVname] = True
+Forms![Generate Report]![CheckVphone] = True
+Forms![Generate Report]![CheckVid] = True
+Forms![Generate Report]![CheckVtype] = True
+//Add rep email
+
+Forms![Generate Report]![CheckArtist] = True  
+Forms![Generate Report]![CheckBand] = True
+Forms![Generate Report]![CheckAname] = True
+Forms![Generate Report]![CheckAphone] = True
+Forms![Generate Report]![CheckAid] = True
+
+Forms![Generate Report]![CheckAgent] = True
+Forms![Generate Report]![CheckAgName] = True
+Forms![Generate Report]![CheckAgPhone] = True
+Forms![Generate Report]![CheckAgId] = True
+//Add agent email
+
+
+Forms![Generate Report]![Check] = True
+Forms![Generate Report]![Check] = True
+Forms![Generate Report]![Check] = True
+
+Forms![Generate Report]![EventID_Label]=Event.EventID
+

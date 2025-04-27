@@ -1,0 +1,245 @@
+<HTML>
+
+<HEAD>
+<TITLE>Assignment 9 -- Driver Program</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>Driver Program for Assignment 9</B/</H2>
+</CENTER>
+<PRE>**********************************************************************
+*                                                                    *
+*            Name:  DRIVER.                                          *
+*                                                                    *
+*        Function:  Test platform for macros.                        *
+*                                                                    *
+*           Input:  None.                                            *
+*                                                                    *
+*          Output:  Results of the tests.                            *
+*                                                                    *
+*     Entry Conds:  14 -- Return address to the operating            *
+*                         system.                                    *
+*                   15 -- Address of entry to the program.           *
+*                                                                    *
+*  Register Usage:   2 -- Used in addresses in macro tests.          *
+*                   11 -- Second base register.                      *
+*                   12 -- Base register.                             *
+*                                                                    *
+*      Exit Conds:  14 -- Return address to the operating            *
+*                         system.                                    *
+*                                                                    *
+**********************************************************************
+         EJECT
+**********************************************************************
+*               The DRIVER program begins here.                      *
+**********************************************************************
+*
+DRIVER   CSECT                         Beginning of the program
+*
+         PRINT   GEN                   Expand macros
+*
+*  Standard entry linkage.
+*
+         STM   14,12,12(13)            Store the registers in the save
+*                                      area of the calling routine
+*
+         LR    12,15                   Point register 12 at DRIVER
+         USING DRIVER,12               The base register is 12
+*
+         LA    14,DRIVSAV              Point register 14 at DRIVER's
+*                                      save area
+         ST    13,4(14)                Store the backward pointer
+         ST    14,8(13)                Store the forward pointer
+         LR    13,14                   Point register 13 at DRIVER's
+*                                      save area
+*
+         XPRNT =CL26'1Results of testing Macros',26 
+*                                      Print the title
+*
+* This block of code tests the STRLEN macro.
+*
+         XPRNT =C'0',1                 Skip an extra 2 lines
+         XPRNT =CL32'-First we test the STRLEN macro.',32
+*                                      Print a heading
+*
+* These first three calls to STRLEN all have problems which should
+* result in MNOTEs.
+*
+         STRLEN   S1
+*
+         STRLEN   ,LENGTH
+*
+         STRLEN
+*
+* The next few calls to STRLEN should all work.
+*
+         XPRNT =CL23'The input value is:  00',23
+         XPRNT =CL27'0The actual length is:    0',27
+         STRLEN   S1,LENGTH
+         L     4,LENGTH
+         CVD   4,TEMP
+         MVC   SVALUE(4),=XL4'40202120'
+         ED    SVALUE(4),TEMP+6
+         XPRNT SLINE,27
+*
+         XPRNT =CL29'The input value is:  C1C2C300',29
+         XPRNT =CL27'0The actual length is:    3',27
+         STRLEN   S2,LENGTH
+         L     4,LENGTH
+         CVD   4,TEMP
+         MVC   SVALUE(4),=XL4'40202120'
+         ED    SVALUE(4),TEMP+6
+         XPRNT SLINE,27
+*
+         XPRNT =CL27'The input value is:  000000',27
+         XPRNT =CL27'0The actual length is:    0',27
+         STRLEN   S3,LENGTH
+         L     4,LENGTH
+         CVD   4,TEMP
+         MVC   SVALUE(4),=XL4'40202120'
+         ED    SVALUE(4),TEMP+6
+         XPRNT SLINE,27
+*
+         XPRNT =CL29'The input value is:  C1C2C300',29
+         XPRNT =CL27'0The actual length is:    3',27
+         LA    3,S2
+         STRLEN   0(3),LENGTH
+         L     4,LENGTH
+         CVD   4,TEMP
+         MVC   SVALUE(4),=XL4'40202120'
+         ED    SVALUE(4),TEMP+6
+         XPRNT SLINE,27
+*
+         XPRNT =CL29'The input value is:  C1C2C300',29
+         XPRNT =CL27'0The actual length is:    3',27
+         LA    5,LENGTH
+         STRLEN   S2,0(5)
+         L     4,LENGTH
+         CVD   4,TEMP
+         MVC   SVALUE(4),=XL4'40202120'
+         ED    SVALUE(4),TEMP+6
+         XPRNT SLINE,27
+*
+         XPRNT =CL29'The input value is:  C1C2C300',29
+         XPRNT =CL27'0The actual length is:    3',27
+         LA    3,S2
+         LA    5,LENGTH
+         STRLEN   0(3),0(5)
+         L     4,LENGTH
+         CVD   4,TEMP
+         MVC   SVALUE(4),=XL4'40202120'
+         ED    SVALUE(4),TEMP+6
+         XPRNT SLINE,27
+*
+         XPRNT =CL35'The input value is:  D1D2D300D4D500',35
+         XPRNT =CL27'0The actual length is:    3',27
+         LA    5,LENGTH
+         STRLEN   S4,0(5)
+         L     4,LENGTH
+         CVD   4,TEMP
+         MVC   SVALUE(4),=XL4'40202120'
+         ED    SVALUE(4),TEMP+6
+         XPRNT SLINE,27
+*
+* The second block of code deals with the FROMHEX macro.
+*
+         XPRNT =C'0',1                 Skip an extra 2 lines.
+         XPRNT =CL32'-Next we test the FROMHEX macro.',32
+*                                      Print a heading.
+*
+* These first three calls to FROMHEX have problems which should
+* result in MNOTEs.
+         FROMHEX  PIN
+*
+         FROMHEX  ,POUT
+*
+         FROMHEX
+*
+* The next group of calls should all work.
+*
+         MVC   PIN(6),=CL6'000001'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         MVC   PIN(6),=CL6'000A00'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         MVC   PIN(6),=CL6'100000'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         MVC   PIN(6),=CL6'000000'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         MVC   PIN(6),=CL6'ABCDEF'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         MVC   PIN(6),=CL6'654321'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         MVC   PIN(6),=CL6'00000F'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         MVC   PIN(6),=CL6'005000'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         MVC   PIN(6),=CL6'FFFFFF'
+         FROMHEX  PIN,POUT
+         XPRNT PLINE,45
+*
+         EJECT
+*
+*  Standard exit linkage with return code = 0.
+*
+         XR    15,15                   Put 0 in register 15
+         L     13,4(13)                Point register 13 at the calling
+*                                      program's save area
+         L     14,12(13)               Restore all registers except
+         LM    0,12,20(13)             15
+         BR    14                      Return to the calling program
+         EJECT
+**********************************************************************
+*          The storage section for DRIVER starts here.               *
+**********************************************************************
+*
+         LTORG
+*
+DRIVSAV  DC    18F'-1'                 Save area for linkage
+*
+* Variables for testing STRLEN
+S1       DC    X'00'
+*
+S2       DC    XL4'C1C2C300'
+*
+S3       DC    XL3'000000'
+*
+S4       DC    XL7'D1D2D300D4D500'
+*
+LENGTH   DS    F
+*
+SLINE    DC    C'0'
+         DC    CL22'The computed length is'
+SVALUE   DS    4C
+*
+TEMP     DS    D
+*
+* Storage for testing FROMHEX
+PLINE    DC    C'0'
+         DC    CL8'INPUT = '
+PIN      DS    CL6
+         DC    5C' '
+         DC    CL9'OUTPUT = '
+POUT     DS    16C         
+         END   DRIVER                  End of the overall program
+*</PRE>
+</BODY>
+
+</HTML>

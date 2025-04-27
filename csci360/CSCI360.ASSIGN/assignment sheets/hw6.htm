@@ -1,0 +1,146 @@
+<HTML>
+
+<HEAD>
+<TITLE>CSCI 360 Assignment 6</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>Assignment 6
+<P>100 points
+</B></H2></CENTER>
+
+<P><B>Overview</B>
+
+<P>For this assignment, you will write a program that will read a
+   file containing information about clients:  names, passwords,
+   account balances and ID numbers.  The information will be 
+   stored in a table.  The table will be printed and 
+   some statistics will be computed.
+
+<P>In particular, this program will make use of external
+   subroutines, character data and packed decimal numbers.
+
+<P><HR>
+
+<P><B>Input</B>
+
+<P>The input to the program will be a file with an unknown number of
+   records.  Each record represents a single client of Familiar Names, Inc.
+   and has the following format:
+
+<PRE>     columns         description
+     -------         -----------
+      1 - 10         First Name (characters)
+     11 - 12         not used (periods)             
+     13 - 22         Last Name (characters)
+     23 - 24         not used (periods)
+     25 - 32         Password (characters)
+     33 - 34         not used (periods)
+     35 - 43         ID Number (characters)
+     44 - 45         not used (periods)
+     46 - 53         Expiration Date (Year, Month, Day)
+     54 - 55         not used  (periods)
+     56 - 62         Balance (numeric, a number of pennies)
+     63 - 80         not used (blanks)
+</PRE>
+
+<P>A positive balance indicates that the client owes us money, and a
+   negative balance indicates that we owe the client money.
+
+<P>Use the following JCL statement to specify the input file:
+
+<PRE>//FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW6DATA,DISP=SHR</PRE>
+
+<P><HR>
+
+<P><B>Processing Requirements</B>
+
+<P>The main program will carry out the following steps:
+
+<UL>
+ <LI>Call subroutine BUILD to read the file and store the data in
+     a table.  BUILD will store the number of entries in a
+     numerical field passd in as a parameter.
+     <P>
+ <LI>Call subroutine PRINT to print the contents of the table,
+     using appropriate page and column headings.  The page heading
+     should include a page number.
+     <P>
+ <LI>Call subroutine TALLY to compute and print:
+     <UL TYPE=SQUARE>
+      <LI>the number of clients
+      <LI>the sum of all account balances 
+      <LI>the average account balance 
+      <LI>the largest account balance
+      <LI>the number of negative account balances
+     </UL>
+     <P>These can be added at the end of the last page.
+</UL> 
+
+<P><HR>
+
+<P><B>Other Notes</B>
+
+<OL>
+ <LI>You may assume that the table needs to hold no more than 70
+     values.  Each entry should have the following format:
+     <UL>
+      <LI>Last Name (10 characters)
+      <LI>First Name (10 characters)
+      <LI>ID Number (9 characters)
+      <LI>Password (8 characters)
+      <LI>Balance (5 packed decimal bytes)
+      <LI>Expiration Date (5 packed decimal bytes)
+      <LI>Filler (1 blank)
+     </UL>   
+     <P>Immediately before the line of code that declares the table,
+        put in this line:
+
+<PRE>         ORG   PROG6+(*-PROG6+15)/16*16</PRE>
+
+     <P>The effect of this line of code will be to align your table
+        on a 16-byte boundary (an address which is a multiple of
+        16).  This will be helpful if and when you XDUMP the table.
+        If your main program is not called PROG6, use its name
+        in place of PROG6.
+     <P>
+  <LI>Write this program incrementally, one subroutine at a time.
+      Start with BUILD and XDUMP the table to see whether BUILD is
+      correct.  (Remove the XDUMP later.)  After that, write and 
+      test PRINT.  Once you have PRINT working, you can go on to TALLY.
+      <P>
+ <LI>The JCL for this assignment is the same as the JCL used in
+     Assignments 4 and 5 except for the line given above to provide
+     the data.
+     <P>
+ <LI>You may not use XDECI or XDECO anywhere in this assignment.
+     The numbers should all be stored in packed decimal format.
+     <P>
+ <LI>When you print amounts of money, print a leading dollar sign,
+     a decimal point and two digits to the right of the decimal
+     point.  If an amount of money is negative, print <U>CR</U>
+     to the right of the value.
+     <P>
+ <LI>When you print a date, print it in the format Year/Month/Day,
+     as in 2018/01/23.
+     <P>
+</OL>
+
+<P><HR>
+
+<P><B>Output</B>
+
+<P>The page header for the report should start at the top of a new
+   page.  The page heading should be centered.  The line of column 
+   headings should be underlined and it should be double-spaced from 
+   the page header.  The lines of client information should be 
+   double spaced.  The summary lines should be triple-spaced
+   from the last client record.  Print no more than 20 lines of client
+   information per page. 
+
+</BODY>
+
+</HTML>

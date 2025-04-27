@@ -1,0 +1,181 @@
+<HTML>
+
+<HEAD>
+<TITLE>Assignment 5</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>Assignment 5
+<P>100 points
+</B></H2>
+</CENTER>
+
+<P><B>Overview</B>
+
+<P>In this assignment, you will rewrite the program you wrote in
+   Assignment 4 using external subroutines instead of internal subroutines.
+   There are a few minor changes and additional steps.
+
+<P><HR>
+
+<P><B>Input</B>
+
+<P>The input to the program will be a file with an unknown number of
+   records.
+
+<P>The data starts with a number of lines very much like those in
+   the data for Assignment 4, followed by a line containing the 
+   integer -44444444.  This number serves as a delimiter and is not
+   part of the data.  After that are three lines each containing 
+   two integers as described below.
+
+<P>Use the following JCL statement to specify the input file:
+
+<PRE>     //FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW5DATA,DISP=SHR</PRE>
+
+<P>Otherwise the JCL is the same JCL we have been using.
+
+<P><HR>
+
+<P><B>What needs to be done</B>
+
+<UL>
+ <LI>Call the BUILD subroutine to read lines in the file until it
+     find the delimiter line.  Each line contains zero or more 
+     integers.  Put the integers in the table.  Do not put the
+     delimiter value -44444444 in the table.
+     <P>
+ <LI>After you find the line containing -44444444, end the BUILD
+     subroutine and return to MAIN.  Read the next three
+     lines in the file.  Each contains two small nonzero integers which
+     we can call D1 and H1 (first line), D2 and H2 (second line) and
+     D3 and H3 (third line).  Store these in fullwords in MAIN for now.
+     <P>
+ <LI>In the main routine, print a heading saying something like "Table
+     Contents".
+     <P>
+ <LI>Now call subroutine PRINT to print the contents of the table with 
+     5 numbers on each line.
+     <P>
+ <LI>In the main routine, print a heading saying something like
+     "Multiples of D1" (filling in the value of D1).
+     <P>
+ <LI>Call subroutine PRINT to print a list of all of the integers which are
+     multiples of D1 with H1 values on each line.  (The last
+     line may not have as many as H1 values on it.)
+     <P>
+ <LI>Now repeat the last step with D2 and H2.
+     <P>
+ <LI>Now repeat the last step with D3 and H3.
+</UL>
+
+<P><HR>
+
+<P><B>External Subroutines</B>
+
+<P>You will need several external subroutines:
+
+<UL LIST-STYLE-TYPE=DISC>
+ <LI>BUILD is a subroutine that will read the input file and build
+     the table.  It will store the address of the last entry in
+     a fullword passed in as its second parameter.
+     <P>The arguments for BUILD are:
+        <UL LIST-STYLE-TYPE=SQUARE>
+         <LI>the address of the input buffer
+         <LI>the address of the table
+         <LI>the address of a fullword containing the address of the
+             next available entry
+        </UL>
+     <P>
+ <LI>PRINT is a subroutine that will print all numbers in the table that
+     are multiples of DIV (thus all the numbers if DIV is 1 or -1), with 
+     HOWMANY values per line, starting on a new page and double-spaced.
+     <P>The arguments for PRINT are:
+        <UL LIST-STYLE-TYPE=SQUARE>
+         <LI>the address of the table
+         <LI>the address of a fullword containing the address of the
+             next available entry
+         <LI>the address of a fullword called DIV
+         <LI>the address of a fullword called HOWMANY
+        </UL>
+     <P>
+     <P>The first time you call PRINT, use the values 1 and 5 for 
+        DIV and HOWMANY.  Later, those values will come from input.
+        Before you call PRINT, copy the values you want into DIV
+        and HOWMANY.  Another way to do this would be to have
+        several parameter lists for PRINT, or to supply the parameter
+        list as a literal.
+</UL>
+
+<P>There are several requirements for using an external subroutine:
+
+<UL>
+ <LI>Each external subroutine is actually a separate program.  You
+     need a <U>CSECT</U> with the name of the subroutine, as in:
+
+<PRE>     BUILD    CSECT</PRE>
+     <P>
+ <LI>You need to create a <U>parameter list</U> for the subroutine (a set
+     of consecutive fullwords, each containing the address of a
+     parameter).  We did this with internal subroutines.
+     <P>
+ <LI>You need to <U>call</U> the subroutine, as in:
+
+<PRE>     LA      1,BPARMS         Parmlist for BUILD
+     L       15,=V(BUILD)     Get the address of BUILD  
+     BALR    14,15            Branch to BUILD</PRE>
+
+     <P>Here the BALR instruction will set register 14 = the address
+        of the next instruction after the BALR.
+     <P>
+ <LI>In the subroutine, you need a <u>register save area</u> and
+     <U>standard entry linkage</U>.  (You should probably go read
+        about standard entry linkage.)
+     <P>
+ <LI>At the end of the subroutine, you need <u>standard exit linkage</u>.
+     (You should probably go read about standard exit linkage.)
+</UL>     
+
+<P><HR>
+
+<P><B>Other Requirements</B>
+
+<UL>
+ <LI>You may assume that the table needs to hold no more than
+     75 values.  You do not need to count the numbers.  Each entry
+     is one fullword.  Initialize the table to the value -64 (as
+     in 75F'-64').
+     <P>
+ <LI>In the PRINT subroutine, you may assume the value of HOWMANY
+     is never more than 7.
+     <P>
+ <LI>In the PRINT subroutine, the value of DIV may be 1 or -1.  If so,
+     the subroutine will print all the numbers in the table.  
+     Everything is a multiple of 1 or -1.
+     <P>
+ <LI>The first time you call PRINT, the value of DIV should
+     be 1 and the value of HOWMANY should be 5.  The second time you
+     call PRINT, the value of DIV should be D1 and the value of
+     HOWMANY should be H1.  The third time you call PRINT, use the values
+     of D2 and H2 for DIV and HOWMANY, respectively.  You can manage this
+     with one parameter list containing the addresses of two fullwords,
+     DIV and HOWMANY, and then change the values of those fullwords as
+     needed.
+     <P>
+ <LI>In PRINT, double-space between lines of numbers.
+     <P>    
+ <LI>You may use register equates if you want, but it is not required.
+     <P>
+ <LI>You may use extended mnemonics such as BH, BL, BNE, etc. for branch
+     instructions.
+     <P>
+ <LI>Document your program as usual and submit it through Blackboard
+     as usual.
+</UL>
+
+</BODY>
+
+</HTML>

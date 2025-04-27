@@ -1,0 +1,244 @@
+<HTML>
+<HEAD>
+<TITLE>CSCI 360 Assignment 8</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>Assignment 8
+<P>100 points
+</B></H2></CENTER>
+
+<P><B>Overview</B>
+
+<P>The data in this assignment deals with appointments for tutoring.
+   You will write a program that will read the file.  The data will
+   be processed and put in a table.  You will then XDUMP part of 
+   the table.  After that, you should print out the table contents 
+   in a report.  Next: sort the table in descending order by ID Number 
+   and then print it again.  
+
+<P>The data will be stored in a small number of bytes.
+
+<P><HR>
+<P><B>Input</B>
+
+<P>The input to the program will be a file with an unknown number of
+   records.  Each record represents a single player and has the following
+   format:
+
+<PRE>     columns         description
+     -------         -----------
+      1 - 8          ID Number ('R' followed by 7 digits)
+      9 - 12         not used (spaces)
+     13 - 20         Password  (characters)
+     21 - 24         not used (spaces)
+     25 - 33         Day of the Week (characters)
+     34 - 37         not used (spaces)
+     38 - 42         Time of Day in HH:MM format using a 24-hour clock
+     43 - 46         not used (spaces)
+     47 - 49         Room Number (digits)
+     50 - 80         not used (spaces)</PRE>
+
+<P>Use the following JCL statement to specify the input file:
+
+<PRE>//FT05F001  DD  DSN=KC02314.SUMMER18.CSCI360.HW8DATA,DISP=SHR</PRE>
+
+<P>Otherwise the JCL is the same JCL we have been using.
+
+<P><HR>
+
+<P><B>Processing Requirements</B>
+
+<P>The main program will carry out the following steps:
+
+<P>1. Call subroutine BUILD to read the file and store the data in
+     a table.
+     <P>             
+<P>2. Use XDUMP to print 60 bytes of the table in hex.
+     <P>
+<P>3. Call subroutine PRINT to print the contents of the table
+      using appropriate page and column headings.  
+      <P>
+<P>4. Call subroutine SORTID to sort the table in ascending 
+      order.  The key field is ID Number.
+      <P>
+<P>5. Call subroutine PRINT again.
+
+<P><HR>
+
+<P><B>Structure of a table entry</B>
+
+<P>The structure of a table entry is as follows, in this order:
+ <UL>
+  <LI>Student ID (4 bytes)
+  <LI>Password (8 bytes)
+  <LI>a 3-byte field containing the Day of Week, Time of Day and Room Number
+ </UL>
+<P<>Thus each table entry is 15 bytes long.
+
+<P><HR>
+
+<P><B>BUILD subroutine</B>
+
+<P>The arguments for the BUILD subroutine are the address of the table
+   and the address of a fullword where we will store the end-of-table
+   address.
+
+<P>We are going to store the 7 digits of the ID number as a 4-byte
+   binary value.  In the table, these may or may not be on fullword
+   boundaries.  You may need PACK, CVB and STCM.  (As every ID Number 
+   starts with 'R', we do not need to store the 'R'.)
+
+<P>We are going to store the Password using "XOR encryption" using the
+   binary value of the ID as the key field.
+
+<P>The "XOR encryption" technique works like this:  suppose we have
+   a 4-byte binary number KEY and we want to encrypt a 4-byte
+   variable called PHRASE.  Then:
+
+<PRE>     (encrypted form of PHRASE) = PHRASE XOR KEY</PRE>
+
+<P>We will do this using the ID number (as a 4-byte binary value) as
+   the key.  Each Password is up to 8 bytes long, so we need to
+   encrypt the first 4 bytes and then the last 4 bytes.
+
+<P>We are going to store the rest of the information in a compressed format:
+
+   <UL>
+    <LI>We will store the Day of the Week as a number, 0 to 6, where 
+        0 = Sunday and 6 = Saturday, using the first 3 bits of a 3 byte value.
+        <P>
+    <LI>We will store the hour (HH) as a number, 0 to 23, using the next 5 bits of 
+        the 3-byte value.
+        <P>
+     <LI>We will store the minute (MM) as a number, 0 to 59, using the next 6
+         bits of the 3-byte value.
+         <P>
+    <LI>We will store the Room Number as a number, 0 to 999, using the last 10
+        bits of the 3-byte value.
+  </UL>
+
+<P>To construct the 3-byte value, you will presumably have to use PACK and
+   CVB, followed by shift and bitwise instructions, and then you can use STCM 
+   to put the value in the table.
+
+<P><HR>
+
+<P><B>PRINT subroutine</B>
+
+<P>The arguments for the PRINT subroutine are the address of the table.
+   the address of a fullword where we have stored the end-of-table
+   address, and the address of a 24-byte caption to put in the 
+   page heading line (centered).
+
+<P>When we extract the data from the table to print it, we will need
+   to decrypt the Password.  This can be done by exactly the same
+   method.  If we have PHRASE and KEY as above:
+
+<PRE>     (decrypted form of PHRASE) = (encrypted form of PHRASE) XOR KEY</PRE>
+
+<P>When we need to recover the last three pieces of information from the 3-byte
+   value, we can do the following:
+
+ <UL>
+  <LI>use ICM to put the value in a register
+  <LI>use SLL and SRL to get just one number (perhaps the Hour) in
+      the rightmost bits with the rest of the register full of 0 bits
+  <LI>use CVD to get hold of the number in packed decimal form
+  <LI>use MVC and ED to get the number in zoned decimal form
+  <LI>move just the digits we want onto the print line
+ </UL>
+
+<P>To extract the other data from the table, you may need to use
+   IC, ICM, CVD, etc.
+
+<P>When you print the ID number, don't forget to put the 'R'
+   in front of it.
+
+<P><HR>
+
+<P><B>SORTID subroutine</B>
+
+<P>The arguments for the SORTID subroutine are the address of the table
+   and the address of a fullword where we have stored the end-of-table
+   address.
+
+<P>We will sort the table in descending order using the ID Number field as 
+   the key for sorting.  
+
+<P>The SORTID subroutine should use the sorting method known as
+   "Bubble Sort".  Here is a description:
+
+<PRE>              Bubble Sort Algorithm
+
+          I is a pointer initially to the first entry
+          J is a pointer initially to the first entry
+          K is a pointer
+          STOP is a pointer to the last entry
+          Temp is a variable as large as a table entry
+
+          Do While (I < STOP)
+            J = I
+            Do While (J < STOP)
+              K = J
+              Increment J
+              If Key(J) > Key(K)
+                Temp = Entry(J)
+                Entry(J) = Entry(K)
+                Entry(K) = Temp
+              EndIf
+            EndDo
+            Decrement STOP
+
+          EndDo</PRE>
+
+     <P>Here the Key is the ID Number in the table.
+
+     <P>There may be ways to make the above algorithm more efficient.
+
+<P><HR>
+
+<P><B>Other Notes</B>
+
+<OL>
+ <LI>You may assume that the table needs to hold no more than 20
+     entries, 15 bytes each.  Initialize the table to the value X'FF'.
+     <P>
+ <LI>You may assume that the data is valid.
+     <P>
+ <LI>Notice that you will need to change the name of a day of the week
+     (such as "Tuesday") to a small integer (such as 2), and back again.
+     <P>
+ <LI>You may use a DSECT to describe the table entries if it seems
+     appropriate.
+     <P>
+ <LI>Each of the subroutines needs a parameter list containing the
+     address of the table and the address of a fullword containing
+     the address of the first unused entry.
+</OL>
+
+<P><HR>
+
+<P><B>Output</B>
+
+<P>Aside from the XDUMP, there will be about two pages of output.
+   There is no need to print a page number.
+
+<P>The table listing should have a page heading.  There should be 
+   column headings, triple-spaced from the page heading.
+   
+<P>When you print the Time of Day, print it in the format "HH:MM".
+
+<P>When you print the Day of the Week spell it out, as in "Friday".
+
+<P>The captions in the page heading should be something like:
+   "Appointment Information" or "Appointment Information by ID Number". 
+
+<P>The lines of appointment information should be double-spaced.
+
+</BODY>
+
+</HTML>

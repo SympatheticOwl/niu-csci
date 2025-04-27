@@ -1,0 +1,99 @@
+<HTML>
+
+<HEAD>
+<TITLE>Written Assignment 2</TITLE> 
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>Written Assignment 2
+<P>30 points
+</B></H2>
+</CENTER>
+
+<P>This assignment is practice in reading a dump and diagnosing an error.
+
+<P>Write out your answers to these problems in a text file and submit 
+   them by the due date.
+
+<P>Show your work!
+
+<P><HR>
+
+<P>Run the following program.  You can use the JCL we used in
+   the lab training exercise.
+    
+<PRE>WRITTEN2 CSECT
+         USING WRITTEN2,15  ESTABLISH A BASE REGISTER 
+         L     3,FIRST      LOAD A NUMBER INTO REGISTER 3
+         L     4,SECOND     LOAD ANOTHER NUMBER INTO REGISTER 4 
+         AR    3,4          ADD THE TWO NUMBERS 
+         LA    5,THIRD      REGISTER 5 WILL = ADDRESS OF THIRD
+         L     6,TWO        PUT TWO'S VALUE IN REGISTER 6
+         ST    3,0(6,5)     STORE THE RESULT
+         XDUMP THIRD,4      DUMP THE RESULT
+         SR    6,6          SET REGISTER 6 to 0
+         BCR   B'1111',14   RETURN TO CALLER 
+* THIS IS A COMMENT LINE.
+NOTE     DC    CL2'OK'      PLACE KEEPER
+TWO      DC    F'2'         A CONSTANT = 2
+FIRST    DC    F'211'       A NUMBER
+SECOND   DC    F'94'        ANOTHER NUMBER 
+THIRD    DS    XL4          SUM OF THE TWO NUMBERS 
+FOURTH   DS    F            YET ANOTHER NUMBER
+         END   WRITTEN2     PROGRAM ENDS HERE</PRE>
+
+<P>Use the resulting output to answer the following questions: 
+
+<OL>
+  <LI>(2 points) Did this error occur (a) while the program was being
+      assembled or (b) when it was being run?
+      <P>
+  <LI>(2 points) What is the address of the next instruction which
+      will be executed?
+      <P>
+  <LI>(2 points) What is the value of the condition code at the time
+      of the ABEND?
+      <P>
+  <LI>(2 points) What is the length of the instruction that caused
+      the ABEND (a number of bytes)?
+      <P>
+  <LI>(2 points) What is the address of the instruction that caused
+      the abend?
+      <P>
+  <LI>(2 points) What type of error occurred (number and name)?
+      <P>
+  <LI>(2 points) What actually causes this error?
+      <P>
+  <LI>(3 points) Correct the error by rewriting the section of code
+      that caused it.  (The sum should be stored in THIRD.)  (There
+      are several correct ways to do this.)
+      <P>
+  <LI>(2 points) At the time of the ABEND, what is the value of
+      register 3 in decimal?
+      <P>
+  <LI>(2 points) What does the value in register 3 represent at the
+      time of the ABEND?
+      <P>
+  <LI>(3 points) Why is the address (LOC column) of the storage area
+      with the label TWO on it at X'000024' when the DC statement
+      whose address is X'000020' only takes up 2 bytes?
+      <P>
+  <LI>(2 points) What are the contents of the two bytes of user
+      storage starting at address X'000022'?  What do they represent?
+      <P>
+  <LI>(1 point)  Why do we not have XDUMP output?
+      <P>
+  <LI>(2 points) How many bytes are taken up by the XDUMP
+       pseudo-instruction?
+      <P>
+  <LI>(1 point) If we correct the error, what should be the value of
+      the condition code at the end of the program (when we reach
+      the BCR line)?
+</OL>
+
+</BODY>
+
+</HTML>

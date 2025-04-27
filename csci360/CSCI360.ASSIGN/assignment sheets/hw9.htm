@@ -1,0 +1,135 @@
+<HTML>
+
+<HEAD>
+<TITLE>CSCI 360 Assignment 9</TITLE>
+</HEAD>
+
+<BODY>
+
+<CENTER>
+<H2><B>
+<P>Assignment 9
+<P>50 points
+</B></H2></CENTER>
+
+<P><B>Overview</B>
+
+<P>In this assignment, you will write 2 macros.  These will be tested
+   with a driver program that will be provided. 
+
+<P>You may find it useful to examine the material on macros in the
+   textbook, Chapter 9, and the discussion in the <U>Notes and Examples</U>
+   book, Chapter 19. 
+
+<P><HR>
+
+<P>The first macro is called <U>STRLEN</U>.  Its purpose is to calculate
+   the length of a C-style string.  A C-style string is a character
+   value ending with a byte of X'00'.
+
+<P>For example, if the string is X'C1C2C300', the length is 3.  If the
+   string is X'00', the length is 0.
+
+<P>STRLEN has two symbolic parameters, both positional:
+<UL>
+ <LI>&STR is the label or D(B) address of a character value
+     terminated with X'00'.
+     <P>
+ <LI>&LEN is the label or D(B) address of a fullword in which the
+     macro will return the length.
+</UL>
+        
+<P>The STRLEN macro should verify that each of its mandatory symbolic
+   parameters is present.  If a parameter is missing, the macro should
+   print an informative error message using MNOTE and then MEXIT.
+
+<P>The STRLEN macro should not change the value of any of its parameters,
+   and it should not change the values of any registers.
+                         
+<P><HR>
+
+<P>The second macro is called FROMHEX.  Its purpose is to convert 
+   an input value which is a base-16 number, 6 bytes long, all in printable 
+   characters, and convert it to a base-10 number, 16 bytes long, all in 
+   printable characters.
+
+<P>That is, we have an input value written in base 16 (printable characters)
+   and we want to convert it to base 10 (printable characters).  For 
+   instance, if the input is XL6'F0F0F0F0C1F5', which is CL6'0000A5',
+   then the numerical value of the input is F'165' and the output value 
+   should be XL16'40F0F0F0F0F0F0F0F0F0F0F0F0F1F6F5', which is 
+   CL16'&nbsp0000000000000165'.
+
+<P>You may assume that all the input values are nonnegative and that they
+   are right-justified in 6 bytes, padded on the left with X'F0' as needed. 
+
+<P>You need to convert the input value to a number in a register,
+   and then use CVD followed by ED or UNPK.
+
+<P>FROMHEX has two symbolic parameters, both positional:
+<UL>
+ <LI>&IN is the label or D(B) address of a 6-byte character value.
+     <P>
+ <LI>&OUT is the label of D(B) address of a 16-byte character value.
+</UL>
+
+<P>The FROMHEX macro should verify that each of its mandatory symbolic
+   parameters is present.  If a parameter is missing, the macro should
+   print an informative error message using MNOTE and then MEXIT.                       
+
+<P>How can you convert the input value to a number in a register?  You can
+   do this one byte at a time.  
+<UL>
+ <LI>Set a register to 0.
+ <LI>Get hold of a byte, find its numeric value (0 to 15), and add it to the register.
+ <LI>Multiply the value in the register by 16 (maybe with SLA). 
+ <LI>Repeat.  When you work with the last byte, don't multiply by 16.
+</UL>
+
+<P>How can you convert one byte at a time to its numeric value?  All you need
+   to decide is whether it is in the range X'F0' to X'F9', in which case you 
+   can subtract 240 from it to get 0 to 9, or whether it is in the range
+   X'C1' to X'C6', in which case you can subtract 183 from it to get 10 to 15.
+   (There are other ways to do this as well.)
+
+<P>Along the way, you may find that you need IC, SLA, SRA, CVD and UNPK or ED.
+
+<P><HR>
+
+<P><B>Job Control Language</B>
+
+<P>Use the following Job Control Language (JCL) to execute Assignment 9
+   The fields described in lower case are the same as described in
+   Chapter 2 of your <U>Notes and Examples</U> book.  This JCL combines
+   your macros with the driver program.
+
+<P>The driver program is a <U>complete</U> program. It begins with CSECT
+   and ends with END.  Do not supply <U>anything</U> other than your
+   two macros. 
+
+<PRE>//jobname JOB ,'your name',MSGCLASS=H
+//STEP1   EXEC  PGM=ASSIST,PARM='MACRO=H'
+//STEPLIB   DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT  DD  SYSOUT=*
+//SYSIN     DD  * 
+  Your Macros go here.  Each Macro must begin with 
+  MACRO and a Prototype statement.  Your model
+  statements follow and the Macro ends with MEND.
+  (You should remove these four lines.)
+//          DD DSN=KC02314.SUMMER18.CSCI360.HW9DRVR,DISP=SHR
+//FT05F001  DD DUMMY
+//FT06F001  DD SYSOUT=*
+//</PRE>
+
+<P><HR>
+
+<P><B>Other Requirements</B>
+
+<P>Document your macros completely. See pp 23-24 of <U>Notes and
+   Examples</U>.
+
+</BODY>
+
+</HTML>
+
+

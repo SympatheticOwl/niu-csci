@@ -1,0 +1,30 @@
+//KC03G0BA JOB ,'Lucas Damler',MSGCLASS=H                               00010000
+//STEP1 EXEC PGM=ASSIST                                                 00020000
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                        00030000
+//SYSPRINT DD SYSOUT=*                                                  00040000
+//SYSIN DD *                                                            00050000
+****************************                                            00060000
+* ASSIGNMENT 1A                                                         00070000
+* NAME LUCAS DAMLER                                                     00080000
+* REGISTER USAGE                                                        00090000
+*  3     LEFT                                                           00100000
+*  4     RIGHT                                                          00110000
+*  5     LEFT                                                           00111000
+*  6     RIGHT                                                          00112000
+* 15     BASE REGISTER                                                  00120000
+****************************                                            00130000
+MAIN     CSECT                                                          00140000
+         USING MAIN,15                                                  00150000
+         L     3,LEFT                                                   00160000
+         L     4,RIGHT                                                  00170000
+         SR    3,4                                                      00180000
+         L     5,LEFT                                                   00181000
+         L     6,RIGHT                                                  00182000
+         AR    5,6                                                      00190000
+LEFT     DC    F'169'                                                   00200000
+RIGHT    DC    F'74'                                                    00210000
+         XDUMP                                                          00220000
+         BR    14                                                       00230000
+         END   MAIN                                                     00240000
+/*                                                                      00250000
+//                                                                      00260000

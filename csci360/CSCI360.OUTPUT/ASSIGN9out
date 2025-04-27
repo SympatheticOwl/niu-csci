@@ -1,0 +1,961 @@
+1                    J E S 2  J O B  L O G  --  S Y S T E M  S 0 W 1  --  N O D E  Z O S K C T R         
+0 
+ 16.44.34 JOB04165 ---- TUESDAY,   07 AUG 2018 ----
+ 16.44.34 JOB04165  IRR010I  USERID KC03G0B  IS ASSIGNED TO THIS JOB.
+ 16.44.34 JOB04165  ICH70001I KC03G0B  LAST ACCESS AT 16:28:38 ON TUESDAY, AUGUST 7, 2018
+ 16.44.34 JOB04165  $HASP373 KC03G0BI STARTED - INIT 2    - CLASS A        - SYS S0W1
+ 16.44.34 JOB04165  -                                         --TIMINGS (MINS.)--            ----PAGING COUNTS---
+ 16.44.34 JOB04165  -JOBNAME  STEPNAME PROCSTEP    RC   EXCP    TCB    SRB  CLOCK   SERV  PG   PAGE   SWAP    VIO SWAPS
+ 16.44.34 JOB04165  -KC03G0BI                      00    285 ******    .00     .0    327   0      0      0      0     0
+ 16.44.34 JOB04165  -KC03G0BI ENDED.  NAME-Lucas Damler         TOTAL TCB CPU TIME=   .00  TOTAL ELAPSED TIME=    .0
+ 16.44.34 JOB04165  $HASP395 KC03G0BI ENDED
+0------ JES2 JOB STATISTICS ------
+-  07 AUG 2018 JOB EXECUTION DATE
+-          101 CARDS READ
+-          961 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-           83 SYSOUT SPOOL KBYTES
+-         0.00 MINUTES EXECUTION TIME
+         1 //KC03G0BI JOB ,'Lucas Damler',MSGCLASS=H                               JOB04165
+         2 //STEP1   EXEC  PGM=ASSIST,PARM='MACRO=H'                                       
+         3 //STEPLIB   DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                             
+         4 //SYSPRINT  DD  SYSOUT=*                                                        
+         5 //SYSIN     DD  *                                                               
+         6 //          DD DSN=KC02314.SUMMER18.CSCI360.HW9DRVR,DISP=SHR                    
+         7 //FT05F001  DD DUMMY                                                            
+         8 //FT06F001  DD SYSOUT=*                                                         
+ ICH70001I KC03G0B  LAST ACCESS AT 16:28:38 ON TUESDAY, AUGUST 7, 2018
+ IEF236I ALLOC. FOR KC03G0BI STEP1
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IEF237I JES2 ALLOCATED TO SYSPRINT
+ IEF237I JES2 ALLOCATED TO SYSIN
+ IGD103I SMS ALLOCATED TO DDNAME
+ IEF237I DMY  ALLOCATED TO FT05F001
+ IEF237I JES2 ALLOCATED TO FT06F001
+ IEF142I KC03G0BI STEP1 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02293.ASSIST.LOADLIB                       RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC03G0B.KC03G0BI.JOB04165.D0000102.?         SYSOUT        
+ IEF285I   KC03G0B.KC03G0BI.JOB04165.D0000101.?         SYSIN         
+ IGD104I KC02314.SUMMER18.CSCI360.HW9DRVR             RETAINED,  DDNAME=        
+ IEF285I   KC03G0B.KC03G0BI.JOB04165.D0000103.?         SYSOUT        
+ IEF373I STEP/STEP1   /START 2018219.1644
+ IEF032I STEP/STEP1   /STOP  2018219.1644 
+         CPU:     0 HR  00 MIN  00.01 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:   584K  SYS:   272K  EXT:        4K  SYS:    11968K
+         ATB- REAL:                     0K  SLOTS:                     0K
+              VIRT- ALLOC:       0M SHRD:       0M
+ IEF375I  JOB/KC03G0BI/START 2018219.1644
+ IEF033I  JOB/KC03G0BI/STOP  2018219.1644 
+         CPU:     0 HR  00 MIN  00.01 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+1*** ASSIST 4.0/A2-05/15/82  470/V7A/0:OS/VS2  INS=SDFP7/X=BGHO, CHECK/TRC/=1180, OPTS=CDKMPR FROM PENN ST*NIU COMPSCI*LT         
+0MACRO=H                                                                                                                          
+0                                                                                                               PAGE    1         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                       1 ************************************************************                             
+                                       2 *  STRLEN                                                                                
+                                       3 *   Counts length of input string                                                        
+                                       4 *                                                                                        
+                                       5 *  Program:     ASSIGN9                                                                  
+                                       6 *  Programmer:  Lucas Damler                                                             
+                                       7 *                                                                                        
+                                       8 *  Register usage: R2  &STR                                                              
+                                       9 *                  R3  COUNTER                                                           
+                                      10 *                                                                                        
+                                      11 ************************************************************                             
+                                      12          MACRO                        MACRO start                                        
+                                      13          STRLEN  &STR,&LEN            MACRO name and parameters                          
+                                      14          AIF     ('&STR' EQ '').ERROR Check if first parm present                        
+                                      15          AIF     ('&LEN' EQ '').ERROR Check if second parm is present                    
+                                      16          STM     2,3,A&SYSNDX         Store register values in A&SYSNDX                  
+                                      17          B       B&SYSNDX             Brnach to B&SYSNDX                                 
+                                      18 A&SYSNDX DS      3F                   MACRO save area                                    
+                                      19 B&SYSNDX LA      2,&STR               Load &STR into R2                                  
+                                      20          SR      3,3                  Set R3 to zero                                     
+                                      21 C&SYSNDX DS      0H                                                                      
+                                      22          CLI     0(2),X'00'           Compare char in R2 to delimiter                    
+                                      23          BC      B'1000',D&SYSNDX     If equal go to D&SYSNDX                            
+                                      24          A       2,=F'1'              Advance R2 pointer                                 
+                                      25          A       3,=F'1'              Advance counter                                    
+                                      26          B       C&SYSNDX             Go to C&SYSNDX                                     
+                                      27 D&SYSNDX DS      0H                                                                      
+                                      28          ST      3,&LEN               Store count in &LEN                                
+                                      29          LM      2,3,A&SYSNDX         Load registers from save area                      
+                                      30          MEXIT                        Exit MACRO                                         
+                                      31 .ERROR   MNOTE   'Missing Argument'   MNOTE for error                                    
+                                      32          MEND                         End MACRO                                          
+                                      33 ************************************************************                             
+                                      34 *  FROMHEX                                                                               
+                                      35 *   Converts input string from HEX to DECIMAL                                            
+                                      36 *  Program:     ASSIGN9                                                                  
+                                      37 *  Programmer:  Lucas Damler                                                             
+                                      38 *                                                                                        
+                                      39 *  Register usage: R2  &IN                                                               
+                                      40 *                  R3  HEX value of &IN                                                  
+                                      41 *                  R4  Temp storage of single hex byte from &IN                          
+                                      42 *                  R5  Counter                                                           
+                                      43 *                                                                                        
+                                      44 ************************************************************                             
+                                      45          MACRO                        MACRO start                                        
+                                      46          FROMHEX &IN,&OUT             MACRO name and parameters                          
+                                      47          AIF     ('&IN' EQ '').ERROR  Check if first parm present                        
+                                      48          AIF     ('&OUT' EQ '').ERROR Check if second parm is present                    
+                                      49          STM     2,6,Z&SYSNDX         Store register values in z&SYSNDX                  
+                                      50          SR      3,3                  Set R3 to zero                                     
+                                      51          SR      5,5                  Set R5 to zero                                     
+                                      52          B       Y&SYSNDX             Brnach to Y&SYSNDX                                 
+1                                                                                                               PAGE    2         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                      53 Z&SYSNDX DS      5F                   FROMHEX save area                                  
+                                      54 R&SYSNDX DS      D                    Temp double word storage                           
+                                      55 Y&SYSNDX LA      2,&IN                Load &IN into R2                                   
+                                      56 X&SYSNDX DS      0H                                                                      
+                                      57          SR      4,4                  Set R4 to zero                                     
+                                      58          C       5,=F'5'              Compare R5 to 5                                    
+                                      59          BE      W&SYSNDX             If equal go to W&SYSNDX                            
+                                      60          IC      4,0(0,2)             Get single char from R2 into R4                    
+                                      61          CLI     0(2),X'F0'           Compare to X'F0"                                   
+                                      62          BL      V&SYSNDX             If lower go to V&SYSNDX                            
+                                      63          S       4,=F'240'            Subtract 240 from R4                               
+                                      64          B       U&SYSNDX             Go to U&SYSNDX                                     
+                                      65 V&SYSNDX S       4,=F'183'            Subtract 183 from R4                               
+                                      66          B       U&SYSNDX             Go to U&SYSNDX                                     
+                                      67 U&SYSNDX DS      0H                                                                      
+                                      68          SLA     4,4                  Shift left 4 bits                                  
+                                      69          XR      3,4                  Add R4 to R3                                       
+                                      70          SLA     3,4                  Shift R3 left 4 bits                               
+                                      71          A       5,=F'1'              Add 1 to R5                                        
+                                      72          A       2,=F'1'              Advance R2 pointer                                 
+                                      73          B       X&SYSNDX             Go to X&SYSNDX                                     
+                                      74 W&SYSNDX DS      0H                                                                      
+                                      75          SR      4,4                  Set R4 to zero                                     
+                                      76          IC      4,0(0,2)             Get single char from R2 into R4                    
+                                      77          CLI     0(2),X'F0'           Compare to X'F0"                                   
+                                      78          BL      T&SYSNDX             If lower go to T&SYSNDX                            
+                                      79          S       4,=F'240'            Subtract 240 from R4                               
+                                      80          B       S&SYSNDX             Go to S&SYSNDX                                     
+                                      81 T&SYSNDX S       4,=F'183'            Subtract 183 from R4                               
+                                      82          B       S&SYSNDX             Go to S&SYSNDX                                     
+                                      83 S&SYSNDX DS      0H                                                                      
+                                      84          SLA     4,4                  Shift R4 left 4 bits                               
+                                      85          XR      3,4                  Add R4 to R3                                       
+                                      86          SRA     3,4                  Shift R3 right 4 bits                              
+                                      87          CVD     3,R&SYSNDX           Convert R3 to decimal in R&SYSNDX                  
+                                      88          MVC     &OUT.(16),=X'40212020202020202020202020202020'                          
+                                      89          ED      &OUT.(16),R&SYSNDX   Edit R&SYSNDX into &OUT                            
+                                      90          LM      2,5,Z&SYSNDX         Load registers from save area                      
+                                      91          MEXIT                        Exit MACRO                                         
+                                      92 .ERROR   MNOTE   'Missing Argument'   MNOTE for error                                    
+                                      93          MEND                         End MACRO                                          
+                                      94 **********************************************************************                   
+                                      95 *                                                                    *                   
+                                      96 *            Name:  DRIVER.                                          *                   
+                                      97 *                                                                    *                   
+                                      98 *        Function:  Test platform for macros.                        *                   
+                                      99 *                                                                    *                   
+                                     100 *           Input:  None.                                            *                   
+                                     101 *                                                                    *                   
+                                     102 *          Output:  Results of the tests.                            *                   
+                                     103 *                                                                    *                   
+                                     104 *     Entry Conds:  14 -- Return address to the operating            *                   
+                                     105 *                         system.                                    *                   
+                                     106 *                   15 -- Address of entry to the program.           *                   
+                                     107 *                                                                    *                   
+                                     108 *  Register Usage:   2 -- Used in addresses in macro tests.          *                   
+                                     109 *                   11 -- Second base register.                      *                   
+1                                                                                                               PAGE    3         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                     110 *                   12 -- Base register.                             *                   
+                                     111 *                                                                    *                   
+                                     112 *      Exit Conds:  14 -- Return address to the operating            *                   
+                                     113 *                         system.                                    *                   
+                                     114 *                                                                    *                   
+                                     115 **********************************************************************                   
+1                                                                                                               PAGE    4         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                                                                                                                  
+                                                                                                                                  
+                                     117 **********************************************************************                   
+                                     118 *               The DRIVER program begins here.                      *                   
+                                     119 **********************************************************************                   
+                                     120 *                                                                                        
+ 000000                              121 DRIVER   CSECT                         Beginning of the program                          
+                                     122 *                                                                                        
+                                     124 *                                                                                        
+                                     125 *  Standard entry linkage.                                                               
+                                     126 *                                                                                        
+ 000000 90EC D00C            0000C   127          STM   14,12,12(13)            Store the registers in the save                   
+                                     128 *                                      area of the calling routine                       
+                                     129 *                                                                                        
+ 000004 18CF                         130          LR    12,15                   Point register 12 at DRIVER                       
+ 000000                              131          USING DRIVER,12               The base register is 12                           
+                                     132 *                                                                                        
+ 000006 41E0 CA78            00A78   133          LA    14,DRIVSAV              Point register 14 at DRIVER's                     
+                                     134 *                                      save area                                         
+ 00000A 50DE 0004            00004   135          ST    13,4(14)                Store the backward pointer                        
+ 00000E 50ED 0008            00008   136          ST    14,8(13)                Store the forward pointer                         
+ 000012 18DE                         137          LR    13,14                   Point register 13 at DRIVER's                     
+                                     138 *                                      save area                                         
+                                     139 *                                                                                        
+ 000014 E020 C97C 001A 0097C         140          XPRNT =CL26'1Results of testing Macros',26                                      
+                                     141 *                                      Print the title                                   
+                                     142 *                                                                                        
+                                     143 * This block of code tests the STRLEN macro.                                             
+                                     144 *                                                                                        
+ 00001A E020 C9CC 0001 009CC         145          XPRNT =C'0',1                 Skip an extra 2 lines                             
+ 000020 E020 C918 0020 00918         146          XPRNT =CL32'-First we test the STRLEN macro.',32                                
+                                     147 *                                      Print a heading                                   
+                                     148 *                                                                                        
+                                     149 * These first three calls to STRLEN all have problems which should                       
+                                     150 * result in MNOTEs.                                                                      
+                                     151 *                                                                                        
+                                     152          STRLEN   S1                                                                     
+ ----->AS***MNOTE***      1,Missing Argument                                                                      <-ERROR         
+                                     154 *                                                                                        
+                                     155          STRLEN   ,LENGTH                                                                
+ ----->AS***MNOTE***      1,Missing Argument                                                                      <-ERROR         
+                                     157 *                                                                                        
+                                     158          STRLEN                                                                          
+ ----->AS***MNOTE***      1,Missing Argument                                                                      <-ERROR         
+                                     160 *                                                                                        
+                                     161 * The next few calls to STRLEN should all work.                                          
+                                     162 *                                                                                        
+ 000026 E020 C9CD 0017 009CD         163          XPRNT =CL23'The input value is:  00',23                                         
+ 00002C E020 C9E4 001B 009E4         164          XPRNT =CL27'0The actual length is:    0',27                                     
+                                     165          STRLEN   S1,LENGTH                                                              
+ 000032 9023 C03C            0003C   166+         STM     2,3,A0004            Store register values in A&SYSNDX                  
+ 000036 47F0 C048            00048   167+         B       B0004                Brnach to B&SYSNDX                                 
+ 00003C                              168+A0004    DS      3F                   MACRO save area                                    
+ 000048 4120 CAC0            00AC0   169+B0004    LA      2,S1                 Load &STR into R2                                  
+ 00004C 1B33                         170+         SR      3,3                  Set R3 to zero                                     
+ 00004E                              171+C0004    DS      0H                                                                      
+ 00004E 9500 2000      00000         172+         CLI     0(2),X'00'           Compare char in R2 to delimiter                    
+1                                                                                                               PAGE    5         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000052 4780 C062            00062   173+         BC      B'1000',D0004        If equal go to D&SYSNDX                            
+ 000056 5A20 C968            00968   174+         A       2,=F'1'              Advance R2 pointer                                 
+ 00005A 5A30 C968            00968   175+         A       3,=F'1'              Advance counter                                    
+ 00005E 47F0 C04E            0004E   176+         B       C0004                Go to C&SYSNDX                                     
+ 000062                              177+D0004    DS      0H                                                                      
+ 000062 5030 CAD0            00AD0   178+         ST      3,LENGTH             Store count in &LEN                                
+ 000066 9823 C03C            0003C   179+         LM      2,3,A0004            Load registers from save area                      
+ 00006A 5840 CAD0            00AD0   180          L     4,LENGTH                                                                  
+ 00006E 4E40 CAF0            00AF0   181          CVD   4,TEMP                                                                    
+ 000072 D203 CAEB C96C 00AEB 0096C   182          MVC   SVALUE(4),=XL4'40202120'                                                  
+ 000078 DE03 CAEB CAF6 00AEB 00AF6   183          ED    SVALUE(4),TEMP+6                                                          
+ 00007E E020 CAD4 001B 00AD4         184          XPRNT SLINE,27                                                                  
+                                     185 *                                                                                        
+ 000084 E020 C9FF 001D 009FF         186          XPRNT =CL29'The input value is:  C1C2C300',29                                   
+ 00008A E020 CA1C 001B 00A1C         187          XPRNT =CL27'0The actual length is:    3',27                                     
+                                     188          STRLEN   S2,LENGTH                                                              
+ 000090 9023 C098            00098   189+         STM     2,3,A0005            Store register values in A&SYSNDX                  
+ 000094 47F0 C0A4            000A4   190+         B       B0005                Brnach to B&SYSNDX                                 
+ 000098                              191+A0005    DS      3F                   MACRO save area                                    
+ 0000A4 4120 CAC1            00AC1   192+B0005    LA      2,S2                 Load &STR into R2                                  
+ 0000A8 1B33                         193+         SR      3,3                  Set R3 to zero                                     
+ 0000AA                              194+C0005    DS      0H                                                                      
+ 0000AA 9500 2000      00000         195+         CLI     0(2),X'00'           Compare char in R2 to delimiter                    
+ 0000AE 4780 C0BE            000BE   196+         BC      B'1000',D0005        If equal go to D&SYSNDX                            
+ 0000B2 5A20 C968            00968   197+         A       2,=F'1'              Advance R2 pointer                                 
+ 0000B6 5A30 C968            00968   198+         A       3,=F'1'              Advance counter                                    
+ 0000BA 47F0 C0AA            000AA   199+         B       C0005                Go to C&SYSNDX                                     
+ 0000BE                              200+D0005    DS      0H                                                                      
+ 0000BE 5030 CAD0            00AD0   201+         ST      3,LENGTH             Store count in &LEN                                
+ 0000C2 9823 C098            00098   202+         LM      2,3,A0005            Load registers from save area                      
+ 0000C6 5840 CAD0            00AD0   203          L     4,LENGTH                                                                  
+ 0000CA 4E40 CAF0            00AF0   204          CVD   4,TEMP                                                                    
+ 0000CE D203 CAEB C96C 00AEB 0096C   205          MVC   SVALUE(4),=XL4'40202120'                                                  
+ 0000D4 DE03 CAEB CAF6 00AEB 00AF6   206          ED    SVALUE(4),TEMP+6                                                          
+ 0000DA E020 CAD4 001B 00AD4         207          XPRNT SLINE,27                                                                  
+                                     208 *                                                                                        
+ 0000E0 E020 CA37 001B 00A37         209          XPRNT =CL27'The input value is:  000000',27                                     
+ 0000E6 E020 C9E4 001B 009E4         210          XPRNT =CL27'0The actual length is:    0',27                                     
+                                     211          STRLEN   S3,LENGTH                                                              
+ 0000EC 9023 C0F4            000F4   212+         STM     2,3,A0006            Store register values in A&SYSNDX                  
+ 0000F0 47F0 C100            00100   213+         B       B0006                Brnach to B&SYSNDX                                 
+ 0000F4                              214+A0006    DS      3F                   MACRO save area                                    
+ 000100 4120 CAC5            00AC5   215+B0006    LA      2,S3                 Load &STR into R2                                  
+ 000104 1B33                         216+         SR      3,3                  Set R3 to zero                                     
+ 000106                              217+C0006    DS      0H                                                                      
+ 000106 9500 2000      00000         218+         CLI     0(2),X'00'           Compare char in R2 to delimiter                    
+ 00010A 4780 C11A            0011A   219+         BC      B'1000',D0006        If equal go to D&SYSNDX                            
+ 00010E 5A20 C968            00968   220+         A       2,=F'1'              Advance R2 pointer                                 
+ 000112 5A30 C968            00968   221+         A       3,=F'1'              Advance counter                                    
+ 000116 47F0 C106            00106   222+         B       C0006                Go to C&SYSNDX                                     
+ 00011A                              223+D0006    DS      0H                                                                      
+ 00011A 5030 CAD0            00AD0   224+         ST      3,LENGTH             Store count in &LEN                                
+ 00011E 9823 C0F4            000F4   225+         LM      2,3,A0006            Load registers from save area                      
+ 000122 5840 CAD0            00AD0   226          L     4,LENGTH                                                                  
+ 000126 4E40 CAF0            00AF0   227          CVD   4,TEMP                                                                    
+ 00012A D203 CAEB C96C 00AEB 0096C   228          MVC   SVALUE(4),=XL4'40202120'                                                  
+ 000130 DE03 CAEB CAF6 00AEB 00AF6   229          ED    SVALUE(4),TEMP+6                                                          
+1                                                                                                               PAGE    6         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000136 E020 CAD4 001B 00AD4         230          XPRNT SLINE,27                                                                  
+                                     231 *                                                                                        
+ 00013C E020 C9FF 001D 009FF         232          XPRNT =CL29'The input value is:  C1C2C300',29                                   
+ 000142 E020 CA1C 001B 00A1C         233          XPRNT =CL27'0The actual length is:    3',27                                     
+ 000148 4130 CAC1            00AC1   234          LA    3,S2                                                                      
+                                     235          STRLEN   0(3),LENGTH                                                            
+ 00014C 9023 C154            00154   236+         STM     2,3,A0007            Store register values in A&SYSNDX                  
+ 000150 47F0 C160            00160   237+         B       B0007                Brnach to B&SYSNDX                                 
+ 000154                              238+A0007    DS      3F                   MACRO save area                                    
+ 000160 4123 0000            00000   239+B0007    LA      2,0(3)               Load &STR into R2                                  
+ 000164 1B33                         240+         SR      3,3                  Set R3 to zero                                     
+ 000166                              241+C0007    DS      0H                                                                      
+ 000166 9500 2000      00000         242+         CLI     0(2),X'00'           Compare char in R2 to delimiter                    
+ 00016A 4780 C17A            0017A   243+         BC      B'1000',D0007        If equal go to D&SYSNDX                            
+ 00016E 5A20 C968            00968   244+         A       2,=F'1'              Advance R2 pointer                                 
+ 000172 5A30 C968            00968   245+         A       3,=F'1'              Advance counter                                    
+ 000176 47F0 C166            00166   246+         B       C0007                Go to C&SYSNDX                                     
+ 00017A                              247+D0007    DS      0H                                                                      
+ 00017A 5030 CAD0            00AD0   248+         ST      3,LENGTH             Store count in &LEN                                
+ 00017E 9823 C154            00154   249+         LM      2,3,A0007            Load registers from save area                      
+ 000182 5840 CAD0            00AD0   250          L     4,LENGTH                                                                  
+ 000186 4E40 CAF0            00AF0   251          CVD   4,TEMP                                                                    
+ 00018A D203 CAEB C96C 00AEB 0096C   252          MVC   SVALUE(4),=XL4'40202120'                                                  
+ 000190 DE03 CAEB CAF6 00AEB 00AF6   253          ED    SVALUE(4),TEMP+6                                                          
+ 000196 E020 CAD4 001B 00AD4         254          XPRNT SLINE,27                                                                  
+                                     255 *                                                                                        
+ 00019C E020 C9FF 001D 009FF         256          XPRNT =CL29'The input value is:  C1C2C300',29                                   
+ 0001A2 E020 CA1C 001B 00A1C         257          XPRNT =CL27'0The actual length is:    3',27                                     
+ 0001A8 4150 CAD0            00AD0   258          LA    5,LENGTH                                                                  
+                                     259          STRLEN   S2,0(5)                                                                
+ 0001AC 9023 C1B4            001B4   260+         STM     2,3,A0008            Store register values in A&SYSNDX                  
+ 0001B0 47F0 C1C0            001C0   261+         B       B0008                Brnach to B&SYSNDX                                 
+ 0001B4                              262+A0008    DS      3F                   MACRO save area                                    
+ 0001C0 4120 CAC1            00AC1   263+B0008    LA      2,S2                 Load &STR into R2                                  
+ 0001C4 1B33                         264+         SR      3,3                  Set R3 to zero                                     
+ 0001C6                              265+C0008    DS      0H                                                                      
+ 0001C6 9500 2000      00000         266+         CLI     0(2),X'00'           Compare char in R2 to delimiter                    
+ 0001CA 4780 C1DA            001DA   267+         BC      B'1000',D0008        If equal go to D&SYSNDX                            
+ 0001CE 5A20 C968            00968   268+         A       2,=F'1'              Advance R2 pointer                                 
+ 0001D2 5A30 C968            00968   269+         A       3,=F'1'              Advance counter                                    
+ 0001D6 47F0 C1C6            001C6   270+         B       C0008                Go to C&SYSNDX                                     
+ 0001DA                              271+D0008    DS      0H                                                                      
+ 0001DA 5035 0000            00000   272+         ST      3,0(5)               Store count in &LEN                                
+ 0001DE 9823 C1B4            001B4   273+         LM      2,3,A0008            Load registers from save area                      
+ 0001E2 5840 CAD0            00AD0   274          L     4,LENGTH                                                                  
+ 0001E6 4E40 CAF0            00AF0   275          CVD   4,TEMP                                                                    
+ 0001EA D203 CAEB C96C 00AEB 0096C   276          MVC   SVALUE(4),=XL4'40202120'                                                  
+ 0001F0 DE03 CAEB CAF6 00AEB 00AF6   277          ED    SVALUE(4),TEMP+6                                                          
+ 0001F6 E020 CAD4 001B 00AD4         278          XPRNT SLINE,27                                                                  
+                                     279 *                                                                                        
+ 0001FC E020 C9FF 001D 009FF         280          XPRNT =CL29'The input value is:  C1C2C300',29                                   
+ 000202 E020 CA1C 001B 00A1C         281          XPRNT =CL27'0The actual length is:    3',27                                     
+ 000208 4130 CAC1            00AC1   282          LA    3,S2                                                                      
+ 00020C 4150 CAD0            00AD0   283          LA    5,LENGTH                                                                  
+                                     284          STRLEN   0(3),0(5)                                                              
+ 000210 9023 C218            00218   285+         STM     2,3,A0009            Store register values in A&SYSNDX                  
+ 000214 47F0 C224            00224   286+         B       B0009                Brnach to B&SYSNDX                                 
+1                                                                                                               PAGE    7         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000218                              287+A0009    DS      3F                   MACRO save area                                    
+ 000224 4123 0000            00000   288+B0009    LA      2,0(3)               Load &STR into R2                                  
+ 000228 1B33                         289+         SR      3,3                  Set R3 to zero                                     
+ 00022A                              290+C0009    DS      0H                                                                      
+ 00022A 9500 2000      00000         291+         CLI     0(2),X'00'           Compare char in R2 to delimiter                    
+ 00022E 4780 C23E            0023E   292+         BC      B'1000',D0009        If equal go to D&SYSNDX                            
+ 000232 5A20 C968            00968   293+         A       2,=F'1'              Advance R2 pointer                                 
+ 000236 5A30 C968            00968   294+         A       3,=F'1'              Advance counter                                    
+ 00023A 47F0 C22A            0022A   295+         B       C0009                Go to C&SYSNDX                                     
+ 00023E                              296+D0009    DS      0H                                                                      
+ 00023E 5035 0000            00000   297+         ST      3,0(5)               Store count in &LEN                                
+ 000242 9823 C218            00218   298+         LM      2,3,A0009            Load registers from save area                      
+ 000246 5840 CAD0            00AD0   299          L     4,LENGTH                                                                  
+ 00024A 4E40 CAF0            00AF0   300          CVD   4,TEMP                                                                    
+ 00024E D203 CAEB C96C 00AEB 0096C   301          MVC   SVALUE(4),=XL4'40202120'                                                  
+ 000254 DE03 CAEB CAF6 00AEB 00AF6   302          ED    SVALUE(4),TEMP+6                                                          
+ 00025A E020 CAD4 001B 00AD4         303          XPRNT SLINE,27                                                                  
+                                     304 *                                                                                        
+ 000260 E020 CA52 0023 00A52         305          XPRNT =CL35'The input value is:  D1D2D300D4D500',35                             
+ 000266 E020 CA1C 001B 00A1C         306          XPRNT =CL27'0The actual length is:    3',27                                     
+ 00026C 4150 CAD0            00AD0   307          LA    5,LENGTH                                                                  
+                                     308          STRLEN   S4,0(5)                                                                
+ 000270 9023 C278            00278   309+         STM     2,3,A0010            Store register values in A&SYSNDX                  
+ 000274 47F0 C284            00284   310+         B       B0010                Brnach to B&SYSNDX                                 
+ 000278                              311+A0010    DS      3F                   MACRO save area                                    
+ 000284 4120 CAC8            00AC8   312+B0010    LA      2,S4                 Load &STR into R2                                  
+ 000288 1B33                         313+         SR      3,3                  Set R3 to zero                                     
+ 00028A                              314+C0010    DS      0H                                                                      
+ 00028A 9500 2000      00000         315+         CLI     0(2),X'00'           Compare char in R2 to delimiter                    
+ 00028E 4780 C29E            0029E   316+         BC      B'1000',D0010        If equal go to D&SYSNDX                            
+ 000292 5A20 C968            00968   317+         A       2,=F'1'              Advance R2 pointer                                 
+ 000296 5A30 C968            00968   318+         A       3,=F'1'              Advance counter                                    
+ 00029A 47F0 C28A            0028A   319+         B       C0010                Go to C&SYSNDX                                     
+ 00029E                              320+D0010    DS      0H                                                                      
+ 00029E 5035 0000            00000   321+         ST      3,0(5)               Store count in &LEN                                
+ 0002A2 9823 C278            00278   322+         LM      2,3,A0010            Load registers from save area                      
+ 0002A6 5840 CAD0            00AD0   323          L     4,LENGTH                                                                  
+ 0002AA 4E40 CAF0            00AF0   324          CVD   4,TEMP                                                                    
+ 0002AE D203 CAEB C96C 00AEB 0096C   325          MVC   SVALUE(4),=XL4'40202120'                                                  
+ 0002B4 DE03 CAEB CAF6 00AEB 00AF6   326          ED    SVALUE(4),TEMP+6                                                          
+ 0002BA E020 CAD4 001B 00AD4         327          XPRNT SLINE,27                                                                  
+                                     328 *                                                                                        
+                                     329 * The second block of code deals with the FROMHEX macro.                                 
+                                     330 *                                                                                        
+ 0002C0 E020 C9CC 0001 009CC         331          XPRNT =C'0',1                 Skip an extra 2 lines.                            
+ 0002C6 E020 C938 0020 00938         332          XPRNT =CL32'-Next we test the FROMHEX macro.',32                                
+                                     333 *                                      Print a heading.                                  
+                                     334 *                                                                                        
+                                     335 * These first three calls to FROMHEX have problems which should                          
+                                     336 * result in MNOTEs.                                                                      
+                                     337          FROMHEX  PIN                                                                    
+ ----->AS***MNOTE***      1,Missing Argument                                                                      <-ERROR         
+                                     339 *                                                                                        
+                                     340          FROMHEX  ,POUT                                                                  
+ ----->AS***MNOTE***      1,Missing Argument                                                                      <-ERROR         
+                                     342 *                                                                                        
+                                     343          FROMHEX                                                                         
+1                                                                                                               PAGE    8         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ ----->AS***MNOTE***      1,Missing Argument                                                                      <-ERROR         
+                                     345 *                                                                                        
+                                     346 * The next group of calls should all work.                                               
+                                     347 *                                                                                        
+ 0002CC D205 CB01 C996 00B01 00996   348          MVC   PIN(6),=CL6'000001'                                                       
+                                     349          FROMHEX  PIN,POUT                                                               
+ 0002D2 9026 C2E0            002E0   350+         STM     2,6,Z0014            Store register values in z&SYSNDX                  
+ 0002D6 1B33                         351+         SR      3,3                  Set R3 to zero                                     
+ 0002D8 1B55                         352+         SR      5,5                  Set R5 to zero                                     
+ 0002DA 47F0 C300            00300   353+         B       Y0014                Brnach to Y&SYSNDX                                 
+ 0002E0                              354+Z0014    DS      5F                   FROMHEX save area                                  
+ 0002F8                              355+R0014    DS      D                    Temp double word storage                           
+ 000300 4120 CB01            00B01   356+Y0014    LA      2,PIN                Load &IN into R2                                   
+ 000304                              357+X0014    DS      0H                                                                      
+ 000304 1B44                         358+         SR      4,4                  Set R4 to zero                                     
+ 000306 5950 C970            00970   359+         C       5,=F'5'              Compare R5 to 5                                    
+ 00030A 4780 C340            00340   360+         BE      W0014                If equal go to W&SYSNDX                            
+ 00030E 4340 2000            00000   361+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000312 95F0 2000      00000         362+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 000316 4740 C322            00322   363+         BL      V0014                If lower go to V&SYSNDX                            
+ 00031A 5B40 C974            00974   364+         S       4,=F'240'            Subtract 240 from R4                               
+ 00031E 47F0 C32A            0032A   365+         B       U0014                Go to U&SYSNDX                                     
+ 000322 5B40 C978            00978   366+V0014    S       4,=F'183'            Subtract 183 from R4                               
+ 000326 47F0 C32A            0032A   367+         B       U0014                Go to U&SYSNDX                                     
+ 00032A                              368+U0014    DS      0H                                                                      
+ 00032A 8B40 0004            00004   369+         SLA     4,4                  Shift left 4 bits                                  
+ 00032E 1734                         370+         XR      3,4                  Add R4 to R3                                       
+ 000330 8B30 0004            00004   371+         SLA     3,4                  Shift R3 left 4 bits                               
+ 000334 5A50 C968            00968   372+         A       5,=F'1'              Add 1 to R5                                        
+ 000338 5A20 C968            00968   373+         A       2,=F'1'              Advance R2 pointer                                 
+ 00033C 47F0 C304            00304   374+         B       X0014                Go to X&SYSNDX                                     
+ 000340                              375+W0014    DS      0H                                                                      
+ 000340 1B44                         376+         SR      4,4                  Set R4 to zero                                     
+ 000342 4340 2000            00000   377+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000346 95F0 2000      00000         378+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 00034A 4740 C356            00356   379+         BL      T0014                If lower go to T&SYSNDX                            
+ 00034E 5B40 C974            00974   380+         S       4,=F'240'            Subtract 240 from R4                               
+ 000352 47F0 C35E            0035E   381+         B       S0014                Go to S&SYSNDX                                     
+ 000356 5B40 C978            00978   382+T0014    S       4,=F'183'            Subtract 183 from R4                               
+ 00035A 47F0 C35E            0035E   383+         B       S0014                Go to S&SYSNDX                                     
+ 00035E                              384+S0014    DS      0H                                                                      
+ 00035E 8B40 0004            00004   385+         SLA     4,4                  Shift R4 left 4 bits                               
+ 000362 1734                         386+         XR      3,4                  Add R4 to R3                                       
+ 000364 8A30 0004            00004   387+         SRA     3,4                  Shift R3 right 4 bits                              
+ 000368 4E30 C2F8            002F8   388+         CVD     3,R0014              Convert R3 to decimal in R&SYSNDX                  
+ 00036C D20F CB15 C958 00B15 00958   389+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 000372 DE0F CB15 C2F8 00B15 002F8   390+         ED      POUT(16),R0014       Edit R&SYSNDX into &OUT                            
+ 000378 9825 C2E0            002E0   391+         LM      2,5,Z0014            Load registers from save area                      
+ 00037C E020 CAF8 002D 00AF8         392          XPRNT PLINE,45                                                                  
+                                     393 *                                                                                        
+ 000382 D205 CB01 C99C 00B01 0099C   394          MVC   PIN(6),=CL6'000A00'                                                       
+                                     395          FROMHEX  PIN,POUT                                                               
+ 000388 9026 C394            00394   396+         STM     2,6,Z0015            Store register values in z&SYSNDX                  
+ 00038C 1B33                         397+         SR      3,3                  Set R3 to zero                                     
+ 00038E 1B55                         398+         SR      5,5                  Set R5 to zero                                     
+ 000390 47F0 C3B0            003B0   399+         B       Y0015                Brnach to Y&SYSNDX                                 
+ 000394                              400+Z0015    DS      5F                   FROMHEX save area                                  
+1                                                                                                               PAGE    9         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 0003A8                              401+R0015    DS      D                    Temp double word storage                           
+ 0003B0 4120 CB01            00B01   402+Y0015    LA      2,PIN                Load &IN into R2                                   
+ 0003B4                              403+X0015    DS      0H                                                                      
+ 0003B4 1B44                         404+         SR      4,4                  Set R4 to zero                                     
+ 0003B6 5950 C970            00970   405+         C       5,=F'5'              Compare R5 to 5                                    
+ 0003BA 4780 C3F0            003F0   406+         BE      W0015                If equal go to W&SYSNDX                            
+ 0003BE 4340 2000            00000   407+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 0003C2 95F0 2000      00000         408+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 0003C6 4740 C3D2            003D2   409+         BL      V0015                If lower go to V&SYSNDX                            
+ 0003CA 5B40 C974            00974   410+         S       4,=F'240'            Subtract 240 from R4                               
+ 0003CE 47F0 C3DA            003DA   411+         B       U0015                Go to U&SYSNDX                                     
+ 0003D2 5B40 C978            00978   412+V0015    S       4,=F'183'            Subtract 183 from R4                               
+ 0003D6 47F0 C3DA            003DA   413+         B       U0015                Go to U&SYSNDX                                     
+ 0003DA                              414+U0015    DS      0H                                                                      
+ 0003DA 8B40 0004            00004   415+         SLA     4,4                  Shift left 4 bits                                  
+ 0003DE 1734                         416+         XR      3,4                  Add R4 to R3                                       
+ 0003E0 8B30 0004            00004   417+         SLA     3,4                  Shift R3 left 4 bits                               
+ 0003E4 5A50 C968            00968   418+         A       5,=F'1'              Add 1 to R5                                        
+ 0003E8 5A20 C968            00968   419+         A       2,=F'1'              Advance R2 pointer                                 
+ 0003EC 47F0 C3B4            003B4   420+         B       X0015                Go to X&SYSNDX                                     
+ 0003F0                              421+W0015    DS      0H                                                                      
+ 0003F0 1B44                         422+         SR      4,4                  Set R4 to zero                                     
+ 0003F2 4340 2000            00000   423+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 0003F6 95F0 2000      00000         424+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 0003FA 4740 C406            00406   425+         BL      T0015                If lower go to T&SYSNDX                            
+ 0003FE 5B40 C974            00974   426+         S       4,=F'240'            Subtract 240 from R4                               
+ 000402 47F0 C40E            0040E   427+         B       S0015                Go to S&SYSNDX                                     
+ 000406 5B40 C978            00978   428+T0015    S       4,=F'183'            Subtract 183 from R4                               
+ 00040A 47F0 C40E            0040E   429+         B       S0015                Go to S&SYSNDX                                     
+ 00040E                              430+S0015    DS      0H                                                                      
+ 00040E 8B40 0004            00004   431+         SLA     4,4                  Shift R4 left 4 bits                               
+ 000412 1734                         432+         XR      3,4                  Add R4 to R3                                       
+ 000414 8A30 0004            00004   433+         SRA     3,4                  Shift R3 right 4 bits                              
+ 000418 4E30 C3A8            003A8   434+         CVD     3,R0015              Convert R3 to decimal in R&SYSNDX                  
+ 00041C D20F CB15 C958 00B15 00958   435+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 000422 DE0F CB15 C3A8 00B15 003A8   436+         ED      POUT(16),R0015       Edit R&SYSNDX into &OUT                            
+ 000428 9825 C394            00394   437+         LM      2,5,Z0015            Load registers from save area                      
+ 00042C E020 CAF8 002D 00AF8         438          XPRNT PLINE,45                                                                  
+                                     439 *                                                                                        
+ 000432 D205 CB01 C9A2 00B01 009A2   440          MVC   PIN(6),=CL6'100000'                                                       
+                                     441          FROMHEX  PIN,POUT                                                               
+ 000438 9026 C444            00444   442+         STM     2,6,Z0016            Store register values in z&SYSNDX                  
+ 00043C 1B33                         443+         SR      3,3                  Set R3 to zero                                     
+ 00043E 1B55                         444+         SR      5,5                  Set R5 to zero                                     
+ 000440 47F0 C460            00460   445+         B       Y0016                Brnach to Y&SYSNDX                                 
+ 000444                              446+Z0016    DS      5F                   FROMHEX save area                                  
+ 000458                              447+R0016    DS      D                    Temp double word storage                           
+ 000460 4120 CB01            00B01   448+Y0016    LA      2,PIN                Load &IN into R2                                   
+ 000464                              449+X0016    DS      0H                                                                      
+ 000464 1B44                         450+         SR      4,4                  Set R4 to zero                                     
+ 000466 5950 C970            00970   451+         C       5,=F'5'              Compare R5 to 5                                    
+ 00046A 4780 C4A0            004A0   452+         BE      W0016                If equal go to W&SYSNDX                            
+ 00046E 4340 2000            00000   453+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000472 95F0 2000      00000         454+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 000476 4740 C482            00482   455+         BL      V0016                If lower go to V&SYSNDX                            
+ 00047A 5B40 C974            00974   456+         S       4,=F'240'            Subtract 240 from R4                               
+ 00047E 47F0 C48A            0048A   457+         B       U0016                Go to U&SYSNDX                                     
+1                                                                                                               PAGE   10         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000482 5B40 C978            00978   458+V0016    S       4,=F'183'            Subtract 183 from R4                               
+ 000486 47F0 C48A            0048A   459+         B       U0016                Go to U&SYSNDX                                     
+ 00048A                              460+U0016    DS      0H                                                                      
+ 00048A 8B40 0004            00004   461+         SLA     4,4                  Shift left 4 bits                                  
+ 00048E 1734                         462+         XR      3,4                  Add R4 to R3                                       
+ 000490 8B30 0004            00004   463+         SLA     3,4                  Shift R3 left 4 bits                               
+ 000494 5A50 C968            00968   464+         A       5,=F'1'              Add 1 to R5                                        
+ 000498 5A20 C968            00968   465+         A       2,=F'1'              Advance R2 pointer                                 
+ 00049C 47F0 C464            00464   466+         B       X0016                Go to X&SYSNDX                                     
+ 0004A0                              467+W0016    DS      0H                                                                      
+ 0004A0 1B44                         468+         SR      4,4                  Set R4 to zero                                     
+ 0004A2 4340 2000            00000   469+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 0004A6 95F0 2000      00000         470+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 0004AA 4740 C4B6            004B6   471+         BL      T0016                If lower go to T&SYSNDX                            
+ 0004AE 5B40 C974            00974   472+         S       4,=F'240'            Subtract 240 from R4                               
+ 0004B2 47F0 C4BE            004BE   473+         B       S0016                Go to S&SYSNDX                                     
+ 0004B6 5B40 C978            00978   474+T0016    S       4,=F'183'            Subtract 183 from R4                               
+ 0004BA 47F0 C4BE            004BE   475+         B       S0016                Go to S&SYSNDX                                     
+ 0004BE                              476+S0016    DS      0H                                                                      
+ 0004BE 8B40 0004            00004   477+         SLA     4,4                  Shift R4 left 4 bits                               
+ 0004C2 1734                         478+         XR      3,4                  Add R4 to R3                                       
+ 0004C4 8A30 0004            00004   479+         SRA     3,4                  Shift R3 right 4 bits                              
+ 0004C8 4E30 C458            00458   480+         CVD     3,R0016              Convert R3 to decimal in R&SYSNDX                  
+ 0004CC D20F CB15 C958 00B15 00958   481+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 0004D2 DE0F CB15 C458 00B15 00458   482+         ED      POUT(16),R0016       Edit R&SYSNDX into &OUT                            
+ 0004D8 9825 C444            00444   483+         LM      2,5,Z0016            Load registers from save area                      
+ 0004DC E020 CAF8 002D 00AF8         484          XPRNT PLINE,45                                                                  
+                                     485 *                                                                                        
+ 0004E2 D205 CB01 C9A8 00B01 009A8   486          MVC   PIN(6),=CL6'000000'                                                       
+                                     487          FROMHEX  PIN,POUT                                                               
+ 0004E8 9026 C4F4            004F4   488+         STM     2,6,Z0017            Store register values in z&SYSNDX                  
+ 0004EC 1B33                         489+         SR      3,3                  Set R3 to zero                                     
+ 0004EE 1B55                         490+         SR      5,5                  Set R5 to zero                                     
+ 0004F0 47F0 C510            00510   491+         B       Y0017                Brnach to Y&SYSNDX                                 
+ 0004F4                              492+Z0017    DS      5F                   FROMHEX save area                                  
+ 000508                              493+R0017    DS      D                    Temp double word storage                           
+ 000510 4120 CB01            00B01   494+Y0017    LA      2,PIN                Load &IN into R2                                   
+ 000514                              495+X0017    DS      0H                                                                      
+ 000514 1B44                         496+         SR      4,4                  Set R4 to zero                                     
+ 000516 5950 C970            00970   497+         C       5,=F'5'              Compare R5 to 5                                    
+ 00051A 4780 C550            00550   498+         BE      W0017                If equal go to W&SYSNDX                            
+ 00051E 4340 2000            00000   499+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000522 95F0 2000      00000         500+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 000526 4740 C532            00532   501+         BL      V0017                If lower go to V&SYSNDX                            
+ 00052A 5B40 C974            00974   502+         S       4,=F'240'            Subtract 240 from R4                               
+ 00052E 47F0 C53A            0053A   503+         B       U0017                Go to U&SYSNDX                                     
+ 000532 5B40 C978            00978   504+V0017    S       4,=F'183'            Subtract 183 from R4                               
+ 000536 47F0 C53A            0053A   505+         B       U0017                Go to U&SYSNDX                                     
+ 00053A                              506+U0017    DS      0H                                                                      
+ 00053A 8B40 0004            00004   507+         SLA     4,4                  Shift left 4 bits                                  
+ 00053E 1734                         508+         XR      3,4                  Add R4 to R3                                       
+ 000540 8B30 0004            00004   509+         SLA     3,4                  Shift R3 left 4 bits                               
+ 000544 5A50 C968            00968   510+         A       5,=F'1'              Add 1 to R5                                        
+ 000548 5A20 C968            00968   511+         A       2,=F'1'              Advance R2 pointer                                 
+ 00054C 47F0 C514            00514   512+         B       X0017                Go to X&SYSNDX                                     
+ 000550                              513+W0017    DS      0H                                                                      
+ 000550 1B44                         514+         SR      4,4                  Set R4 to zero                                     
+1                                                                                                               PAGE   11         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000552 4340 2000            00000   515+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000556 95F0 2000      00000         516+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 00055A 4740 C566            00566   517+         BL      T0017                If lower go to T&SYSNDX                            
+ 00055E 5B40 C974            00974   518+         S       4,=F'240'            Subtract 240 from R4                               
+ 000562 47F0 C56E            0056E   519+         B       S0017                Go to S&SYSNDX                                     
+ 000566 5B40 C978            00978   520+T0017    S       4,=F'183'            Subtract 183 from R4                               
+ 00056A 47F0 C56E            0056E   521+         B       S0017                Go to S&SYSNDX                                     
+ 00056E                              522+S0017    DS      0H                                                                      
+ 00056E 8B40 0004            00004   523+         SLA     4,4                  Shift R4 left 4 bits                               
+ 000572 1734                         524+         XR      3,4                  Add R4 to R3                                       
+ 000574 8A30 0004            00004   525+         SRA     3,4                  Shift R3 right 4 bits                              
+ 000578 4E30 C508            00508   526+         CVD     3,R0017              Convert R3 to decimal in R&SYSNDX                  
+ 00057C D20F CB15 C958 00B15 00958   527+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 000582 DE0F CB15 C508 00B15 00508   528+         ED      POUT(16),R0017       Edit R&SYSNDX into &OUT                            
+ 000588 9825 C4F4            004F4   529+         LM      2,5,Z0017            Load registers from save area                      
+ 00058C E020 CAF8 002D 00AF8         530          XPRNT PLINE,45                                                                  
+                                     531 *                                                                                        
+ 000592 D205 CB01 C9AE 00B01 009AE   532          MVC   PIN(6),=CL6'ABCDEF'                                                       
+                                     533          FROMHEX  PIN,POUT                                                               
+ 000598 9026 C5A4            005A4   534+         STM     2,6,Z0018            Store register values in z&SYSNDX                  
+ 00059C 1B33                         535+         SR      3,3                  Set R3 to zero                                     
+ 00059E 1B55                         536+         SR      5,5                  Set R5 to zero                                     
+ 0005A0 47F0 C5C0            005C0   537+         B       Y0018                Brnach to Y&SYSNDX                                 
+ 0005A4                              538+Z0018    DS      5F                   FROMHEX save area                                  
+ 0005B8                              539+R0018    DS      D                    Temp double word storage                           
+ 0005C0 4120 CB01            00B01   540+Y0018    LA      2,PIN                Load &IN into R2                                   
+ 0005C4                              541+X0018    DS      0H                                                                      
+ 0005C4 1B44                         542+         SR      4,4                  Set R4 to zero                                     
+ 0005C6 5950 C970            00970   543+         C       5,=F'5'              Compare R5 to 5                                    
+ 0005CA 4780 C600            00600   544+         BE      W0018                If equal go to W&SYSNDX                            
+ 0005CE 4340 2000            00000   545+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 0005D2 95F0 2000      00000         546+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 0005D6 4740 C5E2            005E2   547+         BL      V0018                If lower go to V&SYSNDX                            
+ 0005DA 5B40 C974            00974   548+         S       4,=F'240'            Subtract 240 from R4                               
+ 0005DE 47F0 C5EA            005EA   549+         B       U0018                Go to U&SYSNDX                                     
+ 0005E2 5B40 C978            00978   550+V0018    S       4,=F'183'            Subtract 183 from R4                               
+ 0005E6 47F0 C5EA            005EA   551+         B       U0018                Go to U&SYSNDX                                     
+ 0005EA                              552+U0018    DS      0H                                                                      
+ 0005EA 8B40 0004            00004   553+         SLA     4,4                  Shift left 4 bits                                  
+ 0005EE 1734                         554+         XR      3,4                  Add R4 to R3                                       
+ 0005F0 8B30 0004            00004   555+         SLA     3,4                  Shift R3 left 4 bits                               
+ 0005F4 5A50 C968            00968   556+         A       5,=F'1'              Add 1 to R5                                        
+ 0005F8 5A20 C968            00968   557+         A       2,=F'1'              Advance R2 pointer                                 
+ 0005FC 47F0 C5C4            005C4   558+         B       X0018                Go to X&SYSNDX                                     
+ 000600                              559+W0018    DS      0H                                                                      
+ 000600 1B44                         560+         SR      4,4                  Set R4 to zero                                     
+ 000602 4340 2000            00000   561+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000606 95F0 2000      00000         562+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 00060A 4740 C616            00616   563+         BL      T0018                If lower go to T&SYSNDX                            
+ 00060E 5B40 C974            00974   564+         S       4,=F'240'            Subtract 240 from R4                               
+ 000612 47F0 C61E            0061E   565+         B       S0018                Go to S&SYSNDX                                     
+ 000616 5B40 C978            00978   566+T0018    S       4,=F'183'            Subtract 183 from R4                               
+ 00061A 47F0 C61E            0061E   567+         B       S0018                Go to S&SYSNDX                                     
+ 00061E                              568+S0018    DS      0H                                                                      
+ 00061E 8B40 0004            00004   569+         SLA     4,4                  Shift R4 left 4 bits                               
+ 000622 1734                         570+         XR      3,4                  Add R4 to R3                                       
+ 000624 8A30 0004            00004   571+         SRA     3,4                  Shift R3 right 4 bits                              
+1                                                                                                               PAGE   12         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000628 4E30 C5B8            005B8   572+         CVD     3,R0018              Convert R3 to decimal in R&SYSNDX                  
+ 00062C D20F CB15 C958 00B15 00958   573+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 000632 DE0F CB15 C5B8 00B15 005B8   574+         ED      POUT(16),R0018       Edit R&SYSNDX into &OUT                            
+ 000638 9825 C5A4            005A4   575+         LM      2,5,Z0018            Load registers from save area                      
+ 00063C E020 CAF8 002D 00AF8         576          XPRNT PLINE,45                                                                  
+                                     577 *                                                                                        
+ 000642 D205 CB01 C9B4 00B01 009B4   578          MVC   PIN(6),=CL6'654321'                                                       
+                                     579          FROMHEX  PIN,POUT                                                               
+ 000648 9026 C654            00654   580+         STM     2,6,Z0019            Store register values in z&SYSNDX                  
+ 00064C 1B33                         581+         SR      3,3                  Set R3 to zero                                     
+ 00064E 1B55                         582+         SR      5,5                  Set R5 to zero                                     
+ 000650 47F0 C670            00670   583+         B       Y0019                Brnach to Y&SYSNDX                                 
+ 000654                              584+Z0019    DS      5F                   FROMHEX save area                                  
+ 000668                              585+R0019    DS      D                    Temp double word storage                           
+ 000670 4120 CB01            00B01   586+Y0019    LA      2,PIN                Load &IN into R2                                   
+ 000674                              587+X0019    DS      0H                                                                      
+ 000674 1B44                         588+         SR      4,4                  Set R4 to zero                                     
+ 000676 5950 C970            00970   589+         C       5,=F'5'              Compare R5 to 5                                    
+ 00067A 4780 C6B0            006B0   590+         BE      W0019                If equal go to W&SYSNDX                            
+ 00067E 4340 2000            00000   591+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000682 95F0 2000      00000         592+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 000686 4740 C692            00692   593+         BL      V0019                If lower go to V&SYSNDX                            
+ 00068A 5B40 C974            00974   594+         S       4,=F'240'            Subtract 240 from R4                               
+ 00068E 47F0 C69A            0069A   595+         B       U0019                Go to U&SYSNDX                                     
+ 000692 5B40 C978            00978   596+V0019    S       4,=F'183'            Subtract 183 from R4                               
+ 000696 47F0 C69A            0069A   597+         B       U0019                Go to U&SYSNDX                                     
+ 00069A                              598+U0019    DS      0H                                                                      
+ 00069A 8B40 0004            00004   599+         SLA     4,4                  Shift left 4 bits                                  
+ 00069E 1734                         600+         XR      3,4                  Add R4 to R3                                       
+ 0006A0 8B30 0004            00004   601+         SLA     3,4                  Shift R3 left 4 bits                               
+ 0006A4 5A50 C968            00968   602+         A       5,=F'1'              Add 1 to R5                                        
+ 0006A8 5A20 C968            00968   603+         A       2,=F'1'              Advance R2 pointer                                 
+ 0006AC 47F0 C674            00674   604+         B       X0019                Go to X&SYSNDX                                     
+ 0006B0                              605+W0019    DS      0H                                                                      
+ 0006B0 1B44                         606+         SR      4,4                  Set R4 to zero                                     
+ 0006B2 4340 2000            00000   607+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 0006B6 95F0 2000      00000         608+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 0006BA 4740 C6C6            006C6   609+         BL      T0019                If lower go to T&SYSNDX                            
+ 0006BE 5B40 C974            00974   610+         S       4,=F'240'            Subtract 240 from R4                               
+ 0006C2 47F0 C6CE            006CE   611+         B       S0019                Go to S&SYSNDX                                     
+ 0006C6 5B40 C978            00978   612+T0019    S       4,=F'183'            Subtract 183 from R4                               
+ 0006CA 47F0 C6CE            006CE   613+         B       S0019                Go to S&SYSNDX                                     
+ 0006CE                              614+S0019    DS      0H                                                                      
+ 0006CE 8B40 0004            00004   615+         SLA     4,4                  Shift R4 left 4 bits                               
+ 0006D2 1734                         616+         XR      3,4                  Add R4 to R3                                       
+ 0006D4 8A30 0004            00004   617+         SRA     3,4                  Shift R3 right 4 bits                              
+ 0006D8 4E30 C668            00668   618+         CVD     3,R0019              Convert R3 to decimal in R&SYSNDX                  
+ 0006DC D20F CB15 C958 00B15 00958   619+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 0006E2 DE0F CB15 C668 00B15 00668   620+         ED      POUT(16),R0019       Edit R&SYSNDX into &OUT                            
+ 0006E8 9825 C654            00654   621+         LM      2,5,Z0019            Load registers from save area                      
+ 0006EC E020 CAF8 002D 00AF8         622          XPRNT PLINE,45                                                                  
+                                     623 *                                                                                        
+ 0006F2 D205 CB01 C9BA 00B01 009BA   624          MVC   PIN(6),=CL6'00000F'                                                       
+                                     625          FROMHEX  PIN,POUT                                                               
+ 0006F8 9026 C704            00704   626+         STM     2,6,Z0020            Store register values in z&SYSNDX                  
+ 0006FC 1B33                         627+         SR      3,3                  Set R3 to zero                                     
+ 0006FE 1B55                         628+         SR      5,5                  Set R5 to zero                                     
+1                                                                                                               PAGE   13         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000700 47F0 C720            00720   629+         B       Y0020                Brnach to Y&SYSNDX                                 
+ 000704                              630+Z0020    DS      5F                   FROMHEX save area                                  
+ 000718                              631+R0020    DS      D                    Temp double word storage                           
+ 000720 4120 CB01            00B01   632+Y0020    LA      2,PIN                Load &IN into R2                                   
+ 000724                              633+X0020    DS      0H                                                                      
+ 000724 1B44                         634+         SR      4,4                  Set R4 to zero                                     
+ 000726 5950 C970            00970   635+         C       5,=F'5'              Compare R5 to 5                                    
+ 00072A 4780 C760            00760   636+         BE      W0020                If equal go to W&SYSNDX                            
+ 00072E 4340 2000            00000   637+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000732 95F0 2000      00000         638+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 000736 4740 C742            00742   639+         BL      V0020                If lower go to V&SYSNDX                            
+ 00073A 5B40 C974            00974   640+         S       4,=F'240'            Subtract 240 from R4                               
+ 00073E 47F0 C74A            0074A   641+         B       U0020                Go to U&SYSNDX                                     
+ 000742 5B40 C978            00978   642+V0020    S       4,=F'183'            Subtract 183 from R4                               
+ 000746 47F0 C74A            0074A   643+         B       U0020                Go to U&SYSNDX                                     
+ 00074A                              644+U0020    DS      0H                                                                      
+ 00074A 8B40 0004            00004   645+         SLA     4,4                  Shift left 4 bits                                  
+ 00074E 1734                         646+         XR      3,4                  Add R4 to R3                                       
+ 000750 8B30 0004            00004   647+         SLA     3,4                  Shift R3 left 4 bits                               
+ 000754 5A50 C968            00968   648+         A       5,=F'1'              Add 1 to R5                                        
+ 000758 5A20 C968            00968   649+         A       2,=F'1'              Advance R2 pointer                                 
+ 00075C 47F0 C724            00724   650+         B       X0020                Go to X&SYSNDX                                     
+ 000760                              651+W0020    DS      0H                                                                      
+ 000760 1B44                         652+         SR      4,4                  Set R4 to zero                                     
+ 000762 4340 2000            00000   653+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000766 95F0 2000      00000         654+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 00076A 4740 C776            00776   655+         BL      T0020                If lower go to T&SYSNDX                            
+ 00076E 5B40 C974            00974   656+         S       4,=F'240'            Subtract 240 from R4                               
+ 000772 47F0 C77E            0077E   657+         B       S0020                Go to S&SYSNDX                                     
+ 000776 5B40 C978            00978   658+T0020    S       4,=F'183'            Subtract 183 from R4                               
+ 00077A 47F0 C77E            0077E   659+         B       S0020                Go to S&SYSNDX                                     
+ 00077E                              660+S0020    DS      0H                                                                      
+ 00077E 8B40 0004            00004   661+         SLA     4,4                  Shift R4 left 4 bits                               
+ 000782 1734                         662+         XR      3,4                  Add R4 to R3                                       
+ 000784 8A30 0004            00004   663+         SRA     3,4                  Shift R3 right 4 bits                              
+ 000788 4E30 C718            00718   664+         CVD     3,R0020              Convert R3 to decimal in R&SYSNDX                  
+ 00078C D20F CB15 C958 00B15 00958   665+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 000792 DE0F CB15 C718 00B15 00718   666+         ED      POUT(16),R0020       Edit R&SYSNDX into &OUT                            
+ 000798 9825 C704            00704   667+         LM      2,5,Z0020            Load registers from save area                      
+ 00079C E020 CAF8 002D 00AF8         668          XPRNT PLINE,45                                                                  
+                                     669 *                                                                                        
+ 0007A2 D205 CB01 C9C0 00B01 009C0   670          MVC   PIN(6),=CL6'005000'                                                       
+                                     671          FROMHEX  PIN,POUT                                                               
+ 0007A8 9026 C7B4            007B4   672+         STM     2,6,Z0021            Store register values in z&SYSNDX                  
+ 0007AC 1B33                         673+         SR      3,3                  Set R3 to zero                                     
+ 0007AE 1B55                         674+         SR      5,5                  Set R5 to zero                                     
+ 0007B0 47F0 C7D0            007D0   675+         B       Y0021                Brnach to Y&SYSNDX                                 
+ 0007B4                              676+Z0021    DS      5F                   FROMHEX save area                                  
+ 0007C8                              677+R0021    DS      D                    Temp double word storage                           
+ 0007D0 4120 CB01            00B01   678+Y0021    LA      2,PIN                Load &IN into R2                                   
+ 0007D4                              679+X0021    DS      0H                                                                      
+ 0007D4 1B44                         680+         SR      4,4                  Set R4 to zero                                     
+ 0007D6 5950 C970            00970   681+         C       5,=F'5'              Compare R5 to 5                                    
+ 0007DA 4780 C810            00810   682+         BE      W0021                If equal go to W&SYSNDX                            
+ 0007DE 4340 2000            00000   683+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 0007E2 95F0 2000      00000         684+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 0007E6 4740 C7F2            007F2   685+         BL      V0021                If lower go to V&SYSNDX                            
+1                                                                                                               PAGE   14         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 0007EA 5B40 C974            00974   686+         S       4,=F'240'            Subtract 240 from R4                               
+ 0007EE 47F0 C7FA            007FA   687+         B       U0021                Go to U&SYSNDX                                     
+ 0007F2 5B40 C978            00978   688+V0021    S       4,=F'183'            Subtract 183 from R4                               
+ 0007F6 47F0 C7FA            007FA   689+         B       U0021                Go to U&SYSNDX                                     
+ 0007FA                              690+U0021    DS      0H                                                                      
+ 0007FA 8B40 0004            00004   691+         SLA     4,4                  Shift left 4 bits                                  
+ 0007FE 1734                         692+         XR      3,4                  Add R4 to R3                                       
+ 000800 8B30 0004            00004   693+         SLA     3,4                  Shift R3 left 4 bits                               
+ 000804 5A50 C968            00968   694+         A       5,=F'1'              Add 1 to R5                                        
+ 000808 5A20 C968            00968   695+         A       2,=F'1'              Advance R2 pointer                                 
+ 00080C 47F0 C7D4            007D4   696+         B       X0021                Go to X&SYSNDX                                     
+ 000810                              697+W0021    DS      0H                                                                      
+ 000810 1B44                         698+         SR      4,4                  Set R4 to zero                                     
+ 000812 4340 2000            00000   699+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000816 95F0 2000      00000         700+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 00081A 4740 C826            00826   701+         BL      T0021                If lower go to T&SYSNDX                            
+ 00081E 5B40 C974            00974   702+         S       4,=F'240'            Subtract 240 from R4                               
+ 000822 47F0 C82E            0082E   703+         B       S0021                Go to S&SYSNDX                                     
+ 000826 5B40 C978            00978   704+T0021    S       4,=F'183'            Subtract 183 from R4                               
+ 00082A 47F0 C82E            0082E   705+         B       S0021                Go to S&SYSNDX                                     
+ 00082E                              706+S0021    DS      0H                                                                      
+ 00082E 8B40 0004            00004   707+         SLA     4,4                  Shift R4 left 4 bits                               
+ 000832 1734                         708+         XR      3,4                  Add R4 to R3                                       
+ 000834 8A30 0004            00004   709+         SRA     3,4                  Shift R3 right 4 bits                              
+ 000838 4E30 C7C8            007C8   710+         CVD     3,R0021              Convert R3 to decimal in R&SYSNDX                  
+ 00083C D20F CB15 C958 00B15 00958   711+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 000842 DE0F CB15 C7C8 00B15 007C8   712+         ED      POUT(16),R0021       Edit R&SYSNDX into &OUT                            
+ 000848 9825 C7B4            007B4   713+         LM      2,5,Z0021            Load registers from save area                      
+ 00084C E020 CAF8 002D 00AF8         714          XPRNT PLINE,45                                                                  
+                                     715 *                                                                                        
+ 000852 D205 CB01 C9C6 00B01 009C6   716          MVC   PIN(6),=CL6'FFFFFF'                                                       
+                                     717          FROMHEX  PIN,POUT                                                               
+ 000858 9026 C864            00864   718+         STM     2,6,Z0022            Store register values in z&SYSNDX                  
+ 00085C 1B33                         719+         SR      3,3                  Set R3 to zero                                     
+ 00085E 1B55                         720+         SR      5,5                  Set R5 to zero                                     
+ 000860 47F0 C880            00880   721+         B       Y0022                Brnach to Y&SYSNDX                                 
+ 000864                              722+Z0022    DS      5F                   FROMHEX save area                                  
+ 000878                              723+R0022    DS      D                    Temp double word storage                           
+ 000880 4120 CB01            00B01   724+Y0022    LA      2,PIN                Load &IN into R2                                   
+ 000884                              725+X0022    DS      0H                                                                      
+ 000884 1B44                         726+         SR      4,4                  Set R4 to zero                                     
+ 000886 5950 C970            00970   727+         C       5,=F'5'              Compare R5 to 5                                    
+ 00088A 4780 C8C0            008C0   728+         BE      W0022                If equal go to W&SYSNDX                            
+ 00088E 4340 2000            00000   729+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 000892 95F0 2000      00000         730+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 000896 4740 C8A2            008A2   731+         BL      V0022                If lower go to V&SYSNDX                            
+ 00089A 5B40 C974            00974   732+         S       4,=F'240'            Subtract 240 from R4                               
+ 00089E 47F0 C8AA            008AA   733+         B       U0022                Go to U&SYSNDX                                     
+ 0008A2 5B40 C978            00978   734+V0022    S       4,=F'183'            Subtract 183 from R4                               
+ 0008A6 47F0 C8AA            008AA   735+         B       U0022                Go to U&SYSNDX                                     
+ 0008AA                              736+U0022    DS      0H                                                                      
+ 0008AA 8B40 0004            00004   737+         SLA     4,4                  Shift left 4 bits                                  
+ 0008AE 1734                         738+         XR      3,4                  Add R4 to R3                                       
+ 0008B0 8B30 0004            00004   739+         SLA     3,4                  Shift R3 left 4 bits                               
+ 0008B4 5A50 C968            00968   740+         A       5,=F'1'              Add 1 to R5                                        
+ 0008B8 5A20 C968            00968   741+         A       2,=F'1'              Advance R2 pointer                                 
+ 0008BC 47F0 C884            00884   742+         B       X0022                Go to X&SYSNDX                                     
+1                                                                                                               PAGE   15         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 0008C0                              743+W0022    DS      0H                                                                      
+ 0008C0 1B44                         744+         SR      4,4                  Set R4 to zero                                     
+ 0008C2 4340 2000            00000   745+         IC      4,0(0,2)             Get single char from R2 into R4                    
+ 0008C6 95F0 2000      00000         746+         CLI     0(2),X'F0'           Compare to X'F0"                                   
+ 0008CA 4740 C8D6            008D6   747+         BL      T0022                If lower go to T&SYSNDX                            
+ 0008CE 5B40 C974            00974   748+         S       4,=F'240'            Subtract 240 from R4                               
+ 0008D2 47F0 C8DE            008DE   749+         B       S0022                Go to S&SYSNDX                                     
+ 0008D6 5B40 C978            00978   750+T0022    S       4,=F'183'            Subtract 183 from R4                               
+ 0008DA 47F0 C8DE            008DE   751+         B       S0022                Go to S&SYSNDX                                     
+ 0008DE                              752+S0022    DS      0H                                                                      
+ 0008DE 8B40 0004            00004   753+         SLA     4,4                  Shift R4 left 4 bits                               
+ 0008E2 1734                         754+         XR      3,4                  Add R4 to R3                                       
+ 0008E4 8A30 0004            00004   755+         SRA     3,4                  Shift R3 right 4 bits                              
+ 0008E8 4E30 C878            00878   756+         CVD     3,R0022              Convert R3 to decimal in R&SYSNDX                  
+ 0008EC D20F CB15 C958 00B15 00958   757+         MVC     POUT(16),=X'40212020202020202020202020202020'                           
+ 0008F2 DE0F CB15 C878 00B15 00878   758+         ED      POUT(16),R0022       Edit R&SYSNDX into &OUT                            
+ 0008F8 9825 C864            00864   759+         LM      2,5,Z0022            Load registers from save area                      
+ 0008FC E020 CAF8 002D 00AF8         760          XPRNT PLINE,45                                                                  
+                                     761 *                                                                                        
+1                                                                                                               PAGE   16         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                                                                                                                  
+                                                                                                                                  
+                                     763 *                                                                                        
+                                     764 *  Standard exit linkage with return code = 0.                                           
+                                     765 *                                                                                        
+ 000902 17FF                         766          XR    15,15                   Put 0 in register 15                              
+ 000904 58DD 0004            00004   767          L     13,4(13)                Point register 13 at the calling                  
+                                     768 *                                      program's save area                               
+ 000908 58ED 000C            0000C   769          L     14,12(13)               Restore all registers except                      
+ 00090C 980C D014            00014   770          LM    0,12,20(13)             15                                                
+ 000910 07FE                         771          BR    14                      Return to the calling program                     
+1                                                                                                               PAGE   17         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                                                                                                                  
+                                                                                                                                  
+                                     773 **********************************************************************                   
+                                     774 *          The storage section for DRIVER starts here.               *                   
+                                     775 **********************************************************************                   
+                                     776 *                                                                                        
+                                     777          LTORG                                                                           
+ 000918 60C68999A2A340A6             778                =CL32'-First we test the STRLEN macro.'                                   
+ 000938 60D585A7A340A685             779                =CL32'-Next we test the FROMHEX macro.'                                   
+ 000958 4021202020202020             780                =X'40212020202020202020202020202020'                                      
+ 000968 00000001                     781                =F'1'                                                                     
+ 00096C 40202120                     782                =XL4'40202120'                                                            
+ 000970 00000005                     783                =F'5'                                                                     
+ 000974 000000F0                     784                =F'240'                                                                   
+ 000978 000000B7                     785                =F'183'                                                                   
+ 00097C F1D985A2A493A3A2             786                =CL26'1Results of testing Macros'                                         
+ 000996 F0F0F0F0F0F1                 787                =CL6'000001'                                                              
+ 00099C F0F0F0C1F0F0                 788                =CL6'000A00'                                                              
+ 0009A2 F1F0F0F0F0F0                 789                =CL6'100000'                                                              
+ 0009A8 F0F0F0F0F0F0                 790                =CL6'000000'                                                              
+ 0009AE C1C2C3C4C5C6                 791                =CL6'ABCDEF'                                                              
+ 0009B4 F6F5F4F3F2F1                 792                =CL6'654321'                                                              
+ 0009BA F0F0F0F0F0C6                 793                =CL6'00000F'                                                              
+ 0009C0 F0F0F5F0F0F0                 794                =CL6'005000'                                                              
+ 0009C6 C6C6C6C6C6C6                 795                =CL6'FFFFFF'                                                              
+ 0009CC F0                           796                =C'0'                                                                     
+ 0009CD E3888540899597A4             797                =CL23'The input value is:  00'                                            
+ 0009E4 F0E38885408183A3             798                =CL27'0The actual length is:    0'                                        
+ 0009FF E3888540899597A4             799                =CL29'The input value is:  C1C2C300'                                      
+ 000A1C F0E38885408183A3             800                =CL27'0The actual length is:    3'                                        
+ 000A37 E3888540899597A4             801                =CL27'The input value is:  000000'                                        
+ 000A52 E3888540899597A4             802                =CL35'The input value is:  D1D2D300D4D500'                                
+                                     803 *                                                                                        
+ 000A78 FFFFFFFFFFFFFFFF             804 DRIVSAV  DC    18F'-1'                 Save area for linkage                             
+                                     805 *                                                                                        
+                                     806 * Variables for testing STRLEN                                                           
+ 000AC0 00                           807 S1       DC    X'00'                                                                     
+                                     808 *                                                                                        
+ 000AC1 C1C2C300                     809 S2       DC    XL4'C1C2C300'                                                             
+                                     810 *                                                                                        
+ 000AC5 000000                       811 S3       DC    XL3'000000'                                                               
+                                     812 *                                                                                        
+ 000AC8 D1D2D300D4D500               813 S4       DC    XL7'D1D2D300D4D500'                                                       
+                                     814 *                                                                                        
+ 000AD0                              815 LENGTH   DS    F                                                                         
+                                     816 *                                                                                        
+ 000AD4 F0                           817 SLINE    DC    C'0'                                                                      
+ 000AD5 E388854083969497             818          DC    CL22'The computed length is'                                              
+ 000AEB                              819 SVALUE   DS    4C                                                                        
+                                     820 *                                                                                        
+ 000AF0                              821 TEMP     DS    D                                                                         
+                                     822 *                                                                                        
+                                     823 * Storage for testing FROMHEX                                                            
+ 000AF8 F0                           824 PLINE    DC    C'0'                                                                      
+ 000AF9 C9D5D7E4E3407E40             825          DC    CL8'INPUT = '                                                             
+ 000B01                              826 PIN      DS    CL6                                                                       
+ 000B07 4040404040                   827          DC    5C' '                                                                     
+1                                                                                                               PAGE   18         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000B0C D6E4E3D7E4E3407E             828          DC    CL9'OUTPUT = '                                                            
+ 000B15                              829 POUT     DS    16C                                                                       
+                                     830          END   DRIVER                  End of the overall program                        
+0***  NO   STATEMENTS FLAGGED -  NO   WARNINGS,  NO   ERRORS                                                                      
+0*** DYNAMIC CORE AREA USED:  LOW:   50592 HIGH:    3636 LEAVING:  439340 FREE BYTES. AVERAGE:       65 BYTES/STMT ***            
+0*** ASSEMBLY TIME =    0.007 SECS,   118714 STATEMENTS/SEC ***                                                                   
+0*** PROGRAM EXECUTION BEGINNING - ANY OUTPUT BEFORE EXECUTION TIME MESSAGE IS PRODUCED BY USER PROGRAM ***                       
+1Results of testing Macros                                                                                                        
+0                                                                                                                                 
+-First we test the STRLEN macro.                                                                                                  
+ he input value is:  00                                                                                                           
+0The actual length is:    0                                                                                                       
+0The computed length is   0                                                                                                       
+ he input value is:  C1C2C300                                                                                                     
+0The actual length is:    3                                                                                                       
+0The computed length is   3                                                                                                       
+ he input value is:  000000                                                                                                       
+0The actual length is:    0                                                                                                       
+0The computed length is   0                                                                                                       
+ he input value is:  C1C2C300                                                                                                     
+0The actual length is:    3                                                                                                       
+0The computed length is   3                                                                                                       
+ he input value is:  C1C2C300                                                                                                     
+0The actual length is:    3                                                                                                       
+0The computed length is   3                                                                                                       
+ he input value is:  C1C2C300                                                                                                     
+0The actual length is:    3                                                                                                       
+0The computed length is   3                                                                                                       
+ he input value is:  D1D2D300D4D500                                                                                               
+0The actual length is:    3                                                                                                       
+0The computed length is   3                                                                                                       
+0                                                                                                                                 
+-Next we test the FROMHEX macro.                                                                                                  
+0INPUT = 000001     OUTPUT =   00000000000001                                                                                     
+0INPUT = 000A00     OUTPUT =   00000000002560                                                                                     
+0INPUT = 100000     OUTPUT =   00000001048576                                                                                     
+0INPUT = 000000     OUTPUT =   00000000000000                                                                                     
+0INPUT = ABCDEF     OUTPUT =   00000011259375                                                                                     
+0INPUT = 654321     OUTPUT =   00000006636321                                                                                     
+0INPUT = 00000F     OUTPUT =   00000000000015                                                                                     
+0INPUT = 005000     OUTPUT =   00000000020480                                                                                     
+1INPUT = FFFFFF     OUTPUT =   00000016777215                                                                                     
+0*** EXECUTION TIME =    0.000 SECS.      1038 INSTRUCTIONS EXECUTED -  1038000 INSTRUCTIONS/SEC ***                              
+0*** FIRST CARD NOT READ: NO CARDS READ:FILE UNOPENED                                                                             
+0*** AM004 - NORMAL USER TERMINATION BY RETURN ***                                                                                
